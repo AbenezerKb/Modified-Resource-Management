@@ -35,7 +35,6 @@ function ApproveBorrow({ addedItems, setAddedItems, borrow }) {
 
         const data = {
             borrowId: borrow.borrowId,
-            approvedById: 1, ////////////////////////
             borrowItems: [],
         };
 

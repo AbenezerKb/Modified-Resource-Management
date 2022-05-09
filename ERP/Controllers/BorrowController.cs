@@ -16,14 +16,13 @@ namespace ERP.Controllers
     [Authorize(Roles = "Employee")]
     public class BorrowController : Controller
     {
-        private readonly DataContext context;
         private readonly IUserService _userService;
         private readonly IBorrowService _borrowService;
 
         public BorrowController(IBorrowService borrowService, IUserService userService)
         {
-            this.context = context;
             _borrowService = borrowService;
+            _userService = userService;
         }
 
         [HttpGet("{id}")]
@@ -33,7 +32,12 @@ namespace ERP.Controllers
             try
             {
                 var borrow = await _borrowService.GetById(id);
-                return Ok(borrow);
+                if (_userService.UserRole.IsAdmin || _userService.UserRole.IsFinance ||
+                        (_userService.UserRole.CanViewBorrow && _userService.Employee.EmployeeSiteId == borrow.SiteId) ||
+                        _userService.Employee.EmployeeId == borrow.RequestedById)
+                    return Ok(borrow);
+
+                return Forbid();
             }
             catch (KeyNotFoundException ex)
             {
@@ -45,16 +49,6 @@ namespace ERP.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<Borrow>>> Get()
-        {
-
-            var borrows = await context.Borrows
-                .Include(borrow => borrow.Site)
-                .ToListAsync();
-
-            return Ok(borrows);
-        }
 
         [HttpPost]
         public async Task<ActionResult<List<Borrow>>> GetByCondition(GetBorrowsDTO getBorrowsDTO)
@@ -67,6 +61,9 @@ namespace ERP.Controllers
         [HttpPost("request")]
         public async Task<ActionResult<int>> Post(CreateBorrowDTO borrowDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanRequestBorrow)
+                return Forbid();
+
             try
             {
                 var borrow = await _borrowService.RequestBorrow(borrowDTO);
@@ -86,6 +83,9 @@ namespace ERP.Controllers
         [HttpPost("approve")]
         public async Task<ActionResult<Borrow>> Approve(ApproveBorrowDTO approveDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanApproveBorrow)
+                return Forbid();
+
             try
             {
                 var borrow = await _borrowService.ApproveBorrow(approveDTO);
@@ -104,6 +104,9 @@ namespace ERP.Controllers
         [HttpPost("decline")]
         public async Task<ActionResult<Borrow>> Decline(DeclineBorrowDTO declineDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanApproveBorrow)
+                return Forbid();
+
             try
             {
                 var borrow = await _borrowService.DeclineBorrow(declineDTO);
@@ -123,6 +126,8 @@ namespace ERP.Controllers
         [HttpPost("hand")]
         public async Task<ActionResult<Borrow>> Hand(HandBorrowDTO handDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanHandBorrow)
+                return Forbid();
 
             try
             {

@@ -1,229 +1,269 @@
-import { useEffect, useState, useMemo } from "react";
-import { useParams } from "react-router-dom";
-import { Form, Container } from "react-bootstrap";
-import Item from "../../../models/Item";
-import Header from "../../layouts/Header";
-import BuyStatusBadge from "./fragments/BuyStatusBadge";
-import { ITEMTYPE, BUYSTATUS } from "../../../Constants";
-import ApproveBuy from "./ApproveBuy";
-import ConfirmBuy from "./ConfirmBuy";
-import CheckBuy from "./CheckBuy";
-import ViewBuy from "./ViewBuy";
-import DeclinedBuy from "./DeclinedBuy";
-import { useQuery } from "react-query";
-import { fetchBuy } from "../../../api/buy";
-import LoadingSpinner from "../../fragments/LoadingSpinner";
-import ConnectionError from "../../fragments/ConnectionError";
+import { useEffect, useState, useMemo } from "react"
+import { useParams } from "react-router-dom"
+import { Form, Container } from "react-bootstrap"
+import Item from "../../../models/Item"
+import Header from "../../layouts/Header"
+import BuyStatusBadge from "./fragments/BuyStatusBadge"
+import { ITEMTYPE, BUYSTATUS } from "../../../Constants"
+import ApproveBuy from "./ApproveBuy"
+import ConfirmBuy from "./ConfirmBuy"
+import CheckBuy from "./CheckBuy"
+import ViewBuy from "./ViewBuy"
+import DeclinedBuy from "./DeclinedBuy"
+import { useQuery } from "react-query"
+import FormRow from "../../fragments/FormRow"
+import { fetchBuy } from "../../../api/buy"
+import { useAuth } from "../../../contexts/AuthContext"
+import LoadingSpinner from "../../fragments/LoadingSpinner"
+import ConnectionError from "../../fragments/ConnectionError"
+import AlertNotification from "../../fragments/AlertNotification"
 
 function SingleBuy() {
-    const { id } = useParams();
-    const [buy, setBuy] = useState({});
-    const [addedItems, setAddedItems] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+  const { id } = useParams()
+  const [buy, setBuy] = useState({})
+  const [addedItems, setAddedItems] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [viewOnly, setViewOnly] = useState()
+  const [notificationType, setNotificationType] = useState(null)
 
-    var query = useQuery(["buy", id], () => fetchBuy(id));
+  const auth = useAuth()
 
-    useEffect(() => {
-        if (query.data === undefined) return;
-        setBuy(query.data);
-        let items = [];
-        for (let buyItem of query.data.buyItems) {
-            let itemObj = new Item();
+  var query = useQuery(["buy", id], () => fetchBuy(id))
 
-            itemObj.itemId = buyItem.itemId;
-            itemObj.name = buyItem.item.name;
-            itemObj.cost = buyItem.cost;
-            itemObj.type = buyItem.item.type
+  useEffect(() => {
+    if (query.data === undefined) return
+    setBuy(query.data)
+    let items = []
+    for (let buyItem of query.data.buyItems) {
+      let itemObj = new Item()
 
-            itemObj.qtyRequested = buyItem.qtyRequested;
-            itemObj.requestRemark = buyItem.requestRemark;
+      itemObj.itemId = buyItem.itemId
+      itemObj.name = buyItem.item.name
+      itemObj.cost = buyItem.cost
+      itemObj.type = buyItem.item.type
 
-            if (
-                query.data.status >= BUYSTATUS.APPROVED ||
-                query.data.status === BUYSTATUS.DECLINED
-            ) {
-                itemObj.qtyApproved = buyItem.qtyApproved;
-                itemObj.approveRemark = buyItem.approveRemark;
-            }
+      itemObj.qtyRequested = buyItem.qtyRequested
+      itemObj.requestRemark = buyItem.requestRemark
 
-            if (
-                query.data.status >= BUYSTATUS.BOUGHT
-            ) {
-                itemObj.qtyBought = buyItem.qtyBought;
-                itemObj.buyRemark = buyItem.buyRemark;
-            }
+      if (
+        query.data.status >= BUYSTATUS.APPROVED ||
+        query.data.status === BUYSTATUS.DECLINED
+      ) {
+        itemObj.qtyApproved = buyItem.qtyApproved
+        itemObj.approveRemark = buyItem.approveRemark
+      }
 
-            if (buyItem.item.type === ITEMTYPE.MATERIAL) {
-                itemObj.spec = buyItem.item.material.spec;
-                itemObj.units = [buyItem.item.material.unit];
-            }
+      if (query.data.status >= BUYSTATUS.BOUGHT) {
+        itemObj.qtyBought = buyItem.qtyBought
+        itemObj.buyRemark = buyItem.buyRemark
+      }
 
-            items.push(itemObj);
-        }
+      if (buyItem.item.type === ITEMTYPE.MATERIAL) {
+        itemObj.spec = buyItem.item.material.spec
+        itemObj.units = [buyItem.item.material.unit]
+      }
 
-        setAddedItems(items);
-        setIsLoading(false);
-    }, [query.data]);
-
-    function FormRow({ labelL, labelR, valueL, valueR }) {
-        //defines layout of each row
-        return (
-            <div className="row mx-2">
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <div className="row">
-                            <div className="col-3 mt-1">
-                                <Form.Label>{labelL}</Form.Label>
-                            </div>
-                            <div className="col">
-                                {typeof valueL === "object" ? (
-                                    valueL
-                                ) : (
-                                    <Form.Control type="text" readOnly value={valueL} />
-                                )}
-                            </div>
-                        </div>
-                    </Form.Group>
-                </div>
-                <div className="col">
-                    <Form.Group className="mb-3">
-                        <div className="row">
-                            <div className="col-3 mt-1">
-                                <Form.Label>{labelR}</Form.Label>
-                            </div>
-                            <div className="col">
-                                {typeof valueR === "object" ? (
-                                    valueR
-                                ) : (
-                                    <Form.Control type="text" readOnly value={valueR} />
-                                )}
-                            </div>
-                        </div>
-                    </Form.Group>
-                </div>
-            </div>
-        );
+      items.push(itemObj)
     }
 
-    function TopForm() {
-        return (
-            <Form>
-                <FormRow
-                    labelL="Buy Number"
-                    valueL={buy.buyId}
-                    labelR="Status"
-                    valueR={BuyStatusBadge(buy.status)}
-                />
+    setAddedItems(items)
+    setIsLoading(false)
+  }, [query.data])
 
-                <FormRow
-                    labelL="Requested By"
-                    valueL={`${buy.requestedBy.fName} ${buy.requestedBy.mName}`}
-                    labelR="Requested On"
-                    valueR={new Date(buy.requestDate).toLocaleString()}
-                />
-                {buy.status >= BUYSTATUS.CHECKED && (
-                    <>
-                        <FormRow
-                            labelL="Checked By"
-                            valueL={
-                                buy.checkedBy
-                                    ? `${buy.checkedBy.fName} ${buy.checkedBy.mName}`
-                                    : ""
-                            }
-                            labelR="Checked On"
-                            valueR={
-                                buy.checkDate
-                                    ? new Date(buy.checkDate).toLocaleString()
-                                    : ""
-                            }
-                        />
-                    </>
-                )}
-                {buy.status >= BUYSTATUS.APPROVED && (
-                    <>
-                        <FormRow
-                            labelL="Approved By"
-                            valueL={
-                                buy.approvedBy
-                                    ? `${buy.approvedBy.fName} ${buy.approvedBy.mName}`
-                                    : ""
-                            }
-                            labelR="Approved On"
-                            valueR={
-                                buy.approveDate
-                                    ? new Date(buy.approveDate).toLocaleString()
-                                    : ""
-                            }
-                        />
-                    </>
-                )}
-            </Form>
-        );
+  useEffect(() => {
+    if (buy.status === undefined) return
+    if (buy.status === BUYSTATUS.QUEUED) {
+      setViewOnly(true)
+      return setNotificationType(BUYSTATUS.QUEUED)
     }
 
-    const titles = useMemo(
-        () => [
-            "Declined Buy",
-            "Check Buy",
-            "Queued Buy",
-            "Approve Buy",
-            "Confirm Buy",
-            "Item Bought",
-        ],
-        []
-    );
+    if (
+      buy.status === BUYSTATUS.REQUESTED &&
+      (auth.data.employee.employeeSiteId !== buy.buySiteId ||
+        !auth.data.userRole.canCheckBuy)
+    ) {
+      setViewOnly(true)
+      return setNotificationType(BUYSTATUS.REQUESTED)
+    }
 
-    if (query.isError) return <ConnectionError />;
+    if (
+      buy.status === BUYSTATUS.CHECKED &&
+      (auth.data.employee.employeeSiteId !== buy.buySiteId ||
+        !auth.data.userRole.canApproveBuy)
+    ) {
+      setViewOnly(true)
+      return setNotificationType(BUYSTATUS.CHECKED)
+    }
 
-    if (isLoading) return <LoadingSpinner />;
+    if (
+      buy.status === BUYSTATUS.APPROVED &&
+      (auth.data.employee.employeeSiteId !== buy.buySiteId ||
+        !auth.data.userRole.canConfirmBuy)
+    ) {
+      setViewOnly(true)
+      return setNotificationType(BUYSTATUS.APPROVED)
+    }
 
+    setViewOnly(false)
+    setNotificationType(null)
+  }, [buy])
+
+  function BuyNotificaion() {
+    switch (notificationType) {
+      case BUYSTATUS.REQUESTED:
+        return (
+          <AlertNotification
+            title="Buy Needs Check"
+            content="Buy Has Been Requested and Needs Check to Continue."
+          />
+        )
+
+      case BUYSTATUS.QUEUED:
+        return (
+          <AlertNotification
+            title="Buy Pending"
+            content="Buy Has Been Queued For Purchase, Wait For Purchase."
+          />
+        )
+
+      case BUYSTATUS.CHECKED:
+        return (
+          <AlertNotification
+            title="Buy Needs Approval"
+            content="Buy Has Been Checked and Needs Approval to Continue."
+          />
+        )
+
+      case BUYSTATUS.APPROVED:
+        return (
+          <AlertNotification
+            title="Buy Confirmation Pending"
+            content="Buy Has Been Approved but Hasn't Been Bought Yet."
+          />
+        )
+
+      default:
+        return <></>
+    }
+  }
+
+  function TopForm() {
     return (
+      <Form>
+        <FormRow
+          labelL="Buy Number"
+          valueL={buy.buyId}
+          labelR="Status"
+          valueR={BuyStatusBadge(buy.status)}
+        />
+
+        <FormRow
+          labelL="Requested By"
+          valueL={`${buy.requestedBy.fName} ${buy.requestedBy.mName}`}
+          labelR="Requested On"
+          valueR={new Date(buy.requestDate).toLocaleString()}
+        />
+        {buy.status >= BUYSTATUS.CHECKED && (
+          <>
+            <FormRow
+              labelL="Checked By"
+              valueL={
+                buy.checkedBy
+                  ? `${buy.checkedBy.fName} ${buy.checkedBy.mName}`
+                  : ""
+              }
+              labelR="Checked On"
+              valueR={
+                buy.checkDate ? new Date(buy.checkDate).toLocaleString() : ""
+              }
+            />
+          </>
+        )}
+        {buy.status >= BUYSTATUS.APPROVED && (
+          <>
+            <FormRow
+              labelL="Approved By"
+              valueL={
+                buy.approvedBy
+                  ? `${buy.approvedBy.fName} ${buy.approvedBy.mName}`
+                  : ""
+              }
+              labelR="Approved On"
+              valueR={
+                buy.approveDate
+                  ? new Date(buy.approveDate).toLocaleString()
+                  : ""
+              }
+            />
+          </>
+        )}
+      </Form>
+    )
+  }
+
+  const titles = useMemo(
+    () => [
+      "Declined Buy",
+      "Check Buy",
+      "Queued Buy",
+      "Approve Buy",
+      "Confirm Buy",
+      "Item Bought",
+    ],
+    []
+  )
+
+  if (query.isError)
+    return <ConnectionError status={query.error?.response?.status} />
+
+  if (isLoading) return <LoadingSpinner />
+
+  return (
+    <>
+      <Header
+        title={titles[buy.status]}
+        showPrint={buy.status === BUYSTATUS.BOUGHT || viewOnly}
+      />
+
+      <Container className="my-3">
         <>
-            <Header title={titles[buy.status]} />
+          <TopForm />
 
-            <Container className="my-3">
-                <>
-                    <TopForm />
+          {buy.status === BUYSTATUS.DECLINED && (
+            <DeclinedBuy addedItems={addedItems} FormRow={FormRow} buy={buy} />
+          )}
 
-                    {buy.status === BUYSTATUS.DECLINED && (
-                        <DeclinedBuy
-                            addedItems={addedItems}
-                            FormRow={FormRow}
-                            buy={buy}
-                        />
-                    )}
+          {buy.status === BUYSTATUS.REQUESTED && !viewOnly && (
+            <CheckBuy
+              addedItems={addedItems}
+              setAddedItems={setAddedItems}
+              buy={buy}
+            />
+          )}
 
-                    {buy.status === BUYSTATUS.REQUESTED && (
-                        <CheckBuy
-                            addedItems={addedItems}
-                            setAddedItems={setAddedItems}
-                            buy={buy}
-                        />
-                    )}
+          {buy.status === BUYSTATUS.CHECKED && !viewOnly && (
+            <ApproveBuy
+              addedItems={addedItems}
+              setAddedItems={setAddedItems}
+              buy={buy}
+            />
+          )}
 
-                    {buy.status === BUYSTATUS.CHECKED && (
-                        <ApproveBuy
-                            addedItems={addedItems}
-                            setAddedItems={setAddedItems}
-                            buy={buy}
-                        />
-                    )}
+          {buy.status === BUYSTATUS.APPROVED && !viewOnly && (
+            <ConfirmBuy
+              addedItems={addedItems}
+              setAddedItems={setAddedItems}
+              buy={buy}
+            />
+          )}
 
-                    {buy.status === BUYSTATUS.APPROVED && (
-                        <ConfirmBuy
-                            addedItems={addedItems}
-                            setAddedItems={setAddedItems}
-                            buy={buy}
-                        />
-                    )}
-
-                    {(buy.status === BUYSTATUS.BOUGHT || buy.status === BUYSTATUS.QUEUED ) && (
-                        <ViewBuy addedItems={addedItems} buy={buy} />
-                    )}
-                </>
-            </Container>
+          {(buy.status === BUYSTATUS.BOUGHT ||
+            buy.status === BUYSTATUS.QUEUED ||
+            viewOnly) && <ViewBuy addedItems={addedItems} buy={buy} />}
         </>
-    );
+      </Container>
+    </>
+  )
 }
 
-export default SingleBuy;
+export default SingleBuy

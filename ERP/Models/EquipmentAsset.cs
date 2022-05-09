@@ -13,7 +13,7 @@ namespace ERP.Models
 
         public string AssetNo { get; set; }
 
-        public string SerialNo { get; set; }
+        public string? SerialNo { get; set; }
 
         public int? CurrentSiteId { get; set; }
 

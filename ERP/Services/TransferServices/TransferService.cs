@@ -312,7 +312,7 @@ namespace ERP.Services.TransferServices
 
             transfer.ReceiveDate = DateTime.Now;
             transfer.ReceivedById = _userService.Employee.EmployeeId;
-            transfer.DeliveredById = receiveDTO.DeliveredById;
+            transfer.DeliveredBy = receiveDTO.DeliveredBy;
             transfer.VehiclePlateNo = receiveDTO.VehiclePlateNo;
 
 

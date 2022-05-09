@@ -87,7 +87,11 @@ function ReturnReturnEquipment({ addedItems, setAddedItems, index, employee }) {
 
     function valueChanged(e) {
         const addedItemsCpy = [...addedItems];
+
         addedItemsCpy[index][e.target.name] = e.target.value;
+
+        if (e.target.name === "fileName") addedItemsCpy[index].file = e.target.files[0];
+
         setAddedItems(addedItemsCpy);
     }
 
@@ -309,6 +313,22 @@ function ReturnReturnEquipment({ addedItems, setAddedItems, index, employee }) {
                     </Form.Group>
                 </div>
             </div>
+            {addedItems[index].assetDamageId !== "-1" ? (
+                <div className="row">
+                    <div className="col">
+                        <Form.Group className="mb-3">
+                            <Form.Label> Asset Damage Attachment</Form.Label>
+                            <Form.Control
+                                type="file"
+                                name="fileName"
+                                onChange={valueChanged}
+                                required
+                                accept=".docx, .doc, .pdf, .png, .jpeg, .jpg"
+                            />
+                        </Form.Group>
+                    </div>
+                </div>
+            ) : null}
         </div>
     );
 }

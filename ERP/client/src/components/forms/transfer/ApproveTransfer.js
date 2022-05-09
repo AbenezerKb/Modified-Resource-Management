@@ -38,7 +38,6 @@ function ApproveTransfer({ addedItems, setAddedItems, transfer }) {
 
         const data = {
             transferId: transfer.transferId,
-            approvedById: 1, ////////////////////////
             transferItems: [],
         };
 

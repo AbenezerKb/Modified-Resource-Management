@@ -3,6 +3,7 @@ using ERP.DTOs;
 using ERP.DTOs.Report;
 using ERP.Models;
 using ERP.Services.ReportServices;
+using ERP.Services.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,27 +15,44 @@ namespace ERP.Controllers
     [Authorize(Roles = "Employee")]
     public class ReportController : Controller
     {
-        private readonly DataContext context;
         private readonly IReportService _reportService;
+        private readonly IUserService _userService;
 
-        public ReportController(DataContext context, IReportService reportService)
+        public ReportController( IReportService reportService, IUserService userService)
         {
-            this.context = context;
             _reportService = reportService;
+            _userService = userService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<Site>>> Get()
+        [HttpPost("receive")]
+        public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetReceives(ReceiveReportDTO receiveDTO)
         {
-            var sites = await context.Sites.ToListAsync();
+            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+                return Forbid();
 
-            return Ok(sites);
+            var result = await _reportService.GetReceiveReport(receiveDTO);
+
+            return Ok(result);
+        }
+
+        [HttpPost("purchase")]
+        public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetPurchases(PurchaseReportDTO purchaseDTO)
+        {
+            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+                return Forbid();
+
+            var result = await _reportService.GetPurchaseReport(purchaseDTO);
+
+            return Ok(result);
         }
 
         [HttpPost("transfer")]
         public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetTransfers(TransferReportDTO transferDTO)
         {
-           var result = await _reportService.GetTansferReport(transferDTO);
+            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+                return Forbid();
+
+            var result = await _reportService.GetTansferReport(transferDTO);
 
             return Ok(result);
         }
@@ -42,6 +60,9 @@ namespace ERP.Controllers
         [HttpPost("issue")]
         public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetIssues(IssueReportDTO issueDTO)
         {
+            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+                return Forbid();
+
             var result = await _reportService.GetIssueReport(issueDTO);
 
             return Ok(result);
@@ -50,6 +71,9 @@ namespace ERP.Controllers
         [HttpPost("borrow")]
         public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetBorrows(BorrowReportDTO borrowDTO)
         {
+            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+                return Forbid();
+
             var result = await _reportService.GetBorrowReport(borrowDTO);
 
             return Ok(result);
@@ -58,9 +82,21 @@ namespace ERP.Controllers
         [HttpPost("maintenance")]
         public async Task<ActionResult<ReportReturnDTO<Transfer>>> GetMaintenances(MaintenanceReportDTO maintenanceDTO)
         {
+            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+                return Forbid();
+
             var result = await _reportService.GetMaintenanceReport(maintenanceDTO);
 
             return Ok(result);
+        }
+
+        [HttpPost("general")]
+        public async Task<ActionResult<GeneralReportReturnDTO>> Post(GeneralReportDTO reportDTO)
+        {
+            if (!_userService.UserRole.IsAdmin || !_userService.UserRole.IsFinance)
+                return Forbid();
+
+            return Ok(await _reportService.GetGeneralReport(reportDTO));
         }
 
     }

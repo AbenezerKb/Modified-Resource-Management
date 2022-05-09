@@ -3,6 +3,7 @@ using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.MiscServices;
 using ERP.Services.SiteServices;
+using ERP.Services.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,13 +14,13 @@ namespace ERP.Controllers
     [ApiController]
     public class MiscController : Controller
     {
-        private readonly DataContext context;
         private readonly IMiscService _miscService;
+        private readonly IUserService _userService;
 
-        public MiscController(DataContext context, IMiscService miscService)
+        public MiscController(IMiscService miscService, IUserService userService)
         {
-            this.context = context;
             _miscService = miscService;
+            _userService = userService;
         }
 
         [HttpGet("company")]
@@ -33,6 +34,9 @@ namespace ERP.Controllers
         [HttpPost("company")]
         public async Task<ActionResult<bool>> SetNamePrefix(CompanyNamePrefixDTO companyDTO)
         {
+            if (!_userService.UserRole.IsAdmin)
+                return Forbid();
+
             var result = await _miscService.SetCompanyNamePrefix(companyDTO);
 
             return Ok(result);

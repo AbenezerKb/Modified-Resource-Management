@@ -7,8 +7,13 @@ import { fetchItem, fetchEquipmentModel } from "../../../../api/item";
 import { fetchEquipmentCategories, fetchEquipmentCategory } from "../../../../api/category";
 import ConnectionError from "../../../fragments/ConnectionError";
 
-function BorrowRequestEquipment({ addedItems, setAddedItems, index }) {
-    const [categoryId, setCategoryId] = useState(0);
+function BorrowRequestEquipment({
+    addedItems,
+    setAddedItems,
+    index,
+    categoryId: defaultCategoryId,
+}) {
+    const [categoryId, setCategoryId] = useState(defaultCategoryId ?? 0);
     const [itemId, setItemId] = useState(0);
     const [modelId, setModelId] = useState(0);
 

@@ -24,7 +24,6 @@ function HandBorrow({ addedItems, setAddedItems, borrow }) {
 
         const data = {
             borrowId: borrow.borrowId,
-            handedById: 1, ////////////////////////
             borrowItems: [],
         };
 

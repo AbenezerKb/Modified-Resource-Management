@@ -8,6 +8,7 @@ namespace ERP.Services.ReportServices
         Task<IEnumerable<ReportSingleItem>> GetDamageReport(GeneralReportDTO reportDTO);
         Task<IEnumerable<ReportSingleItem>> GetIssueReport(GeneralReportDTO reportDTO);
         Task<IEnumerable<ReportSingleItem>> GetMinStockReport(GeneralReportDTO reportDTO);
+        Task<IEnumerable<ReportSingleItem>> GetPurchaseReport(GeneralReportDTO reportDTO);
         Task<IEnumerable<ReportSingleItem>> GetReceiveReport(GeneralReportDTO reportDTO);
         Task<IEnumerable<ReportSingleItem>> GetReturnReport(GeneralReportDTO reportDTO);
         Task<IEnumerable<ReportSingleItem>> GetStockReport(GeneralReportDTO reportDTO);

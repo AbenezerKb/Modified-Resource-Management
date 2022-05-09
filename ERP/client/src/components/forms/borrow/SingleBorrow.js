@@ -241,7 +241,10 @@ function SingleBorrow() {
 
     return (
         <>
-            <Header title={titles[borrow.status]} />
+            <Header
+                title={titles[borrow.status]}
+                showPrint={borrow.status === BORROWSTATUS.HANDED || viewOnly}
+            />
 
             <Container className="my-3">
                 <>

@@ -28,6 +28,15 @@ namespace ERP.Services.NotificationServices
             return notifications.OrderByDescending(n => n.Date).ToList();
         }
 
+        public async Task<Notification> GetNotification(int id)
+        {
+            var notification = await _context.Notifications
+                .Where(noti => noti.NotificationId == id)
+                .FirstOrDefaultAsync();
+
+            return notification;
+        }
+
         public async Task<List<Notification>> GetUserNotifications()
         {
 
@@ -42,6 +51,7 @@ namespace ERP.Services.NotificationServices
             notifications.AddRange(await GetTransferNotifications(siteId, employeeId));
             notifications.AddRange(await GetIssueNotifications(siteId, employeeId));
             notifications.AddRange(await GetPurchaseNotifications(siteId, employeeId));
+            notifications.AddRange(await GetBulkPurchaseNotifications(siteId, employeeId));
             notifications.AddRange(await GetBorrowNotifications(siteId, employeeId));
             notifications.AddRange(await GetReceiveNotifications(siteId, employeeId));
             notifications.AddRange(await GetMaintenanceNotifications(siteId, employeeId));
@@ -66,7 +76,8 @@ namespace ERP.Services.NotificationServices
             return notifications;
 
         }
-            private async Task<List<Notification>> GetMaintenanceNotifications(int siteId, int employeeId)
+        
+        private async Task<List<Notification>> GetMaintenanceNotifications(int siteId, int employeeId)
         {
 
             List<Notification> notifications = new();
@@ -223,6 +234,14 @@ namespace ERP.Services.NotificationServices
                 notifications.AddRange(await _context.Notifications
                     .Where(noti => noti.IsCleared == false &&
                         noti.Type == NOTIFICATIONTYPE.RECEIVE &&
+                        (noti.Status == RECEIVESTATUS.PURCHASED ) &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+             if (_userService.UserRole.CanReceive)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.RECEIVE &&
                         (noti.Status == RECEIVESTATUS.APPROVED) &&
                         noti.EmployeeId == employeeId)
                     .ToListAsync());
@@ -247,19 +266,27 @@ namespace ERP.Services.NotificationServices
                 notifications.AddRange(await _context.Notifications
                     .Where(noti => noti.IsCleared == false &&
                         noti.Type == NOTIFICATIONTYPE.BUY &&
-                        (noti.Status == BUYSTATUS.CHECKED || noti.Status == BUYSTATUS.DECLINED) &&
+                        (noti.Status == BUYSTATUS.BOUGHT || noti.Status == BUYSTATUS.QUEUED || noti.Status == BUYSTATUS.DECLINED) &&
                         noti.EmployeeId == employeeId)
                     .ToListAsync());
 
-            if (_userService.UserRole.CanApproveBuy)
+            if (_userService.UserRole.CanCheckBuy)
                 notifications.AddRange(await _context.Notifications
                     .Where(noti => noti.IsCleared == false &&
                         noti.Type == NOTIFICATIONTYPE.BUY &&
                         noti.Status == BUYSTATUS.REQUESTED &&
                         noti.SiteId == siteId)
                     .ToListAsync());
+            
+            if (_userService.UserRole.CanApproveBuy)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.BUY &&
+                        noti.Status == BUYSTATUS.CHECKED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
 
-            if (_userService.UserRole.CanCheckBuy)
+            if (_userService.UserRole.CanConfirmBuy)
                 notifications.AddRange(await _context.Notifications
                     .Where(noti => noti.IsCleared == false &&
                         noti.Type == NOTIFICATIONTYPE.BUY &&
@@ -279,15 +306,15 @@ namespace ERP.Services.NotificationServices
                 notifications.AddRange(await _context.Notifications
                     .Where(noti => noti.IsCleared == false &&
                         noti.Type == NOTIFICATIONTYPE.PURCHASE &&
-                        (noti.Status == PURCHASESTATUS.CHECKED || noti.Status == PURCHASESTATUS.DECLINED) &&
+                        (noti.Status == PURCHASESTATUS.BULKQUEUED || noti.Status == PURCHASESTATUS.PURCHASED || noti.Status == PURCHASESTATUS.DECLINED) &&
                         noti.EmployeeId == employeeId)
                     .ToListAsync());
 
-            if (_userService.UserRole.CanApprovePurchase)
+            if (_userService.UserRole.CanRequestPurchase)
                 notifications.AddRange(await _context.Notifications
                     .Where(noti => noti.IsCleared == false &&
                         noti.Type == NOTIFICATIONTYPE.PURCHASE &&
-                        noti.Status == PURCHASESTATUS.REQUESTED &&
+                        noti.Status == PURCHASESTATUS.QUEUED &&
                         noti.SiteId == siteId)
                     .ToListAsync());
 
@@ -295,8 +322,61 @@ namespace ERP.Services.NotificationServices
                 notifications.AddRange(await _context.Notifications
                     .Where(noti => noti.IsCleared == false &&
                         noti.Type == NOTIFICATIONTYPE.PURCHASE &&
+                        noti.Status == PURCHASESTATUS.REQUESTED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanApprovePurchase)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.PURCHASE &&
+                        noti.Status == PURCHASESTATUS.CHECKED &&
+                        noti.SiteId == siteId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanConfirmPurchase)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.PURCHASE &&
                         noti.Status == PURCHASESTATUS.APPROVED &&
                         noti.SiteId == siteId)
+                    .ToListAsync());
+
+            return notifications;
+        }
+
+        private async Task<List<Notification>> GetBulkPurchaseNotifications(int siteId, int employeeId)
+        {
+
+            List<Notification> notifications = new();
+
+            if (_userService.UserRole.CanRequestBulkPurchase)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.BULKPURCHASE &&
+                        (noti.Status == BULKPURCHASESTATUS.DECLINED) &&
+                        noti.EmployeeId == employeeId)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanRequestBulkPurchase)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.BULKPURCHASE &&
+                        noti.Status == BULKPURCHASESTATUS.QUEUED || noti.Status == BULKPURCHASESTATUS.PURCHASED)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanApproveBulkPurchase)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.BULKPURCHASE &&
+                        noti.Status == BULKPURCHASESTATUS.REQUESTED)
+                    .ToListAsync());
+
+            if (_userService.UserRole.CanConfirmPurchase)
+                notifications.AddRange(await _context.Notifications
+                    .Where(noti => noti.IsCleared == false &&
+                        noti.Type == NOTIFICATIONTYPE.BULKPURCHASE &&
+                        noti.Status == BULKPURCHASESTATUS.APPROVED)
                     .ToListAsync());
 
             return notifications;
@@ -379,6 +459,10 @@ namespace ERP.Services.NotificationServices
 
                 case NOTIFICATIONTYPE.PURCHASE:
                     await MakeContentPurchase(status, actionId);
+                    break;
+
+                case NOTIFICATIONTYPE.BULKPURCHASE:
+                    await MakeContentBulkPurchase(status, actionId);
                     break;
 
                 case NOTIFICATIONTYPE.BORROW:
@@ -506,21 +590,72 @@ namespace ERP.Services.NotificationServices
         {
             switch (status)
             {
+                case PURCHASESTATUS.QUEUED:
+                    notification.Title = "Request Queued Purchase";
+                    notification.Content = $"Request Queued Purchase With Request No: {actionId}";
+                    break;
+                
                 case PURCHASESTATUS.REQUESTED:
-                    notification.Title = "Approve Purchase Request";
+                    notification.Title = "Check Purchase Request";
                     notification.Content = $"New Purchase Request With Request No: {actionId}";
                     break;
 
-                case PURCHASESTATUS.APPROVED:
-                    notification.Title = "Check Purchased Items";
-                    notification.Content = $"Check Purchase Request {actionId} Items";
+                case PURCHASESTATUS.CHECKED:
+                    notification.Title = "Approve Purchased Items";
+                    notification.Content = $"Approve Purchase Request With Request No: {actionId}";
                     break;
 
+                case PURCHASESTATUS.APPROVED:
+                    notification.Title = "Confirm Purchased Items";
+                    notification.Content = $"Confirm Purchase Request With Request No: {actionId}";
+                    break;
+
+                case PURCHASESTATUS.BULKQUEUED:
+                    notification.Title = "Queued Purchase Request";
+                    notification.Content = $"Purchase Request {actionId} Has Been Queued For Bulk Purchase";
+                    break;
+                
                 case PURCHASESTATUS.DECLINED:
                     notification.Title = "Declined Purchase Request";
                     notification.Content = $"Purchase Request {actionId} Has Been Declined";
                     break;
+                
+                case PURCHASESTATUS.PURCHASED:
+                    notification.Title = "Confirmed Purchase Request";
+                    notification.Content = $"Purchase Request {actionId} Has Been Purchased";
+                    break;
 
+            }
+        }
+
+        private async Task MakeContentBulkPurchase(int status, int actionId)
+        {
+            switch (status)
+            {
+                case BULKPURCHASESTATUS.QUEUED:
+                    notification.Title = "Request Bulk Purchase";
+                    notification.Content = $"Request Queued Bulk Purchase With Request No: {actionId}";
+                    break;
+
+                case BULKPURCHASESTATUS.REQUESTED:
+                    notification.Title = "Approve Bulk Purchase Request";
+                    notification.Content = $"Approve Bulk Purchase Request With Request No: {actionId}";
+                    break;
+                
+                case BULKPURCHASESTATUS.APPROVED:
+                    notification.Title = "Confirm Bulk Purchase Request";
+                    notification.Content = $"Confirm Bulk Purchase Request With Request No: {actionId}";
+                    break;
+
+                case BULKPURCHASESTATUS.PURCHASED:
+                    notification.Title = "Confirmed Bulk Purchase Request";
+                    notification.Content = $"Bulk Purchase Request {actionId} Has Been Purchased";
+                    break;
+
+                case BULKPURCHASESTATUS.DECLINED:
+                    notification.Title = "Declined Bulk Purchase Request";
+                    notification.Content = $"Bulk Purchase Request {actionId} Has Been Declined";
+                    break;
             }
         }
 
@@ -529,18 +664,33 @@ namespace ERP.Services.NotificationServices
             switch (status)
             {
                 case BUYSTATUS.REQUESTED:
-                    notification.Title = "Approve Buy Request";
+                    notification.Title = "Check Buy Request";
                     notification.Content = $"New Buy Request With Request No: {actionId}";
                     break;
 
+                case BUYSTATUS.CHECKED:
+                    notification.Title = "Approve Buy Request";
+                    notification.Content = $"Approve Buy Request With Request No: {actionId}";
+                    break;
+
                 case BUYSTATUS.APPROVED:
-                    notification.Title = "Check Bought Items";
-                    notification.Content = $"Check Buy Request {actionId} Items";
+                    notification.Title = "Confirm Bought Items";
+                    notification.Content = $"Confirm Buy Request With Request No: {actionId}";
                     break;
 
                 case BUYSTATUS.DECLINED:
                     notification.Title = "Declined Buy Request";
                     notification.Content = $"Buy Request {actionId} Has Been Declined";
+                    break;
+
+                case BUYSTATUS.QUEUED:
+                    notification.Title = "Queued Buy Request";
+                    notification.Content = $"Buy Request {actionId} Has Been Queued For Purchase";
+                    break;
+
+                case BUYSTATUS.BOUGHT:
+                    notification.Title = "Bought Buy Request";
+                    notification.Content = $"Buy Request {actionId} Has Been Bought";
                     break;
 
             }
@@ -550,9 +700,14 @@ namespace ERP.Services.NotificationServices
         {
             switch (status)
             {
+                case RECEIVESTATUS.PURCHASED:
+                    notification.Title = "Receive Purchased Items";
+                    notification.Content = $"New Receive Order With Request No: {actionId}";
+                    break;
+                
                 case RECEIVESTATUS.RECEIVED:
                     notification.Title = "Check Received Items";
-                    notification.Content = $"Items of Receive No. {actionId} Has Been Received";
+                    notification.Content = $"Check Received Request With Request No: {actionId}";
                     break;
 
                 case RECEIVESTATUS.APPROVED:

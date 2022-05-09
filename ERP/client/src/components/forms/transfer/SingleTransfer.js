@@ -224,11 +224,7 @@ function SingleTransfer() {
 
                         <FormRow
                             labelL="Delivered By"
-                            valueL={
-                                transfer.deliveredBy
-                                    ? `${transfer.deliveredBy.fName} ${transfer.deliveredBy.mName}`
-                                    : ""
-                            }
+                            valueL={transfer.deliveredBy}
                             labelR="Vehicle Plate No."
                             valueR={transfer.vehiclePlateNo}
                         />
@@ -255,7 +251,10 @@ function SingleTransfer() {
 
     return (
         <>
-            <Header title={titles[transfer.status]} />
+            <Header
+                title={titles[transfer.status]}
+                showPrint={transfer.status === TRANSFERSTATUS.RECEIVED || viewOnly}
+            />
 
             <Container className="my-3">
                 <>

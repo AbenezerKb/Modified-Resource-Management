@@ -20,11 +20,49 @@ namespace ERP.Controllers
             _siteService = siteService;
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Site>> GetOne(int id)
+        {
+            try
+            {
+                Site site = await _siteService.GetOne(id);
+                return Ok(site);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<Site>>> Get()
         {
             var sites = await _siteService.GetAll();
             return Ok(sites);
+        }
+
+        [Authorize(Roles = "Employee")]
+        [HttpPost]
+        public async Task<ActionResult<Site>> AddSite(Site request)
+        {
+            var site = await _siteService.AddSite(request);
+            
+            return Ok(site);
+        }
+
+        [Authorize(Roles = "Employee")]
+        [HttpPost("edit")]
+        public async Task<ActionResult<Site>> EditSite(Site request)
+        {
+            try
+            {
+                var site = await _siteService.EditSite(request);
+                return Ok(site);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

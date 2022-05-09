@@ -10,6 +10,7 @@ namespace ERP.Services.NotificationServices
         Task Clear(string type, int actionId);
         public Task<List<Notification>> Get(string type, int status, int siteId);
         Task<List<Notification>> GetAllNotifications();
+        Task<Notification> GetNotification(int id);
         Task<List<Notification>> GetUserNotifications();
     }
 }

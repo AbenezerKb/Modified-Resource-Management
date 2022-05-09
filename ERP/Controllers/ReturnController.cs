@@ -15,13 +15,11 @@ namespace ERP.Controllers
     [Authorize(Roles = "Employee")]
     public class ReturnController : Controller
     {
-        private readonly DataContext context;
         private readonly IReturnService _returnService;
         private readonly IUserService _userService;
 
-        public ReturnController(DataContext context, IReturnService returnService, IUserService userService)
+        public ReturnController(IReturnService returnService, IUserService userService)
         {
-            this.context = context;
             _returnService = returnService;
 
             _userService = userService;
@@ -34,7 +32,14 @@ namespace ERP.Controllers
             try
             {
                 var returnResult = await _returnService.GetById(id);
-                return Ok(returnResult);
+
+                if (_userService.UserRole.IsAdmin || _userService.UserRole.IsFinance ||
+                    (_userService.UserRole.CanViewBorrow && _userService.Employee.EmployeeSiteId == returnResult.SiteId) ||
+                    (_userService.UserRole.CanViewBorrow && _userService.Employee.EmployeeSiteId == returnResult.ReturnEquipmentAssets.FirstOrDefault()?.Borrow.SiteId) ||
+                    _userService.Employee.EmployeeId == returnResult.ReturnEquipmentAssets.FirstOrDefault()?.Borrow.RequestedById)
+                    return Ok(returnResult);
+
+                return Forbid();
             }
             catch (KeyNotFoundException ex)
             {
@@ -46,9 +51,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<Borrow>>> Get()
         {
 
-            var returns = await context.Returns
-                .Include(ret => ret.Site)
-                .ToListAsync();
+            var returns = await _returnService.GetByCondition();
 
             return Ok(returns);
         }
@@ -57,6 +60,8 @@ namespace ERP.Controllers
         [HttpPost("return")]
         public async Task<ActionResult<int>> ReturnEquipments(ReturnBorrowDTO returnDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanReturnBorrow)
+                return Forbid();
 
             try
             {

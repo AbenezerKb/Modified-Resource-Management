@@ -18,7 +18,7 @@ function ComanyNamePrefix() {
         pauseOnHover: true,
         draggable: true,
         theme: "dark",
-        // progress: undefined
+    
     };
 
     const {

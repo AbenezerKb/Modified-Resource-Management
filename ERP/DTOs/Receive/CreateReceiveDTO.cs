@@ -14,6 +14,8 @@
     {
         public int ItemId { get; set; }
 
+        public int EquipmentModelId { get; set; } = 0;
+
         public int QtyReceived { get; set; }
 
         public string ReceiveRemark { get; set; } = string.Empty;

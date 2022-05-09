@@ -11,11 +11,13 @@ import { fetchTransferableMaterials } from "../../../api/item";
 import { requestMaterialTransfer } from "../../../api/transfer";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
+import { useAuth } from "../../../contexts/AuthContext";
 
 function MaterialTransfer() {
     const navigate = useNavigate();
     const [sendSite, setSendSite] = useState(0);
     const [addedItems, setAddedItems] = useState([new Item()]);
+    const auth = useAuth();
 
     const [allSites, setAllSites] = useState([]);
     const [allItems, setAllItems] = useState([]);
@@ -24,7 +26,7 @@ function MaterialTransfer() {
 
     const sitesQuery = useQuery("sites", fetchSites, {
         onSuccess: (data) => {
-            setAllSites(data);
+            setAllSites(data.filter((site) => site.siteId != auth.data.employee.employeeSiteId));
             setSendSite(data[0].siteId); // Select Defalut Sites
         },
     });
@@ -56,7 +58,6 @@ function MaterialTransfer() {
 
         var data = {
             sendSiteId: Number(sendSite),
-            requestedById: 1, ////////////////////////////////////////////////////////////////////////////////
             transferItems: [],
         };
 

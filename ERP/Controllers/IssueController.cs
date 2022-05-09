@@ -16,13 +16,11 @@ namespace ERP.Controllers
     [Authorize(Roles = "Employee")]
     public class IssueController : Controller
     {
-        private readonly DataContext context;
         private readonly IIssueService _issueService;
         private readonly IUserService _userService;
 
-        public IssueController(DataContext context, IIssueService issueService, IUserService userService)
+        public IssueController( IIssueService issueService, IUserService userService)
         {
-            this.context = context;
             _issueService = issueService;
             _userService = userService;
         }
@@ -34,23 +32,18 @@ namespace ERP.Controllers
             try
             {
                 var issue = await _issueService.GetById(id);
-                return Ok(issue);
+
+                if (_userService.UserRole.IsAdmin || _userService.UserRole.IsFinance ||
+                        (_userService.UserRole.CanViewIssue && _userService.Employee.EmployeeSiteId == issue.SiteId) ||
+                        _userService.Employee.EmployeeId == issue.RequestedById)
+                    return Ok(issue);
+
+                return Forbid();
             }
             catch (KeyNotFoundException ex)
             {
                 return NotFound(ex.Message);
             }
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<List<Issue>>> Get()
-        {
-
-            var issues = await context.Issues
-                .Include(issue => issue.Site)
-                .ToListAsync();
-
-            return Ok(issues);
         }
 
         [HttpPost]
@@ -64,6 +57,8 @@ namespace ERP.Controllers
         [HttpPost("request")]
         public async Task<ActionResult<int>> Post(CreateIssueDTO issueDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanRequestIssue)
+                return Forbid();
 
             try
             {
@@ -83,6 +78,8 @@ namespace ERP.Controllers
         [HttpPost("approve")]
         public async Task<ActionResult<Issue>> Approve(ApproveIssueDTO approveDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanApproveIssue)
+                return Forbid();
 
             try
             {
@@ -102,6 +99,8 @@ namespace ERP.Controllers
         [HttpPost("decline")]
         public async Task<ActionResult<Issue>> Decline(DeclineIssueDTO declineDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanApproveIssue)
+                return Forbid();
 
             try
             {
@@ -121,6 +120,8 @@ namespace ERP.Controllers
         [HttpPost("hand")]
         public async Task<ActionResult<Issue>> Hand(HandIssueDTO handDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanHandIssue)
+                return Forbid();
 
             try
             {

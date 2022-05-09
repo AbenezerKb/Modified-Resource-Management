@@ -7,8 +7,6 @@
 
         public int ReceiveSiteId { get; set; }
 
-        public int RequestedById { get; set; }
-
         public ICollection<CreateEquipmentTransferItem> TransferItems { get; set; }
 
     }

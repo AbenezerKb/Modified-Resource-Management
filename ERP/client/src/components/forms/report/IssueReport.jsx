@@ -395,7 +395,11 @@ function IssueReport() {
                 {chartData && (
                     <>
                         <h1 className="display-6 text-center mb-2">Report Result</h1>
+
+                        <Chart data={chartData} type={chartType} />
+
                         <Container fluid className="px-4">
+                            <h1 className="text-center mb-2 fs-4">Issue Report Summary</h1>
                             <BootstrapTable responsive striped bordered hover>
                                 <thead>
                                     <tr>
@@ -425,15 +429,13 @@ function IssueReport() {
                                 </tbody>
                             </BootstrapTable>
                         </Container>
-
-                        <Chart data={chartData} type={chartType} />
                     </>
                 )}
                 {report && (
-                    <>
+                    <div className="d-print-none">
                         <h1 className="display-6 text-center my-4">Detailed List</h1>
                         <Table columns={columns} data={report} />
-                    </>
+                    </div>
                 )}
             </Container>
         </>

@@ -30,7 +30,6 @@ function NewMaintenance() {
 
         var data = {
             siteId: sendSite,
-            requestedById: 1, ////////////////////////////////////////////////////////////////////////////////
             itemId: addedItems[0].itemId,
             equipmentModelId: addedItems[0].equipmentModelId,
             reason: addedItems[0].reason,

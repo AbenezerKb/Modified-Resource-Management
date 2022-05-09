@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery } from "react-query";
-import { fetchEquipmentModel, fetchEquipmentAssets} from "../../../../api/item";
+import { fetchEquipmentModel, fetchCleanEquipmentAssets } from "../../../../api/item";
 import { Form, InputGroup, Row, Col } from "react-bootstrap";
 import PropTypes from "prop-types";
 import Select from "react-select";
@@ -15,13 +15,13 @@ function BorrowHandEquipment({ addedItems, setAddedItems, index }) {
             addedItems[index].equipmentModelId &&
             fetchEquipmentModel(addedItems[index].equipmentModelId)
     );
-    
+
     var assetsQuery = useQuery(
-        ["assets", addedItems[index].equipmentModelId],
-        () => addedItems[index].equipmentModelId &&
-        fetchEquipmentAssets(addedItems[index].equipmentModelId)
-    )
-  
+        ["assetsclean", addedItems[index].equipmentModelId],
+        () =>
+            addedItems[index].equipmentModelId &&
+            fetchCleanEquipmentAssets(addedItems[index].equipmentModelId)
+    );
 
     useEffect(() => {
         if (!assetsQuery?.data) return setAssetNumbers([]);

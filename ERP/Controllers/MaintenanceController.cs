@@ -16,16 +16,13 @@ namespace ERP.Controllers
     [Authorize(Roles = "Employee")]
     public class MaintenanceController : Controller
     {
-        private readonly DataContext context;
         private readonly IMaintenanceService _maintenanceService;
         private readonly IUserService _userService;
 
 
-        public MaintenanceController(DataContext context, IMaintenanceService maintenanceService, IUserService userService)
+        public MaintenanceController( IMaintenanceService maintenanceService, IUserService userService)
         {
-            this.context = context;
             _maintenanceService = maintenanceService;
-
             _userService = userService;
         }
 
@@ -35,7 +32,13 @@ namespace ERP.Controllers
             try
             {
                 var maintenance = await _maintenanceService.GetById(id);
+
+                if (_userService.UserRole.IsAdmin || _userService.UserRole.IsFinance || 
+                    (_userService.UserRole.CanViewMaintenance && _userService.Employee.EmployeeSiteId == maintenance.SiteId) ||
+                    _userService.Employee.EmployeeId == maintenance.RequestedById)
                 return Ok(maintenance);
+
+                return Forbid();
             }
             catch (KeyNotFoundException ex)
             {
@@ -52,9 +55,19 @@ namespace ERP.Controllers
             return Ok(maintenance);
         }
 
+        [HttpGet("assets")]
+        public async Task<ActionResult<List<EquipmentAsset>>> GetItems(int modelId)
+        {
+            var items = await _maintenanceService.GetItems(modelId);
+
+            return Ok(items);
+        }
+
         [HttpPost("request")]
         public async Task<ActionResult<int>> Post(CreateMaintenanceDTO maintenanceDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanRequestMaintenance)
+                return Forbid();
 
             try
             {
@@ -74,6 +87,8 @@ namespace ERP.Controllers
         [HttpPost("approve")]
         public async Task<ActionResult<Maintenance>> Approve(ApproveMaintenanceDTO approveDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanApproveMaintenance)
+                return Forbid();
 
             try
             {
@@ -93,6 +108,8 @@ namespace ERP.Controllers
         [HttpPost("decline")]
         public async Task<ActionResult<Maintenance>> Decline(ApproveMaintenanceDTO declineDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanApproveMaintenance)
+                return Forbid();
 
             try
             {
@@ -112,6 +129,9 @@ namespace ERP.Controllers
         [HttpPost("fix")]
         public async Task<ActionResult<Maintenance>> fix(FixMaintenanceDTO fixDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanFixMaintenance)
+                return Forbid();
+
             try
             {
                 var maintenance = await _maintenanceService.FixMaintenance(fixDTO);

@@ -5,11 +5,7 @@ function MaintenanceStatusBadge(status) {
     const color = ["danger", "info", "success", "secondary"];
 
     return (
-        <Badge
-            className="mt-1"
-            bg={color[status]}
-            style={{ width: "90px", fontSize: "14px" }}
-        >
+        <Badge pill className="mt-1" bg={color[status]} style={{ width: "90px", fontSize: "14px" }}>
             {MAINTENANCESTATUS[status]}
         </Badge>
     );

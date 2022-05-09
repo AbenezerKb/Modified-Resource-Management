@@ -68,8 +68,8 @@ function NotificationDashboard() {
                         date={notification.date}
                         now={now || ""}
                         target={
-                            (notification.type === NOTIFICATIONTYPE.MINEQUIPMENT ||
-                            notification.type === NOTIFICATIONTYPE.MINMATERIAL)
+                            notification.type === NOTIFICATIONTYPE.MINEQUIPMENT ||
+                            notification.type === NOTIFICATIONTYPE.MINMATERIAL
                                 ? `${NOTIFICATIONROUTE[notification.type]}`
                                 : `${NOTIFICATIONROUTE[notification.type]}/${notification.actionId}`
                         }

@@ -199,7 +199,10 @@ function SingleMaintenance() {
 
     return (
         <>
-            <Header title={titles[maintenance.status]} />
+            <Header
+                title={titles[maintenance.status]}
+                showPrint={maintenance.status === MAINTENANCESTATUS.FIXED || viewOnly}
+            />
 
             <Container className="my-3">
                 <>

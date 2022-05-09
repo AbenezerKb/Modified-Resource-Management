@@ -10,10 +10,12 @@ import { fetchSites } from "../../../api/site";
 import { requestBorrow } from "../../../api/borrow";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
+import BorrowCategorySelection from "./fragments/BorrowCategorySelection";
 
 function NewBorrow() {
     const navigate = useNavigate();
     const [addedItems, setAddedItems] = useState([new Item()]);
+    const [categoryId, setCategoryId] = useState(-1);
 
     const {
         isError: isSubmitError,
@@ -29,7 +31,6 @@ function NewBorrow() {
         if (isSubmitLoading) return;
 
         var data = {
-            requestedById: 1, ////////////////////////////////////////////////////////////////////////////////
             borrowItems: [],
         };
 
@@ -69,37 +70,49 @@ function NewBorrow() {
         <>
             <Header title="New Borrow Request" />
 
-            <Container className="my-3">
-                <Form onSubmit={submit}>
-                    {addedItems.map((item, index) => (
-                        <BorrowRequestEquipment
-                            key={item.key}
-                            index={index}
-                            addedItems={addedItems}
-                            setAddedItems={setAddedItems}
-                        />
-                    ))}
-
-                    <div className="row">
-                        <div className="col-9 d-grid">
-                            <Button type="submit" className="btn-teal-dark">
-                                Request Borrow
-                            </Button>
-                        </div>
-                        <div className="col-3 d-grid">
-                            <Button className="btn-teal" onClick={addItem}>
-                                <FaPlus className="me-2 mb-1" /> Add Item
-                            </Button>
-                        </div>
+            {categoryId === -1 ? (
+                <Container className="py-3">
+                    <BorrowCategorySelection setCategoryId={setCategoryId} />
+                </Container>
+            ) : (
+                <Container className="my-3">
+                    <div className="d-grid">
+                        <Button className="btn-teal mb-3" onClick={() => setCategoryId(-1)}>
+                            Change Category
+                        </Button>
                     </div>
-                </Form>
-                <div
-                    style={{ float: "left", clear: "both" }}
-                    ref={(el) => {
-                        pageend = el;
-                    }}
-                ></div>
-            </Container>
+                    <Form onSubmit={submit}>
+                        {addedItems.map((item, index) => (
+                            <BorrowRequestEquipment
+                                key={item.key}
+                                index={index}
+                                addedItems={addedItems}
+                                setAddedItems={setAddedItems}
+                                categoryId={categoryId}
+                            />
+                        ))}
+
+                        <div className="row">
+                            <div className="col-9 d-grid">
+                                <Button type="submit" className="btn-teal-dark">
+                                    Request Borrow
+                                </Button>
+                            </div>
+                            <div className="col-3 d-grid">
+                                <Button className="btn-teal" onClick={addItem}>
+                                    <FaPlus className="me-2 mb-1" /> Add Item
+                                </Button>
+                            </div>
+                        </div>
+                    </Form>
+                    <div
+                        style={{ float: "left", clear: "both" }}
+                        ref={(el) => {
+                            pageend = el;
+                        }}
+                    ></div>
+                </Container>
+            )}
         </>
     );
 }

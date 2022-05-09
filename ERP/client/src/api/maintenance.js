@@ -1,5 +1,8 @@
 import api from "./api";
 
+export const fetchDamagedAssets = (data) =>
+    api.get(`/maintenance/assets?modelId=${data}`).then((res) => res.data);
+
 export const fetchMaintenances = () => api.get("/maintenance").then((res) => res.data);
 
 export const fetchMaintenance = (id) => api.get(`/maintenance/${id}`).then((res) => res.data);

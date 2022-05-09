@@ -166,6 +166,9 @@ namespace ERP.Migrations
                     b.Property<int?>("AssetDamageId")
                         .HasColumnType("int");
 
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("ReturnId")
                         .HasColumnType("int");
 
@@ -181,6 +184,83 @@ namespace ERP.Migrations
                     b.HasIndex("ReturnId");
 
                     b.ToTable("BorrowItemEquipmentAssets");
+                });
+
+            modelBuilder.Entity("ERP.Models.BulkPurchase", b =>
+                {
+                    b.Property<int>("BulkPurchaseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BulkPurchaseId"), 1L, 1);
+
+                    b.Property<DateTime?>("ApproveDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ApprovedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RequestedById")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalPurchaseCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("BulkPurchaseId");
+
+                    b.HasIndex("ApprovedById");
+
+                    b.HasIndex("RequestedById");
+
+                    b.ToTable("BulkPurchases");
+                });
+
+            modelBuilder.Entity("ERP.Models.BulkPurchaseItem", b =>
+                {
+                    b.Property<int>("BulkPurchaseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EquipmentModelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ApproveRemark")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("PurchaseRemark")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("QtyApproved")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QtyPurchased")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QtyRequested")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RequestRemark")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("BulkPurchaseId", "ItemId", "EquipmentModelId");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("BulkPurchaseItems");
                 });
 
             modelBuilder.Entity("ERP.Models.Buy", b =>
@@ -199,6 +279,9 @@ namespace ERP.Migrations
 
                     b.Property<DateTime?>("BuyDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("BuySiteId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CheckDate")
                         .HasColumnType("datetime2");
@@ -224,6 +307,8 @@ namespace ERP.Migrations
                     b.HasKey("BuyId");
 
                     b.HasIndex("ApprovedById");
+
+                    b.HasIndex("BuySiteId");
 
                     b.HasIndex("CheckedById");
 
@@ -363,7 +448,6 @@ namespace ERP.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("SerialNo")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("EquipmentAssetId");
@@ -386,6 +470,9 @@ namespace ERP.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EquipmentCategoryId"), 1L, 1);
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -739,11 +826,17 @@ namespace ERP.Migrations
                     b.Property<int?>("ApprovedById")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BulkPurchaseId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("CheckDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("CheckedById")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("PurchaseDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ReceivingSiteId")
                         .HasColumnType("int");
@@ -764,6 +857,8 @@ namespace ERP.Migrations
 
                     b.HasIndex("ApprovedById");
 
+                    b.HasIndex("BulkPurchaseId");
+
                     b.HasIndex("CheckedById");
 
                     b.HasIndex("ReceivingSiteId");
@@ -779,6 +874,9 @@ namespace ERP.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EquipmentModelId")
                         .HasColumnType("int");
 
                     b.Property<string>("ApproveRemark")
@@ -805,7 +903,7 @@ namespace ERP.Migrations
                     b.Property<decimal>("TotalCost")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("PurchaseId", "ItemId");
+                    b.HasKey("PurchaseId", "ItemId", "EquipmentModelId");
 
                     b.HasIndex("ItemId");
 
@@ -820,6 +918,9 @@ namespace ERP.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
+                    b.Property<int>("EquipmentModelId")
+                        .HasColumnType("int");
+
                     b.Property<int>("RequestedById")
                         .HasColumnType("int");
 
@@ -829,7 +930,7 @@ namespace ERP.Migrations
                     b.Property<string>("RequestRemark")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("PurchaseId", "ItemId", "RequestedById");
+                    b.HasKey("PurchaseId", "ItemId", "EquipmentModelId", "RequestedById");
 
                     b.HasIndex("ItemId");
 
@@ -857,6 +958,9 @@ namespace ERP.Migrations
 
                     b.Property<int?>("DeliveredById")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("PurchaseDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PurchaseId")
                         .HasColumnType("int");
@@ -896,14 +1000,11 @@ namespace ERP.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Cost")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("EquipmentModelId")
                         .HasColumnType("int");
 
-                    b.Property<int>("QtyPurchased")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("QtyReceived")
                         .HasColumnType("int");
@@ -911,7 +1012,7 @@ namespace ERP.Migrations
                     b.Property<string>("ReceiveRemark")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ReceiveId", "ItemId");
+                    b.HasKey("ReceiveId", "ItemId", "EquipmentModelId");
 
                     b.HasIndex("ItemId");
 
@@ -1004,8 +1105,8 @@ namespace ERP.Migrations
                     b.Property<int?>("ApprovedById")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DeliveredById")
-                        .HasColumnType("int");
+                    b.Property<string>("DeliveredBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ReceiveDate")
                         .HasColumnType("datetime2");
@@ -1040,8 +1141,6 @@ namespace ERP.Migrations
                     b.HasKey("TransferId");
 
                     b.HasIndex("ApprovedById");
-
-                    b.HasIndex("DeliveredById");
 
                     b.HasIndex("ReceiveSiteId");
 
@@ -1151,6 +1250,9 @@ namespace ERP.Migrations
                     b.Property<bool>("CanApproveBorrow")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("CanApproveBulkPurchase")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("CanApproveBuy")
                         .HasColumnType("bit");
 
@@ -1169,13 +1271,13 @@ namespace ERP.Migrations
                     b.Property<bool>("CanApproveTransfer")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("CanApproveUser")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("CanCheckBuy")
                         .HasColumnType("bit");
 
                     b.Property<bool>("CanCheckPurchase")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanConfirmBulkPurchase")
                         .HasColumnType("bit");
 
                     b.Property<bool>("CanConfirmBuy")
@@ -1184,7 +1286,7 @@ namespace ERP.Migrations
                     b.Property<bool>("CanConfirmPurchase")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("CanDeleteUser")
+                    b.Property<bool>("CanEditUser")
                         .HasColumnType("bit");
 
                     b.Property<bool>("CanFixMaintenance")
@@ -1206,6 +1308,9 @@ namespace ERP.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("CanRequestBorrow")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("CanRequestBulkPurchase")
                         .HasColumnType("bit");
 
                     b.Property<bool>("CanRequestBuy")
@@ -1232,6 +1337,9 @@ namespace ERP.Migrations
                     b.Property<bool>("CanViewBorrow")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("CanViewBulkPurchase")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("CanViewBuy")
                         .HasColumnType("bit");
 
@@ -1251,6 +1359,9 @@ namespace ERP.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFinance")
                         .HasColumnType("bit");
 
                     b.Property<string>("Role")
@@ -1364,12 +1475,55 @@ namespace ERP.Migrations
                     b.Navigation("Return");
                 });
 
+            modelBuilder.Entity("ERP.Models.BulkPurchase", b =>
+                {
+                    b.HasOne("ERP.Models.Employee", "ApprovedBy")
+                        .WithMany()
+                        .HasForeignKey("ApprovedById")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ERP.Models.Employee", "RequestedBy")
+                        .WithMany()
+                        .HasForeignKey("RequestedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApprovedBy");
+
+                    b.Navigation("RequestedBy");
+                });
+
+            modelBuilder.Entity("ERP.Models.BulkPurchaseItem", b =>
+                {
+                    b.HasOne("ERP.Models.BulkPurchase", "BulkPurchase")
+                        .WithMany("BulkPurchaseItems")
+                        .HasForeignKey("BulkPurchaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ERP.Models.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BulkPurchase");
+
+                    b.Navigation("Item");
+                });
+
             modelBuilder.Entity("ERP.Models.Buy", b =>
                 {
                     b.HasOne("ERP.Models.Employee", "ApprovedBy")
                         .WithMany()
                         .HasForeignKey("ApprovedById")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("ERP.Models.Site", "BuySite")
+                        .WithMany()
+                        .HasForeignKey("BuySiteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("ERP.Models.Employee", "CheckedBy")
                         .WithMany()
@@ -1388,6 +1542,8 @@ namespace ERP.Migrations
                         .IsRequired();
 
                     b.Navigation("ApprovedBy");
+
+                    b.Navigation("BuySite");
 
                     b.Navigation("CheckedBy");
 
@@ -1676,6 +1832,10 @@ namespace ERP.Migrations
                         .HasForeignKey("ApprovedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
+                    b.HasOne("ERP.Models.BulkPurchase", "BulkPurchase")
+                        .WithMany()
+                        .HasForeignKey("BulkPurchaseId");
+
                     b.HasOne("ERP.Models.Employee", "CheckedBy")
                         .WithMany()
                         .HasForeignKey("CheckedById")
@@ -1694,6 +1854,8 @@ namespace ERP.Migrations
                         .IsRequired();
 
                     b.Navigation("ApprovedBy");
+
+                    b.Navigation("BulkPurchase");
 
                     b.Navigation("CheckedBy");
 
@@ -1844,11 +2006,6 @@ namespace ERP.Migrations
                         .HasForeignKey("ApprovedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("ERP.Models.Employee", "DeliveredBy")
-                        .WithMany()
-                        .HasForeignKey("DeliveredById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("ERP.Models.Site", "ReceiveSite")
                         .WithMany()
                         .HasForeignKey("ReceiveSiteId")
@@ -1878,8 +2035,6 @@ namespace ERP.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ApprovedBy");
-
-                    b.Navigation("DeliveredBy");
 
                     b.Navigation("ReceiveSite");
 
@@ -1947,6 +2102,11 @@ namespace ERP.Migrations
             modelBuilder.Entity("ERP.Models.BorrowItem", b =>
                 {
                     b.Navigation("BorrowEquipmentAssets");
+                });
+
+            modelBuilder.Entity("ERP.Models.BulkPurchase", b =>
+                {
+                    b.Navigation("BulkPurchaseItems");
                 });
 
             modelBuilder.Entity("ERP.Models.Buy", b =>

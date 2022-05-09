@@ -11,6 +11,7 @@ import { ITEMTYPE } from "../../../Constants";
 function ReceiveTransfer({ addedItems, setAddedItems, transfer }) {
     const queryClient = useQueryClient();
     const vehiclePlateRef = useRef();
+    const driverRef = useRef();
 
     const {
         isLoading: isReceiveLoading,
@@ -28,8 +29,7 @@ function ReceiveTransfer({ addedItems, setAddedItems, transfer }) {
 
         const data = {
             transferId: transfer.transferId,
-            receivedById: 1, //////////////////////////
-            deliveredById: 1,
+            deliveredBy: driverRef.current.value,
             vehiclePlateNo: vehiclePlateRef.current.value,
             transferItems: [],
         };
@@ -58,9 +58,7 @@ function ReceiveTransfer({ addedItems, setAddedItems, transfer }) {
                                 <Form.Label>Delivered By</Form.Label>
                             </div>
                             <div className="col">
-                                <Form.Select>
-                                    <option value="">Select Driver</option>
-                                </Form.Select>
+                                <Form.Control type="text" required ref={driverRef} />
                             </div>
                         </div>
                     </Form.Group>

@@ -46,7 +46,6 @@ function NewIssue() {
         if (isSubmitLoading) return;
 
         var data = {
-            requestedById: 1, ////////////////////////////////////////////////////////////////////////////////
             issueItems: [],
         };
 

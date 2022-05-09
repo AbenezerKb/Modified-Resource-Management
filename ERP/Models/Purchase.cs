@@ -29,12 +29,18 @@ namespace ERP.Models
 
         public int? ApprovedById { get; set; }
 
+        public DateTime? PurchaseDate { get; set; }
+
         public Site ReceivingSite { get; set; }
 
         public int ReceivingSiteId { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]
         public decimal TotalPurchaseCost { get; set; } = 0;
+
+        public BulkPurchase BulkPurchase { get; set; }
+
+        public int? BulkPurchaseId { get; set; }
 
         public ICollection<PurchaseItem> PurchaseItems { get; set; }
         

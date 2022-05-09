@@ -49,12 +49,14 @@ namespace ERP.Services.BorrowServices
 
         public async Task<List<Borrow>> GetByCondition(GetBorrowsDTO getBorrowsDTO)
         {
+            checkEmployeeSiteIsAvailable();
             UserRole userRole = _userService.UserRole;
             int employeeId = _userService.Employee.EmployeeId;
+            int siteId = (int)_userService.Employee.EmployeeSiteId;
 
             var borrows = await _context.Borrows
                 .Where(borrow => (
-                    (getBorrowsDTO.SiteId == -1 || borrow.SiteId == getBorrowsDTO.SiteId) &&
+                    (/*getBorrowsDTO.SiteId == -1 ||*/ borrow.SiteId == siteId) &&
                     ((userRole.CanRequestBorrow == true && borrow.RequestedById == employeeId) ||
                     (userRole.CanApproveBorrow == true && borrow.Status == BORROWSTATUS.REQUESTED) ||
                     (userRole.CanHandBorrow == true && borrow.Status == BORROWSTATUS.APPROVED))))

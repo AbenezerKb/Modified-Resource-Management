@@ -25,6 +25,8 @@ namespace ERP.Models
                
         public int? ReturnId { get; set; }
 
+        public string? FileName { get; set; }
+
         public Return Return { get; set; }
 
         [ForeignKey("BorrowId, ItemId, EquipmentModelId")]

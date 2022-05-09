@@ -35,7 +35,6 @@ function ApproveIssue({ addedItems, setAddedItems, issue }) {
 
         const data = {
             issueId: issue.issueId,
-            approvedById: 1, ////////////////////////
             issueItems: [],
         };
 

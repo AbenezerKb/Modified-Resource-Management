@@ -10,10 +10,9 @@ import {
 } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
 import { GoSettings } from "react-icons/go";
-import { FaHome, FaList, FaBars, FaUser } from "react-icons/fa";
+import { FaHome, FaList, FaBars, FaUser, FaChartBar } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth, useAuthUpdate } from "../../contexts/AuthContext";
-import { useQueryClient } from "react-query";
 
 function Sidebar() {
     const navigate = useNavigate();
@@ -28,7 +27,7 @@ function Sidebar() {
             <ProSidebar
                 className="text-light sidebar-decrease-padding"
                 collapsed={collapsed}
-                width="255px"
+                width="280px"
                 style={{ height: "100vh", position: "sticky", top: 0 }}
             >
                 <SidebarHeader className="p-1 text-nowrap">
@@ -38,7 +37,7 @@ function Sidebar() {
                         style={{ display: "inline-flex" }}
                         onClick={() => setCollapsed(!collapsed)}
                     />
-                    {!collapsed && "System Name"}
+                    {!collapsed && "ERP"}
                 </SidebarHeader>
                 <SidebarContent>
                     <Menu>
@@ -56,10 +55,16 @@ function Sidebar() {
                                 <MenuItem>
                                     Add a new Role <Link to="/role/new" />
                                 </MenuItem>
+                                <MenuItem>
+                                    Edit Roles <Link to="/role" />
+                                </MenuItem>
                             </SubMenu>
                             <SubMenu title="Site">
                                 <MenuItem>
                                     Add a new Site <Link to="/site/new" />
+                                </MenuItem>
+                                <MenuItem>
+                                    Edit Sites <Link to="/site" />
                                 </MenuItem>
                             </SubMenu>
                             <SubMenu title="Stock">
@@ -82,10 +87,14 @@ function Sidebar() {
                                 <MenuItem>
                                     Minimum Stock <Link to="/item/minimum-stock" />
                                 </MenuItem>
+                                <MenuItem>
+                                    Manage Damages <Link to="/item/damage" />
+                                </MenuItem>
+                                <MenuItem>
+                                    Import Asset Numbers <Link to="/item/import-asset-numbers" />
+                                </MenuItem>
                             </SubMenu>
-                            <MenuItem>
-                                Reports <Link to="/report" />
-                            </MenuItem>
+
                             <MenuItem>
                                 Notifications <Link to="/notification" />
                             </MenuItem>
@@ -93,6 +102,7 @@ function Sidebar() {
                                 Company Name / Prefix <Link to="/misc/company" />
                             </MenuItem>
                         </SubMenu>
+
                         <SubMenu
                             title="Inventory"
                             icon={<FaList className="fs-5" />}
@@ -101,31 +111,46 @@ function Sidebar() {
                             <SubMenu title="Buy">
                                 {data.userRole?.canRequestBuy && (
                                     <MenuItem>
-                                        Buy an Item <Link to="/buy/material" />
+                                        Buy an Item <Link to="/buy/item" />
                                     </MenuItem>
                                 )}
                                 <MenuItem>
                                     Buy Requests <Link to="/buy" />
                                 </MenuItem>
                             </SubMenu>
+
                             {data.userRole.canViewPurchase && (
                                 <SubMenu title="Purchase">
                                     {data.userRole?.canRequestPurchase && (
                                         <MenuItem>
-                                            Purchase an Item <Link to="/purchase/material" />
+                                            Purchase Material
+                                            <Link to="/purchase/material" />
+                                        </MenuItem>
+                                    )}
+                                    {data.userRole?.canRequestPurchase && (
+                                        <MenuItem>
+                                            Purchase Equipment
+                                            <Link to="/purchase/equipment" />
                                         </MenuItem>
                                     )}
 
                                     <MenuItem>
                                         List Purchase Requests <Link to="/purchase" />
                                     </MenuItem>
+                                    {data.userRole?.canRequestPurchase && (
+                                        <MenuItem>
+                                            Bulk Purchase
+                                            <Link to="/bulkPurchase" />
+                                        </MenuItem>
+                                    )}
                                 </SubMenu>
                             )}
+
                             {data.userRole.canViewReceive && (
                                 <SubMenu title="Receive">
                                     {data.userRole?.canReceive && (
                                         <MenuItem>
-                                            Receive an Item <Link to="/receive/material" />
+                                            Receive an Item <Link to="/receive/item" />
                                         </MenuItem>
                                     )}
 
@@ -134,71 +159,116 @@ function Sidebar() {
                                     </MenuItem>
                                 </SubMenu>
                             )}
-                            <SubMenu title="Transfer">
-                                <MenuItem>
-                                    New Material Transfer
-                                    <Link to="/transfer/material" />
-                                </MenuItem>
-                                <MenuItem>
-                                    New Equipment Transfer
-                                    <Link to="/transfer/equipment" />
-                                </MenuItem>
-                                <MenuItem>
-                                    Transfer In <Link to="/transfer/in" />
-                                </MenuItem>
-                                <MenuItem>
-                                    Transfer Out
-                                    <Link to="/transfer/out" />
-                                </MenuItem>
-                            </SubMenu>
-                            <SubMenu title="Issue">
-                                <MenuItem>
-                                    New Issue Request
-                                    <Link to="/issue/new" />
-                                </MenuItem>
-                                <MenuItem>
-                                    Issue Requests
-                                    <Link to="/issue" />
-                                </MenuItem>
-                            </SubMenu>
-                            <SubMenu title="Borrow">
-                                <MenuItem>
-                                    New Borrow Request <Link to="/borrow/new" />
-                                </MenuItem>
-                                <MenuItem>
-                                    Borrow Requests <Link to="/borrow" />
-                                </MenuItem>
-                                <MenuItem>
-                                    Retrun Assets <Link to="/return/new" />
-                                </MenuItem>
-                                <MenuItem>
-                                    Returned Assets <Link to="/return" />
-                                </MenuItem>
-                            </SubMenu>
 
-                            <SubMenu title="Maintenance">
-                                <MenuItem>
-                                    New Maintenance Request <Link to="/maintenance/new" />
-                                </MenuItem>
-                                <MenuItem>
-                                    Maintenance Requests <Link to="/maintenance" />
-                                </MenuItem>
-                            </SubMenu>
-                            <SubMenu title="Rent">
-                                <MenuItem>
-                                    New Rent Request
-                                    <Link to="/rent/new" />
-                                </MenuItem>
-                            </SubMenu>
+                            {data.userRole.canViewTransfer && (
+                                <SubMenu title="Transfer">
+                                    {data.userRole?.canRequestTransfer && (
+                                        <>
+                                            <MenuItem>
+                                                New Material Transfer
+                                                <Link to="/transfer/material" />
+                                            </MenuItem>
+                                            <MenuItem>
+                                                New Equipment Transfer
+                                                <Link to="/transfer/equipment" />
+                                            </MenuItem>
+                                        </>
+                                    )}
+                                    <MenuItem>
+                                        Transfer In <Link to="/transfer/in" />
+                                    </MenuItem>
+                                    <MenuItem>
+                                        Transfer Out
+                                        <Link to="/transfer/out" />
+                                    </MenuItem>
+                                </SubMenu>
+                            )}
+
+                            {data.userRole.canViewIssue && (
+                                <SubMenu title="Issue">
+                                    {data.userRole.canRequestIssue && (
+                                        <MenuItem>
+                                            New Issue Request
+                                            <Link to="/issue/new" />
+                                        </MenuItem>
+                                    )}
+                                    <MenuItem>
+                                        Issue Requests
+                                        <Link to="/issue" />
+                                    </MenuItem>
+                                </SubMenu>
+                            )}
+
+                            {data.userRole.canViewBorrow && (
+                                <SubMenu title="Borrow">
+                                    {data.userRole.canRequestBorrow && (
+                                        <MenuItem>
+                                            New Borrow Request <Link to="/borrow/new" />
+                                        </MenuItem>
+                                    )}
+                                    <MenuItem>
+                                        Borrow Requests <Link to="/borrow" />
+                                    </MenuItem>
+
+                                    {data.userRole.canReturnBorrow && (
+                                        <MenuItem>
+                                            Return Assets <Link to="/return/new" />
+                                        </MenuItem>
+                                    )}
+
+                                    <MenuItem>
+                                        Returned Assets <Link to="/return" />
+                                    </MenuItem>
+                                </SubMenu>
+                            )}
+
+                            {data.userRole.canViewMaintenance && (
+                                <SubMenu title="Maintenance">
+                                    {data.userRole.canRequestMaintenance && (
+                                        <MenuItem>
+                                            New Maintenance Request <Link to="/maintenance/new" />
+                                        </MenuItem>
+                                    )}
+                                    <MenuItem>
+                                        Maintenance Requests <Link to="/maintenance" />
+                                    </MenuItem>
+                                </SubMenu>
+                            )}
+                            {data.userRole.isAdmin && (
+                                <>
+                                    <SubMenu title="Rent">
+                                        <MenuItem>
+                                            New Rent Request
+                                            <Link to="/rent/new" />
+                                        </MenuItem>
+                                    </SubMenu>
+
+                                    <SubMenu title="Garage">
+                                        <MenuItem>
+                                            New Maintenance Request
+                                            <Link to="/garage/new" />
+                                        </MenuItem>
+                                    </SubMenu>
+                                    <SubMenu title="Equipment Production">
+                                        <MenuItem>
+                                            New Production Request
+                                            <Link to="/production/new" />
+                                        </MenuItem>
+                                    </SubMenu>
+                                </>
+                            )}
                         </SubMenu>
+
+                        {(data.userRole.isAdmin || data.userRole.isFinance) && (
+                            <MenuItem icon={<FaChartBar className="fs-5" />}>
+                                Reports <Link to="/report" />
+                            </MenuItem>
+                        )}
                     </Menu>
                 </SidebarContent>
                 <SidebarFooter>
                     <Menu subMenuBullets={true}>
                         <SubMenu title={data.username} icon={<FaUser className="fs-5" />}>
-                            <MenuItem>
-                                Manage Account <Link to="/user/manage" />
-                            </MenuItem>
                             <MenuItem
                                 onClick={() => {
                                     localStorage.removeItem("token");

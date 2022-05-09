@@ -16,6 +16,473 @@ namespace ERP.Services.ReportServices
             _context = context;
             _generalReportService = generalReportService;
         }
+
+        public async Task<ReportReturnDTO<Purchase>> GetPurchaseReport(PurchaseReportDTO purchaseDTO)
+        {
+            purchaseDTO.SetDates(); // parse request data to set what date is given
+            purchaseDTO.SetEmployees();
+
+            var purchases = _context.Purchases
+                .Where(purchase =>
+                //dates
+                (purchaseDTO.RequestDateFrom == null || purchase.RequestDate >= purchaseDTO.RequestDateFrom) &&
+                (purchaseDTO.RequestDateTo == null || purchase.RequestDate <= purchaseDTO.RequestDateTo) &&
+                (purchaseDTO.ApproveDateFrom == null || purchase.ApproveDate >= purchaseDTO.ApproveDateFrom) &&
+                (purchaseDTO.ApproveDateTo == null || purchase.ApproveDate <= purchaseDTO.ApproveDateTo) &&
+                (purchaseDTO.CheckDateFrom == null || purchase.CheckDate >= purchaseDTO.CheckDateFrom) &&
+                (purchaseDTO.CheckDateTo == null || purchase.CheckDate <= purchaseDTO.CheckDateTo) &&
+                (purchaseDTO.PurchaseDateFrom == null || purchase.PurchaseDate >= purchaseDTO.PurchaseDateFrom) &&
+                (purchaseDTO.PurchaseDateTo == null || purchase.PurchaseDate <= purchaseDTO.PurchaseDateTo) &&
+                //sites
+                (purchaseDTO.SiteId == -1 || purchase.ReceivingSiteId == purchaseDTO.SiteId) &&
+                //status
+                (purchaseDTO.Status == -1 || purchase.Status == purchaseDTO.Status) &&
+                //single role one user
+                (purchaseDTO.EmployeeRole == -1 || purchaseDTO.RequestedById == null || purchase.RequestedById == purchaseDTO.RequestedById) &&
+                (purchaseDTO.EmployeeRole == -1 || purchaseDTO.ApprovedById == null || purchase.ApprovedById == purchaseDTO.ApprovedById) &&
+                (purchaseDTO.EmployeeRole == -1 || purchaseDTO.CheckedById == null || purchase.CheckedById == purchaseDTO.CheckedById) &&
+                (purchaseDTO.EmployeeRole == -1 || purchaseDTO.PurchasedById == null || purchase.RequestedById == purchaseDTO.PurchasedById) &&//here
+                //multiple role one user
+                (purchaseDTO.EmployeeRole != -1 || purchaseDTO.EmployeeId == -1 || purchase.RequestedById == purchaseDTO.RequestedById || purchase.ApprovedById == purchaseDTO.ApprovedById || purchase.RequestedById == purchaseDTO.PurchasedById/*here*/ || purchase.CheckedById == purchaseDTO.CheckedById) &&
+                //item type
+                (purchaseDTO.ItemType == -1 || purchase.PurchaseItems.Any(ti => ti.Item.Type == purchaseDTO.ItemType)) &&
+                //equipment category
+                (purchaseDTO.ItemType != ITEMTYPE.EQUIPMENT || purchaseDTO.EquipmentCategoryId == -1 || purchase.PurchaseItems.Any(ti => ti.Item.Equipment.EquipmentCategoryId == purchaseDTO.EquipmentCategoryId)) &&
+                //item
+                (purchaseDTO.ItemId == -1 || purchase.PurchaseItems.Any(ti => ti.ItemId == purchaseDTO.ItemId))
+                )
+                .Include(transfer => transfer.ReceivingSite)
+                .Include(transfer => transfer.RequestedBy)
+                .Include(transfer => transfer.CheckedBy)
+                //here uncomment .Include(transfer => transfer.PurchasedBy)
+                .Include(transfer => transfer.ApprovedBy);
+
+            IQueryable? summary = null;
+
+            switch (purchaseDTO.GroupBy)
+            {
+                //status
+                case PURCHASEREPORTGROUPBY.STATUS:
+                    summary = purchases.GroupBy(transfer => transfer.Status)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().Status });
+                    break;
+
+                //date
+                case PURCHASEREPORTGROUPBY.REQUESTDATE:
+                    summary = purchases.GroupBy(transfer => transfer.RequestDate.Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().RequestDate.ToShortDateString() });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.APPROVEDATE:
+                    summary = purchases.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.Value.Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.Value.ToShortDateString() ?? "N/A" });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.CHECKDATE:
+                    summary = purchases.GroupBy(transfer => transfer.CheckDate == null ? DateTime.MinValue.Date : transfer.CheckDate.Value.Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().CheckDate.Value.ToShortDateString() ?? "N/A" });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.PURCHASEDATE:
+                    summary = purchases.GroupBy(transfer => transfer.PurchaseDate == null ? DateTime.MinValue.Date : transfer.PurchaseDate.Value.Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().PurchaseDate.Value.ToShortDateString() ?? "N/A" });
+                    break;
+
+                //week
+                case PURCHASEREPORTGROUPBY.REQUESTWEEK:
+                    summary = purchases.GroupBy(transfer => new { Week = transfer.RequestDate.DayOfYear / 7, transfer.RequestDate.Year })
+                         .Select(s => new { key = s.Key, count = s.Count(), value = $"Week {s.Key.Week}, {s.Key.Year}" });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.APPROVEWEEK:
+                    summary = purchases.GroupBy(transfer =>
+                            new
+                            {
+                                Week = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.DayOfYear / 7,
+                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().ApproveDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                         });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.CHECKWEEK:
+                    summary = purchases.GroupBy(transfer =>
+                            new
+                            {
+                                Week = transfer.CheckDate.Value == null ? -1 : transfer.CheckDate.Value.DayOfYear / 7,
+                                Year = transfer.CheckDate.Value == null ? -1 : transfer.CheckDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().CheckDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                         });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.PURCHASEWEEK:
+                    summary = purchases.GroupBy(transfer =>
+                            new
+                            {
+                                Week = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.DayOfYear / 7,
+                                Year = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().PurchaseDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                         });
+                    break;
+
+                //month
+                case PURCHASEREPORTGROUPBY.REQUESTMONTH:
+                    summary = purchases.GroupBy(transfer => new { Month = transfer.RequestDate.Month, transfer.RequestDate.Year })
+                         .Select(s => new { key = s.Key, count = s.Count(), value = $"{s.First().RequestDate.ToString("MMMM")}, {s.Key.Year}" });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.APPROVEMONTH:
+                    summary = purchases.GroupBy(transfer =>
+                            new
+                            {
+                                Month = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Month,
+                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.First().ApproveDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                         });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.CHECKMONTH:
+                    summary = purchases.GroupBy(transfer =>
+                            new
+                            {
+                                Month = transfer.CheckDate.Value == null ? -1 : transfer.CheckDate.Value.Month,
+                                Year = transfer.CheckDate.Value == null ? -1 : transfer.CheckDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().CheckDate.Value == null ? "N/A" : $"{s.First().CheckDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                         });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.PURCHASEMONTH:
+                    summary = purchases.GroupBy(transfer =>
+                            new
+                            {
+                                Month = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Month,
+                                Year = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().PurchaseDate.Value == null ? "N/A" : $"{s.First().PurchaseDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                         });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.REQUESTYEAR:
+                    summary = purchases.GroupBy(transfer => transfer.RequestDate.Year)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = $"{s.Key}" });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.APPROVEYEAR:
+                    summary = purchases.GroupBy(transfer =>
+                            transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year)
+                        .Select(s => new
+                        {
+                            key = s.Key,
+                            count = s.Count(),
+                            value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.Key}"
+                        });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.CHECKYEAR:
+                    summary = purchases.GroupBy(transfer =>
+                            transfer.CheckDate.Value == null ? -1 : transfer.CheckDate.Value.Year)
+                        .Select(s => new
+                        {
+                            key = s.Key,
+                            count = s.Count(),
+                            value = s.First().CheckDate.Value == null ? "N/A" : $"{s.Key}"
+                        });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.PURCHASEYEAR:
+                    summary = purchases.GroupBy(transfer =>
+                            transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Year)
+                        .Select(s => new
+                        {
+                            key = s.Key,
+                            count = s.Count(),
+                            value = s.First().PurchaseDate.Value == null ? "N/A" : $"{s.Key}"
+                        });
+                    break;
+
+                //employee
+                case PURCHASEREPORTGROUPBY.REQUESTEDBY:
+                    summary = purchases.GroupBy(transfer => transfer.RequestedById)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().RequestedBy });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.APPROVEDBY:
+                    summary = purchases.GroupBy(transfer => transfer.ApprovedById == null ? 0 : transfer.ApprovedById)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApprovedBy });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.CHECKEDBY:
+                    summary = purchases.GroupBy(transfer => transfer.CheckedById == null ? 0 : transfer.CheckedById)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().CheckedBy });
+                    break;
+
+                case PURCHASEREPORTGROUPBY.PURCHASEDBY:
+                    summary = purchases.GroupBy(transfer => transfer.RequestedById == null ? 0 : transfer.RequestedById)//here
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().RequestedBy });//here
+                    break;
+
+                //site
+                case PURCHASEREPORTGROUPBY.SITE:
+                    summary = purchases.GroupBy(transfer => transfer.ReceivingSiteId)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ReceivingSite });
+                    break;
+
+            }
+
+            var result = new ReportReturnDTO<Purchase>();
+
+            result.Summary = summary;
+            result.Data = await purchases.ToListAsync();
+
+            return result;
+        }
+
+        public async Task<ReportReturnDTO<Receive>> GetReceiveReport(ReceiveReportDTO receiveDTO)
+        {
+            receiveDTO.SetDates(); // parse request data to set what date is given
+            receiveDTO.SetEmployees();
+
+            var receives = _context.Receives
+                .Where(receive =>
+                //dates
+                (receiveDTO.PurchaseDateFrom == null || receive.PurchaseDate >= receiveDTO.PurchaseDateFrom) &&
+                (receiveDTO.PurchaseDateTo == null || receive.PurchaseDate <= receiveDTO.PurchaseDateTo) &&
+                (receiveDTO.ApproveDateFrom == null || receive.ApproveDate >= receiveDTO.ApproveDateFrom) &&
+                (receiveDTO.ApproveDateTo == null || receive.ApproveDate <= receiveDTO.ApproveDateTo) &&
+                (receiveDTO.ReceiveDateFrom == null || receive.ReceiveDate >= receiveDTO.ReceiveDateFrom) &&
+                (receiveDTO.ReceiveDateTo == null || receive.ReceiveDate <= receiveDTO.ReceiveDateTo) &&
+                //sites
+                (receiveDTO.SiteId == -1 || receive.ReceivingSiteId == receiveDTO.SiteId) &&
+                //status
+                (receiveDTO.Status == -1 || receive.Status == receiveDTO.Status) &&
+                //single role one user
+                (receiveDTO.EmployeeRole == -1 || receiveDTO.PurchasedById == null || receive.Purchase.RequestedById == receiveDTO.PurchasedById) && //here
+                (receiveDTO.EmployeeRole == -1 || receiveDTO.ApprovedById == null || receive.ApprovedById == receiveDTO.ApprovedById) &&
+                (receiveDTO.EmployeeRole == -1 || receiveDTO.ReceivedById == null || receive.ReceivedById == receiveDTO.ReceivedById) &&
+                //multiple role one user
+                (receiveDTO.EmployeeRole != -1 || receiveDTO.EmployeeId == -1 || receive.Purchase.RequestedById == receiveDTO.PurchasedById /*here*/|| receive.ApprovedById == receiveDTO.ApprovedById || receive.ReceivedById == receiveDTO.ReceivedById) &&
+                //item type
+                (receiveDTO.ItemType == -1 || receive.ReceiveItems.Any(ri => ri.Item.Type == receiveDTO.ItemType)) &&
+                //equipment category
+                (receiveDTO.ItemType != ITEMTYPE.EQUIPMENT || receiveDTO.EquipmentCategoryId == -1 || receive.ReceiveItems.Any(ri => ri.Item.Equipment.EquipmentCategoryId == receiveDTO.EquipmentCategoryId)) &&
+                //item
+                (receiveDTO.ItemId == -1 || receive.ReceiveItems.Any(ri => ri.ItemId == receiveDTO.ItemId))
+                )
+                .Include(transfer => transfer.ReceivingSite)
+                .Include(transfer => transfer.Purchase.RequestedBy)//here
+                .Include(transfer => transfer.ReceivedBy)
+                .Include(transfer => transfer.ApprovedBy);
+
+            IQueryable? summary = null;
+
+            switch (receiveDTO.GroupBy)
+            {
+                //status
+                case RECEIVEREPORTGROUPBY.STATUS:
+                    summary = receives.GroupBy(transfer => transfer.Status)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().Status });
+                    break;
+
+                //date
+                case RECEIVEREPORTGROUPBY.PURCHASEDATE:
+                    summary = receives.GroupBy(transfer => transfer.PurchaseDate == null ? DateTime.MinValue.Date : transfer.PurchaseDate.Value.Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().PurchaseDate.Value.ToShortDateString() ?? "N/A" });
+                    break;
+
+                case RECEIVEREPORTGROUPBY.APPROVEDATE:
+                    summary = receives.GroupBy(transfer => transfer.ApproveDate == null ? DateTime.MinValue.Date : transfer.ApproveDate.Value.Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApproveDate.Value.ToShortDateString() ?? "N/A" });
+                    break;
+
+                case RECEIVEREPORTGROUPBY.RECEIVEDATE:
+                    summary = receives.GroupBy(transfer => transfer.ReceiveDate == null ? DateTime.MinValue.Date : transfer.ReceiveDate.Value.Date)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ReceiveDate.Value.ToShortDateString() ?? "N/A" });
+                    break;
+
+                //week
+                case RECEIVEREPORTGROUPBY.PURCHASEWEEK:
+                    summary = receives.GroupBy(transfer =>
+                            new
+                            {
+                                Week = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.DayOfYear / 7,
+                                Year = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().PurchaseDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                         });
+                    break;
+
+                case RECEIVEREPORTGROUPBY.APPROVEWEEK:
+                    summary = receives.GroupBy(transfer =>
+                            new
+                            {
+                                Week = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.DayOfYear / 7,
+                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().ApproveDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                         });
+                    break;
+
+                case RECEIVEREPORTGROUPBY.RECEIVEWEEK:
+                    summary = receives.GroupBy(transfer =>
+                            new
+                            {
+                                Week = transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.DayOfYear / 7,
+                                Year = transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().ReceiveDate.Value == null ? "N/A" : $"Week {s.Key.Week}, {s.Key.Year}"
+                         });
+                    break;
+
+                //month
+                case RECEIVEREPORTGROUPBY.PURCHASEMONTH:
+                    summary = receives.GroupBy(transfer =>
+                            new
+                            {
+                                Month = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Month,
+                                Year = transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().PurchaseDate.Value == null ? "N/A" : $"{s.First().PurchaseDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                         });
+                    break;
+
+                case RECEIVEREPORTGROUPBY.APPROVEMONTH:
+                    summary = receives.GroupBy(transfer =>
+                            new
+                            {
+                                Month = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Month,
+                                Year = transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.First().ApproveDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                         });
+                    break;
+
+                case RECEIVEREPORTGROUPBY.RECEIVEMONTH:
+                    summary = receives.GroupBy(transfer =>
+                            new
+                            {
+                                Month = transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.Month,
+                                Year = transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.Year
+                            })
+                         .Select(s => new
+                         {
+                             key = s.Key,
+                             count = s.Count(),
+                             value = s.First().ReceiveDate.Value == null ? "N/A" : $"{s.First().ReceiveDate.Value.ToString("MMMM")}, {s.Key.Year}"
+                         });
+                    break;
+
+                case RECEIVEREPORTGROUPBY.PURCHASEYEAR:
+                    summary = receives.GroupBy(transfer =>
+                            transfer.PurchaseDate.Value == null ? -1 : transfer.PurchaseDate.Value.Year)
+                        .Select(s => new
+                        {
+                            key = s.Key,
+                            count = s.Count(),
+                            value = s.First().PurchaseDate.Value == null ? "N/A" : $"{s.Key}"
+                        });
+                    break;
+
+                case RECEIVEREPORTGROUPBY.APPROVEYEAR:
+                    summary = receives.GroupBy(transfer =>
+                            transfer.ApproveDate.Value == null ? -1 : transfer.ApproveDate.Value.Year)
+                        .Select(s => new
+                        {
+                            key = s.Key,
+                            count = s.Count(),
+                            value = s.First().ApproveDate.Value == null ? "N/A" : $"{s.Key}"
+                        });
+                    break;
+
+                case RECEIVEREPORTGROUPBY.RECEIVEYEAR:
+                    summary = receives.GroupBy(transfer =>
+                            transfer.ReceiveDate.Value == null ? -1 : transfer.ReceiveDate.Value.Year)
+                        .Select(s => new
+                        {
+                            key = s.Key,
+                            count = s.Count(),
+                            value = s.First().ReceiveDate.Value == null ? "N/A" : $"{s.Key}"
+                        });
+                    break;
+
+                //employee
+                case RECEIVEREPORTGROUPBY.PURCHASEDBY:
+                    summary = receives.GroupBy(transfer => transfer.Purchase.RequestedById)//here
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().Purchase.RequestedBy });//here
+                    break;
+
+                case RECEIVEREPORTGROUPBY.APPROVEDBY:
+                    summary = receives.GroupBy(transfer => transfer.ApprovedById == null ? 0 : transfer.ApprovedById)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ApprovedBy });
+                    break;
+
+                case RECEIVEREPORTGROUPBY.RECEIVEDBY:
+                    summary = receives.GroupBy(transfer => transfer.ReceivedById == null ? 0 : transfer.ReceivedById)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ReceivedBy });
+                    break;
+
+                //site
+                case RECEIVEREPORTGROUPBY.SITE:
+                    summary = receives.GroupBy(transfer => transfer.ReceivingSiteId)
+                         .Select(s => new { key = s.Key, count = s.Count(), value = s.First().ReceivingSite });
+                    break;
+            }
+
+            var result = new ReportReturnDTO<Receive>();
+
+            result.Summary = summary;
+            result.Data = await receives.ToListAsync();
+
+            return result;
+        }
+
         public async Task<ReportReturnDTO<Issue>> GetIssueReport(IssueReportDTO issueDTO)
         {
             issueDTO.SetDates(); // parse request data to set what date is given
@@ -853,6 +1320,14 @@ namespace ERP.Services.ReportServices
                 foreach (var x in receiveSummary) result.Keys.Add(x.Key.ToString());
                 foreach (var x in receiveSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
                 result.ReceiveSummary = receiveSummary.ToDictionary(d => (string)d.Key.ToString(), d => d);
+            }
+
+            if (reportDTO.Include.Contains(GENERALREPORTSELECTION.PURCHASED))
+            {
+                var purchaseSummary = await _generalReportService.GetPurchaseReport(reportDTO);
+                foreach (var x in purchaseSummary) result.Keys.Add(x.Key.ToString());
+                foreach (var x in purchaseSummary) result.Labels.TryAdd(x.Key.ToString(), x.Label);
+                result.PurchaseSummary = purchaseSummary.ToDictionary(d => (string)d.Key.ToString(), d => d);
             }
 
             if (reportDTO.Include.Contains(GENERALREPORTSELECTION.TRANSFERREDOUT))

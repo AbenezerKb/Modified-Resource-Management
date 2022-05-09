@@ -18,8 +18,6 @@ namespace ERP.Models
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Cost { get; set; }
 
-        public int QtyPurchased { get; set; }
-
         public int QtyReceived { get; set; } = 0;
 
         public string? ReceiveRemark { get; set; }

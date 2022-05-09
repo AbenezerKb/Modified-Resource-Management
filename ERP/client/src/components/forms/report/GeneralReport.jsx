@@ -98,6 +98,14 @@ function GeneralReport() {
                     ),
                 });
 
+            summary.purchaseSummary &&
+                data.datasets.push({
+                    label: "Purchased",
+                    data: summary.keys.map(
+                        (key) => summary.purchaseSummary[key]?.[chartDataType] ?? 0
+                    ),
+                });
+
             summary.receiveSummary &&
                 data.datasets.push({
                     label: "Received",
@@ -409,6 +417,14 @@ function GeneralReport() {
                         title="Minimum Stock Summary"
                         groupBy={formValues.groupBy}
                         data={queryResult.minStockSummary}
+                    />
+                )}
+
+                {queryResult?.purchaseSummary && (
+                    <SimpleReportTable
+                        title="Purchased Items Summary"
+                        groupBy={formValues.groupBy}
+                        data={queryResult.purchaseSummary}
                     />
                 )}
 

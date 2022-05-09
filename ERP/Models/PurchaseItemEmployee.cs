@@ -13,6 +13,9 @@ namespace ERP.Models
         public int ItemId { get; set; }
 
         [Key]
+        public int EquipmentModelId { get; set; } = 0;
+
+        [Key]
         public int RequestedById { get; set; }
 
         public int QtyRequested { get; set; } = 0;

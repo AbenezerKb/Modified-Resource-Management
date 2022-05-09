@@ -2,6 +2,7 @@
 using ERP.DTOs;
 using ERP.DTOs.Item;
 using ERP.Models;
+using ERP.Services.ItemSiteQtyServices;
 using ERP.Services.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,11 +12,13 @@ namespace ERP.Services.ItemServices
     {
         private readonly DataContext _context;
         private readonly IUserService _userService;
+        private readonly IItemSiteQtyService _itemSiteQtyService;
 
-        public ItemService(DataContext context, IUserService userService)
+        public ItemService(DataContext context, IUserService userService, IItemSiteQtyService itemSiteQtyService)
         {
             _context = context;
             _userService = userService;
+            _itemSiteQtyService = itemSiteQtyService;
         }
 
         public async Task<List<Item>> GetAll()
@@ -26,6 +29,38 @@ namespace ERP.Services.ItemServices
                 .ToListAsync();
 
             return items;
+        }
+
+
+        public async Task<int> ImportAssetNumbers(ImportAssetNoDTO importDTO)
+        {
+            if(importDTO.SiteId == -1 || importDTO.EquipmentModelId == -1)
+                return 0;
+
+            int count = 0;
+
+            foreach (var importAsset in importDTO.Assets)
+            {
+                var asset = new EquipmentAsset();
+
+                if(importAsset.AssetNo != null && importAsset.AssetNo.Trim() != String.Empty)
+                {
+                    asset.AssetNo = importAsset.AssetNo.Trim();
+                    count++;
+
+                    if(importAsset.SerialNo != null && importAsset.SerialNo.Trim() != String.Empty)
+                        asset.SerialNo = importAsset.SerialNo.Trim();
+
+                    asset.EquipmentModelId = importDTO.EquipmentModelId;
+                    asset.CurrentSiteId = importDTO.SiteId;
+                    _context.EquipmentAssets.Add(asset);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            await _itemSiteQtyService.AddEquipmentModel(importDTO.EquipmentModelId, importDTO.SiteId, count);
+
+            return count;
         }
 
         public async Task<bool> UpdateMinimumStockItems(List<MinimumStockItemDTO> requestDTO)
@@ -181,6 +216,18 @@ namespace ERP.Services.ItemServices
 
             var assets = await _context.EquipmentAssets
                 .Where(ea => ea.CurrentSiteId == siteId && ea.EquipmentModelId == modelId)
+                .ToListAsync();
+
+            return assets;
+
+        }
+
+        public async Task<List<EquipmentAsset>> GetCleanAssets(int modelId)
+        {
+            var siteId = _userService.Employee.EmployeeSiteId;
+
+            var assets = await _context.EquipmentAssets
+                .Where(ea => ea.CurrentSiteId == siteId && ea.EquipmentModelId == modelId && ea.AssetDamageId == null)
                 .ToListAsync();
 
             return assets;

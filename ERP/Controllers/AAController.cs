@@ -1,4 +1,5 @@
-﻿using ERP.Context;
+﻿using BrunoZell.ModelBinding;
+using ERP.Context;
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services.AssetNumberServices;
@@ -47,9 +48,10 @@ namespace ERP.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<IFormFile>> Post(IFormFile file)
+        public async Task<ActionResult<IFormFile>> Post([ModelBinder(BinderType = typeof(JsonModelBinder))] ReturnBorrowAsset value,
+    IList<IFormFile> files)
         {
-            var name = await _fileService.SaveFile(file);          
+            var name = await _fileService.SaveFile(files[0]);          
             
             return Ok(name);
         }

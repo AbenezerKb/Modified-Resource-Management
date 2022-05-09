@@ -13,10 +13,197 @@ namespace ERP.Services.ReportServices
             _context = context;
         }
 
+        public async Task<IEnumerable<ReportSingleItem>> GetPurchaseReport(GeneralReportDTO reportDTO)
+        {
+            var purchaseItems = await _context.PurchaseItems
+                .Where(ii => ii.Purchase.Status >= PURCHASESTATUS.PURCHASED &&
+                //date
+                (reportDTO.DateFrom == null || ii.Purchase.PurchaseDate >= reportDTO.DateFrom) &&
+                (reportDTO.DateTo == null || ii.Purchase.PurchaseDate <= reportDTO.DateTo) &&
+                //site
+                (reportDTO.SiteId == -1 || ii.Purchase.ReceivingSiteId == reportDTO.SiteId) &&
+                //item type
+                (reportDTO.ItemType == -1 || ii.Item.Type == reportDTO.ItemType) &&
+                //equipment category
+                (reportDTO.ItemType != ITEMTYPE.EQUIPMENT || reportDTO.EquipmentCategoryId == -1 || ii.Item.Type != ITEMTYPE.EQUIPMENT || ii.Item.Equipment.EquipmentCategoryId == reportDTO.EquipmentCategoryId) &&
+                //item
+                (reportDTO.ItemId == -1 || ii.ItemId == reportDTO.ItemId) &&
+                //employee
+                (reportDTO.EmployeeId == -1 || ii.Purchase.CheckedById == reportDTO.EmployeeId)//here
+                )
+                .Include(ii => ii.Purchase)
+                .Include(ii => ii.Item.Material)
+                .Include(ii => ii.Item.Equipment.EquipmentModels)
+                .Include(ii => ii.Item.Equipment.EquipmentCategory)
+                .Include(ii => ii.Purchase.CheckedBy)//here
+                .Include(ii => ii.Purchase.ReceivingSite)
+                .ToListAsync();
+
+            IEnumerable<ReportSingleItem>? groupedPurchase = new List<ReportSingleItem>();
+
+            switch (reportDTO.GroupBy)
+            {
+                case GENERALREPORTGROUPBY.ITEM:
+                    groupedPurchase = purchaseItems.GroupBy(ii => ii.ItemId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.First().Item.Name,
+                            Qty = s.Sum(ii => ii.QtyPurchased),
+                            Cost = s.Sum(ii => ii.QtyPurchased * ii.Cost),
+                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                                ii.QtyPurchased * ii.Item.Material.Cost :
+                                ii.QtyPurchased * ii.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+                        });
+                    break;
+
+                case GENERALREPORTGROUPBY.CATEGORY:
+                    groupedPurchase = purchaseItems.GroupBy(ii => ii.Item.Equipment != null ? ii.Item.Equipment.EquipmentCategoryId : 0)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.Key == 0 ? "Materials" : s.First().Item.Equipment.EquipmentCategory.Name,
+                            Qty = s.Sum(ii => ii.QtyPurchased),
+                            Cost = s.Sum(ii => ii.QtyPurchased * ii.Cost),
+                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                                ii.QtyPurchased * ii.Item.Material.Cost :
+                                ii.QtyPurchased * ii.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+                        });
+                    break;
+
+                case GENERALREPORTGROUPBY.MODEL:
+                    groupedPurchase = purchaseItems.GroupBy(ii => ii.EquipmentModelId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.Key == 0 ? "Materials" :
+                                $"{s.First().Item.Name}, " +
+                                $"{s.First().Item.Equipment.EquipmentModels.Where(em => em.EquipmentModelId == s.First().EquipmentModelId).First().Name}",
+                            Qty = s.Sum(ii => ii.QtyPurchased),
+                            Cost = s.Sum(ii => ii.QtyPurchased * ii.Cost),
+                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                                ii.QtyPurchased * ii.Item.Material.Cost :
+                                ii.QtyPurchased * ii.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+                        });
+                    break;
+
+
+
+                case GENERALREPORTGROUPBY.DATE:
+                    groupedPurchase = purchaseItems.GroupBy(ii => ii.Purchase.PurchaseDate.Value.Date)
+                       .Select(s => new ReportSingleItem
+                       {
+                           Key = s.First().Purchase.PurchaseDate.Value.Date,
+                           Label = s.Key.ToShortDateString(),
+                           Qty = s.Sum(ii => ii.QtyPurchased),
+                           Cost = s.Sum(ii => ii.QtyPurchased * ii.Cost),
+                           CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                               ii.QtyPurchased * ii.Item.Material.Cost :
+                               ii.QtyPurchased * ii.Item.Equipment.EquipmentModels
+                                   .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+
+                       });
+                    break;
+
+                case GENERALREPORTGROUPBY.WEEK:
+                    groupedPurchase = purchaseItems.GroupBy(ii =>
+                    new
+                    {
+                        Week = ii.Purchase.PurchaseDate.Value.DayOfYear / 7,
+                        Year = ii.Purchase.PurchaseDate.Value.Year
+                    })
+                       .Select(s => new ReportSingleItem
+                       {
+                           Key = s.First().Purchase.PurchaseDate.Value.Date,
+                           Label = $"Week{s.Key.Week}, {s.Key.Year}",
+                           Qty = s.Sum(ii => ii.QtyPurchased),
+                           Cost = s.Sum(ii => ii.QtyPurchased * ii.Cost),
+                           CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                               ii.QtyPurchased * ii.Item.Material.Cost :
+                               ii.QtyPurchased * ii.Item.Equipment.EquipmentModels
+                                   .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+
+                       });
+                    break;
+
+                case GENERALREPORTGROUPBY.MONTH:
+                    groupedPurchase = purchaseItems.GroupBy(ii =>
+                    new
+                    {
+                        Month = ii.Purchase.PurchaseDate.Value.Month,
+                        Year = ii.Purchase.PurchaseDate.Value.Year
+                    })
+                       .Select(s => new ReportSingleItem
+                       {
+                           Key = s.First().Purchase.PurchaseDate.Value.Date,
+                           Label = $"{s.First().Purchase.PurchaseDate.Value.ToString("MMMM")}, {s.Key.Year}",
+                           Qty = s.Sum(ii => ii.QtyPurchased),
+                           Cost = s.Sum(ii => ii.QtyPurchased * ii.Cost),
+                           CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                               ii.QtyPurchased * ii.Item.Material.Cost :
+                               ii.QtyPurchased * ii.Item.Equipment.EquipmentModels
+                                   .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+
+                       });
+                    break;
+
+                case GENERALREPORTGROUPBY.YEAR:
+                    groupedPurchase = purchaseItems.GroupBy(ii => ii.Purchase.PurchaseDate.Value.Year)
+                       .Select(s => new ReportSingleItem
+                       {
+                           Key = s.First().Purchase.PurchaseDate.Value.Date,
+                           Label = $"{s.Key}",
+                           Qty = s.Sum(ii => ii.QtyPurchased),
+                           Cost = s.Sum(ii => ii.QtyPurchased * ii.Cost),
+                           CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                               ii.QtyPurchased * ii.Item.Material.Cost :
+                               ii.QtyPurchased * ii.Item.Equipment.EquipmentModels
+                                   .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+
+                       });
+                    break;
+
+                case GENERALREPORTGROUPBY.EMPLOYEE:
+                    groupedPurchase = purchaseItems.GroupBy(ii => ii.Purchase.CheckedById ?? 0)//here
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.Key == 0 ? "N/A" :
+                                $"{s.First().Purchase.CheckedBy.FName} {s.First().Purchase.CheckedBy.MName}",//here
+                            Qty = s.Sum(ii => ii.QtyPurchased),
+                            Cost = s.Sum(ii => ii.QtyPurchased * ii.Cost),
+                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                                ii.QtyPurchased * ii.Item.Material.Cost :
+                                ii.QtyPurchased * ii.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+                        });
+                    break;
+
+                case GENERALREPORTGROUPBY.SITE:
+                    groupedPurchase = purchaseItems.GroupBy(ii => ii.Purchase.ReceivingSiteId)
+                        .Select(s => new ReportSingleItem
+                        {
+                            Key = s.Key,
+                            Label = s.First().Purchase.ReceivingSite.Name,
+                            Qty = s.Sum(ii => ii.QtyPurchased),
+                            Cost = s.Sum(ii => ii.QtyPurchased * ii.Cost),
+                            CurrentValue = s.Sum(ii => ii.Item.Equipment == null ?
+                                ii.QtyPurchased * ii.Item.Material.Cost :
+                                ii.QtyPurchased * ii.Item.Equipment.EquipmentModels
+                                    .Where(em => em.EquipmentModelId == ii.EquipmentModelId).First().Cost)
+                        });
+                    break;
+            }
+
+            return groupedPurchase;
+        }
 
         public async Task<IEnumerable<ReportSingleItem>> GetReceiveReport(GeneralReportDTO reportDTO)
         {
-            var transferOutItems = await _context.ReceiveItems
+            var receiveItems = await _context.ReceiveItems
                 .Where(ii => ii.Receive.Status >= RECEIVESTATUS.RECEIVED &&
                 //date
                 (reportDTO.DateFrom == null || ii.Receive.ReceiveDate >= reportDTO.DateFrom) &&
@@ -40,12 +227,12 @@ namespace ERP.Services.ReportServices
                 .Include(ii => ii.Receive.ReceivingSite)
                 .ToListAsync();
 
-            IEnumerable<ReportSingleItem>? groupedTransfer = new List<ReportSingleItem>();
+            IEnumerable<ReportSingleItem>? groupedReceive = new List<ReportSingleItem>();
 
             switch (reportDTO.GroupBy)
             {
                 case GENERALREPORTGROUPBY.ITEM:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.ItemId)
+                    groupedReceive = receiveItems.GroupBy(ii => ii.ItemId)
                         .Select(s => new ReportSingleItem
                         {
                             Key = s.Key,
@@ -60,7 +247,7 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case GENERALREPORTGROUPBY.CATEGORY:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Item.Equipment != null ? ii.Item.Equipment.EquipmentCategoryId : 0)
+                    groupedReceive = receiveItems.GroupBy(ii => ii.Item.Equipment != null ? ii.Item.Equipment.EquipmentCategoryId : 0)
                         .Select(s => new ReportSingleItem
                         {
                             Key = s.Key,
@@ -75,7 +262,7 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case GENERALREPORTGROUPBY.MODEL:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.EquipmentModelId)
+                    groupedReceive = receiveItems.GroupBy(ii => ii.EquipmentModelId)
                         .Select(s => new ReportSingleItem
                         {
                             Key = s.Key,
@@ -94,7 +281,7 @@ namespace ERP.Services.ReportServices
 
 
                 case GENERALREPORTGROUPBY.DATE:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Receive.ReceiveDate.Value.Date)
+                    groupedReceive = receiveItems.GroupBy(ii => ii.Receive.ReceiveDate.Value.Date)
                        .Select(s => new ReportSingleItem
                        {
                            Key = s.First().Receive.ReceiveDate.Value.Date,
@@ -110,7 +297,7 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case GENERALREPORTGROUPBY.WEEK:
-                    groupedTransfer = transferOutItems.GroupBy(ii =>
+                    groupedReceive = receiveItems.GroupBy(ii =>
                     new
                     {
                         Week = ii.Receive.ReceiveDate.Value.DayOfYear / 7,
@@ -131,7 +318,7 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case GENERALREPORTGROUPBY.MONTH:
-                    groupedTransfer = transferOutItems.GroupBy(ii =>
+                    groupedReceive = receiveItems.GroupBy(ii =>
                     new
                     {
                         Month = ii.Receive.ReceiveDate.Value.Month,
@@ -152,7 +339,7 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case GENERALREPORTGROUPBY.YEAR:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Receive.ReceiveDate.Value.Year)
+                    groupedReceive = receiveItems.GroupBy(ii => ii.Receive.ReceiveDate.Value.Year)
                        .Select(s => new ReportSingleItem
                        {
                            Key = s.First().Receive.ReceiveDate.Value.Date,
@@ -168,7 +355,7 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case GENERALREPORTGROUPBY.EMPLOYEE:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Receive.ReceivedById ?? 0)
+                    groupedReceive = receiveItems.GroupBy(ii => ii.Receive.ReceivedById ?? 0)
                         .Select(s => new ReportSingleItem
                         {
                             Key = s.Key,
@@ -184,7 +371,7 @@ namespace ERP.Services.ReportServices
                     break;
 
                 case GENERALREPORTGROUPBY.SITE:
-                    groupedTransfer = transferOutItems.GroupBy(ii => ii.Receive.ReceivingSiteId)
+                    groupedReceive = receiveItems.GroupBy(ii => ii.Receive.ReceivingSiteId)
                         .Select(s => new ReportSingleItem
                         {
                             Key = s.Key,
@@ -199,9 +386,8 @@ namespace ERP.Services.ReportServices
                     break;
             }
 
-            return groupedTransfer;
+            return groupedReceive;
         }
-
 
         public async Task<IEnumerable<ReportSingleItem>> GetMinStockReport(GeneralReportDTO reportDTO)
         {

@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 function SimpleReportTable({ title, data, groupBy }) {
     return (
         <>
-            <h1 className="display-6 text-center mb-2 fs-4">{title}</h1>
+            <h1 className="text-center mb-2 fs-4">{title}</h1>
             <Container fluid className="px-4 pb-4">
                 <Table responsive striped bordered hover>
                     <thead>

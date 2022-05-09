@@ -33,9 +33,7 @@ namespace ERP.Models
 
         public int? ReceivedById { get; set; }
 
-        public Employee DeliveredBy { get; set; }
-
-        public int? DeliveredById { get; set; }
+        public string? DeliveredBy { get; set; }
 
         public Employee SentBy { get; set; }
 

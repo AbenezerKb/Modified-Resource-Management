@@ -5,11 +5,7 @@ function BorrowStatusBadge(status) {
     const color = ["danger", "info", "success", "secondary"];
 
     return (
-        <Badge
-            className="mt-1"
-            bg={color[status]}
-            style={{ width: "90px", fontSize: "14px" }}
-        >
+        <Badge pill className="mt-1" bg={color[status]} style={{ width: "90px", fontSize: "14px" }}>
             {BORROWSTATUS[status]}
         </Badge>
     );

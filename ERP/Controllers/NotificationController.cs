@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.Models;
 using ERP.Services.NotificationServices;
+using ERP.Services.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,18 +13,21 @@ namespace ERP.Controllers
     [Authorize(Roles = "Employee")]
     public class NotificationController : Controller
     {
-        private readonly DataContext _context;
         private readonly INotificationService _notificationService;
+        private readonly IUserService _userService;
 
-        public NotificationController(DataContext context, INotificationService notificationService)
+        public NotificationController(INotificationService notificationService, IUserService userService)
         {
-            _context = context;
             _notificationService = notificationService;
+            _userService = userService;
         }
 
         [HttpGet("all")]
         public async Task<ActionResult<List<Notification>>> GetAll()
         {
+            if (!_userService.UserRole.IsAdmin)
+                return Forbid();
+
             List<Notification> notifications = await _notificationService.GetAllNotifications();
 
             return Ok(notifications);
@@ -31,7 +35,7 @@ namespace ERP.Controllers
 
 
 
-            [HttpGet]
+        [HttpGet]
         public async Task<ActionResult<List<Notification>>> Get()
         {
             List<Notification> notifications = await _notificationService.GetUserNotifications();
@@ -42,8 +46,15 @@ namespace ERP.Controllers
         [HttpGet("clear/{notificationId}")]
         public async Task<ActionResult<bool>> Clear(int notificationId)
         {
-            var res = await _notificationService.Clear(notificationId);
-            return Ok(res);
+            var notification = await _notificationService.GetNotification(notificationId);
+
+            if (_userService.UserRole.IsAdmin ||
+                    _userService.Employee.EmployeeSiteId == notification.SiteId ||
+                    _userService.Employee.EmployeeId == notification.EmployeeId)
+                return Ok(await _notificationService.Clear(notificationId));
+
+            return Forbid();
+
         }
 
         [HttpGet("now")]

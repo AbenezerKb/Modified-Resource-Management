@@ -37,6 +37,19 @@ namespace ERP.Services.MaintenanceServices
             return maintenance;
         }
 
+        public async Task<List<EquipmentAsset>> GetItems(int modelId)
+        {
+            checkEmployeeSiteIsAvailable();
+            UserRole userRole = _userService.UserRole;
+            int siteId = (int)_userService.Employee.EmployeeSiteId;
+
+            var items = await _context.EquipmentAssets
+                .Where(ea => ea.EquipmentModelId == modelId && ea.AssetDamageId != null && ea.CurrentSiteId == siteId)
+                .ToListAsync();
+
+            return items;
+        }
+
         public async Task<List<Maintenance>> GetByCondition()
         {
             checkEmployeeSiteIsAvailable();
@@ -168,6 +181,7 @@ namespace ERP.Services.MaintenanceServices
         {
             var maintenance = await _context.Maintenances
                 .Where(m => m.MaintenanceId == fixDTO.MaintenanceId)
+                .Include(m=>m.EquipmentAsset)
                 .FirstOrDefaultAsync();
             if (maintenance == null) throw new KeyNotFoundException("Maintenance Request Not Found.");
 
@@ -175,6 +189,7 @@ namespace ERP.Services.MaintenanceServices
             maintenance.FixDate = DateTime.Now;
             maintenance.FixedById = _userService.Employee.EmployeeId;
             maintenance.FixRemark = fixDTO.FixRemark;
+            maintenance.EquipmentAsset.AssetDamageId = null;
 
             maintenance.Status = MAINTENANCESTATUS.FIXED;
 

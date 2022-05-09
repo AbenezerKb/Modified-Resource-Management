@@ -5,11 +5,7 @@ function TransferStatusBadge(status) {
     const color = ["danger", "info", "success", "primary", "secondary"];
 
     return (
-        <Badge
-            className="mt-1"
-            bg={color[status]}
-            style={{ width: "90px", fontSize: "14px" }}
-        >
+        <Badge pill className="mt-1" bg={color[status]} style={{ width: "90px", fontSize: "14px" }}>
             {TRANSFERSTATUS[status]}
         </Badge>
     );

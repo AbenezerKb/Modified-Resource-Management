@@ -11,6 +11,7 @@ import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
 import { FaPlus } from "react-icons/fa";
 import { fetchEmployees } from "../../../api/employee";
+import { uploadFileAPI } from "../../../api/file";
 
 function NewReturn() {
     const navigate = useNavigate();
@@ -18,13 +19,12 @@ function NewReturn() {
     const [requestedBy, setRequestedBy] = useState(0);
     const [addedItems, setAddedItems] = useState([new Item()]);
 
-    const [allSites, setAllSites] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
+    const [isUploadError, setIsUploadError] = useState(false);
 
     const sitesQuery = useQuery("sites", fetchSites, {
         onSuccess: (data) => {
-            setAllSites(data);
             setReturnSite(data[0].siteId);
         },
     });
@@ -39,8 +39,8 @@ function NewReturn() {
     }, [sitesQuery.isLoading, employeesQuery.isLoading]);
 
     useEffect(() => {
-        setIsError(sitesQuery.isError);
-    }, [sitesQuery.isError]);
+        setIsError(isUploadError || sitesQuery.isError);
+    }, [isUploadError, sitesQuery.isError]);
 
     const {
         isError: isSubmitError,
@@ -51,14 +51,24 @@ function NewReturn() {
         onSuccess: (res) => navigate(`/return/${res.data}`),
     });
 
-    function submit(e) {
+    async function uploadFile(file) {
+        const data = new FormData();
+        data.append("file", file);
+
+        try {
+            return await uploadFileAPI(data);
+        } catch {
+            setIsUploadError(true);
+        }
+    }
+
+    async function submit(e) {
         e.preventDefault();
         if (isSubmitLoading) return;
 
         var data = {
             siteId: returnSite,
             requestedById: requestedBy,
-            returnedById: 1, ////////////////////////////////////////////////////////////////////////////////
             borrowAssets: [],
         };
 
@@ -70,6 +80,8 @@ function NewReturn() {
                 assetDamageId: item.assetDamageId,
                 returnRemark: item.returnRemark,
             };
+
+            if (item.file !== null) tempItem.fileName = await uploadFile(item.file);
 
             data.borrowAssets.push(tempItem);
         }

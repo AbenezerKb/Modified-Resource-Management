@@ -4,8 +4,6 @@
     {
         public int ReceieveId { get; set; }
 
-        public string ApproveRemark { get; set; }
-
     }
 
 }

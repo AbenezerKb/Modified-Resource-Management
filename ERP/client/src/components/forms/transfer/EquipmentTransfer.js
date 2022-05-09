@@ -11,11 +11,13 @@ import { fetchEquipments } from "../../../api/item";
 import { requestEquipmentTransfer } from "../../../api/transfer";
 import LoadingSpinner from "../../fragments/LoadingSpinner";
 import ConnectionError from "../../fragments/ConnectionError";
+import { useAuth } from "../../../contexts/AuthContext";
 
 function EquipmentTransfer() {
     const navigate = useNavigate();
     const [sendSite, setSendSite] = useState(0);
     const [addedItems, setAddedItems] = useState([new Item()]);
+    const auth = useAuth();
 
     const [allSites, setAllSites] = useState([]);
     const [allItems, setAllItems] = useState([]);
@@ -24,7 +26,7 @@ function EquipmentTransfer() {
 
     const sitesQuery = useQuery("sites", fetchSites, {
         onSuccess: (data) => {
-            setAllSites(data);
+            setAllSites(data.filter((site) => site.siteId != auth.data.employee.employeeSiteId));
             setSendSite(data[0].siteId);
         },
     });
@@ -55,7 +57,6 @@ function EquipmentTransfer() {
 
         var data = {
             sendSiteId: Number(sendSite),
-            requestedById: 1, ////////////////////////////////////////////////////////////////////////////////
             transferItems: [],
         };
 

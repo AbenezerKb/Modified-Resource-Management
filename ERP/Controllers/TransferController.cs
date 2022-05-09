@@ -15,22 +15,17 @@ namespace ERP.Controllers
 
     [Route("/api/[controller]")]
     [ApiController]
-    //comment out the line below to disable the authorization
     [Authorize(Roles = "Employee")]
     public class TransferController : Controller
     {
         private readonly ITransferService _transferService;
-        private readonly DataContext context;
-        private readonly INotificationService notificationManager;
 
         private readonly IUserService _userService;
 
 
-        public TransferController(ITransferService transferService, DataContext context, IUserService userService, INotificationService notificationManager)
+        public TransferController(ITransferService transferService, IUserService userService)
         {
             _transferService = transferService;
-            this.context = context;
-            this.notificationManager = notificationManager;
 
             _userService = userService;
         }
@@ -38,13 +33,17 @@ namespace ERP.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Transfer>> Get(int id)
         {
-            //if (UserAccount != null && UserAccount.UserRole.CanViewTransfer != 1) return Forbid();
-
-            //if(_userService == null || !_userService.UserRole.CanViewTransfer)
             try
             {
                 Transfer transfer = await _transferService.GetById(id);
-                return Ok(transfer);
+                
+                if( _userService.UserRole.IsAdmin || _userService.UserRole.IsFinance ||
+                    (_userService.UserRole.CanViewTransfer && _userService.Employee.EmployeeSiteId == transfer.SendSiteId) ||
+                    (_userService.UserRole.CanViewTransfer && _userService.Employee.EmployeeSiteId == transfer.ReceiveSiteId) ||
+                    _userService.Employee.EmployeeId == transfer.RequestedById)
+                    return Ok(transfer);
+
+                return Forbid();
             }
             catch (KeyNotFoundException ex)
             {
@@ -52,18 +51,6 @@ namespace ERP.Controllers
             }
 
             
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<List<Transfer>>> Get()
-        {
-
-            var transfers = await context.Transfers
-                .Include(transfer => transfer.SendSite)
-                .Include(transfer => transfer.ReceiveSite)
-                .ToListAsync();
-
-            return Ok(transfers);
         }
 
         [HttpPost]
@@ -78,6 +65,8 @@ namespace ERP.Controllers
         [HttpPost("request/equipment")]
         public async Task<ActionResult<int>> RequestEquipment(CreateEquipmentTransferDTO transferDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanRequestTransfer)
+                return Forbid();
 
             try
             {
@@ -97,7 +86,9 @@ namespace ERP.Controllers
         [HttpPost("request/material")]
         public async Task<ActionResult<List<Transfer>>> RequestMaterial(CreateMaterialTransferDTO transferDTO)
         {
-            
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanRequestTransfer)
+                return Forbid();
+
             try
             {
                 var transfer = await _transferService.RequestMaterial(transferDTO);
@@ -116,6 +107,9 @@ namespace ERP.Controllers
         [HttpPost("approve")]
         public async Task<ActionResult<Transfer>> Approve(ApproveTransferDTO approveDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanApproveTransfer)
+                return Forbid();
+
             try
             {
                 var transfer = await _transferService.ApproveTransfer(approveDTO);
@@ -130,6 +124,9 @@ namespace ERP.Controllers
         [HttpPost("decline")]
         public async Task<ActionResult<Transfer>> Decline(DeclineTransferDTO declineDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanApproveTransfer)
+                return Forbid();
+
             try
             {
                 var transfer = await _transferService.DeclineTransfer(declineDTO);
@@ -144,6 +141,8 @@ namespace ERP.Controllers
         [HttpPost("send")]
         public async Task<ActionResult<Transfer>> Send(SendTransferDTO sendDTO)
         {
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanSendTransfer)
+                return Forbid();
 
             try
             {
@@ -160,7 +159,8 @@ namespace ERP.Controllers
         [HttpPost("receive")]
         public async Task<ActionResult<Transfer>> Receive(ReceiveTransferDTO receiveDTO)
         {
-
+            if (!_userService.UserRole.IsAdmin && !_userService.UserRole.CanReceiveTransfer)
+                return Forbid();
 
             try
             {

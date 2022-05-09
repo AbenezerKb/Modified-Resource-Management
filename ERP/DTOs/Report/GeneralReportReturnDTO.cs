@@ -21,6 +21,9 @@
         public Dictionary<string, ReportSingleItem> MinStockSummary { get; set; }
 
         public Dictionary<string, ReportSingleItem> DamageSummary { get; set; }
+
         public Dictionary<string, ReportSingleItem> ReceiveSummary { get; set; }
+
+        public Dictionary<string, ReportSingleItem> PurchaseSummary { get;  set; }
     }
 }

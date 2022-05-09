@@ -2,6 +2,8 @@
 using ERP.DTOs;
 using ERP.DTOs.Purchase;
 using ERP.Models;
+using ERP.Services.NotificationServices;
+using ERP.Services.PurchaseServices;
 using ERP.Services.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,48 +19,35 @@ namespace ERP.Controllers
     [Authorize(Roles = "Employee")]
     public class PurchaseController : Controller
     {
+        private readonly IPurchaseService _purchaseService;
         private readonly DataContext context;
+        private readonly INotificationService notificationManager;
+
         private readonly IUserService _userService;
 
-        public UserAccount? UserAccount { get; }
-
-        public Employee Employee { get; }
-
-        public PurchaseController(DataContext context, IUserService userService)
+        public PurchaseController(IPurchaseService purchaseService, DataContext context, IUserService userService)
         {
+            _purchaseService = purchaseService;
             this.context = context;
+            this.notificationManager = notificationManager;
 
             _userService = userService;            
 
-            UserAccount = context.UserAccounts
-                .Where(u => u.Username == _userService.GetMyName())
-                .Include(u => u.Employee)
-                .ThenInclude(e => e.UserRole)
-                .FirstOrDefault();
-
-            Employee = UserAccount.Employee;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Purchase>> Get(int id)
+        public async Task<ActionResult<Purchase>> GetById(int id)
         {
             //if (UserAccount != null && UserAccount.UserRole.CanViewPurchase != 1) return Forbid();
-
-            var purchase = context.Purchases.Where(purchase => purchase.PurchaseId == id)
-               .Include(purchase => purchase.RequestedBy)
-               .Include(purchase => purchase.CheckedBy)
-               .Include(purchase => purchase.ApprovedBy)
-               .Include(purchase => purchase.ReceivingSite)
-               .Include(purchase => purchase.PurchaseItems)
-               .ThenInclude(purchaseItem => purchaseItem.Item)
-               .ThenInclude(item => item.Material)
-               .Include(purchase => purchase.PurchaseItems)
-               .ThenInclude(purchaseItem => purchaseItem.Item.Equipment)
-               .FirstOrDefault();
-
-            if (purchase == null) return NotFound("Purchase Not Found.");
-
-            return Ok(purchase);
+            try
+            {
+                Purchase purchase = await _purchaseService.GetById(id);
+                return Ok(purchase);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpGet]
@@ -74,60 +63,53 @@ namespace ERP.Controllers
             return Ok(purchases);
         }
 
-        [HttpPost("request")]
-        public async Task<ActionResult<List<Purchase>>> Post(CreatePurchaseDTO purchaseDTO)
+        [HttpPost]
+        public async Task<ActionResult<List<Purchase>>> GetByParams(GetPurchasesDTO getPurchasesDTO)
+        {
+
+            var purchases = await _purchaseService.GetByCondition(getPurchasesDTO);
+
+            return Ok(purchases);
+        }
+
+        [HttpPost("request/material")]
+        public async Task<ActionResult<int>> RequestMaterial(CreateMaterialPurchaseDTO purchaseDTO)
         {
             //if (UserAccount != null && UserAccount.UserRole.CanRequestPurchase != 1) return Forbid();
 
-            Purchase purchase = new();
-            purchase.RequestedById = Employee.EmployeeId;
-            purchase.ReceivingSiteId = purchaseDTO.ReceivingSiteId;
-
-            ICollection<PurchaseItem> purchaseItems = new List<PurchaseItem>();
-            ICollection<PurchaseItemEmployee> purchaseItemEmployees = new List<PurchaseItemEmployee>();
-            
-            foreach (var requestItem in purchaseDTO.PurchaseItems)
+            try
             {
-                PurchaseItem purchaseItem = new();
-                purchaseItem.ItemId = requestItem.ItemId;
-                purchaseItem.QtyRequested = requestItem.QtyRequested;
-                purchaseItem.RequestRemark = requestItem.RequestRemark;
-
-                var itemTemp = context.Items.Where(item => item.ItemId == requestItem.ItemId).
-                    Include(i => i.Equipment).
-                    Include(i => i.Material).
-                    FirstOrDefault();
-
-                if (itemTemp == null) return NotFound($"Purchase Item with Id {requestItem.ItemId} Not Found");
-
-                if (itemTemp.Type == ITEMTYPE.MATERIAL)
-                {
-                    purchaseItem.Cost = itemTemp.Material.Cost;
-                    purchaseItem.TotalCost = itemTemp.Material.Cost * purchaseItem.QtyRequested;
-                }
-               
-                purchaseItems.Add(purchaseItem);
-
-                purchase.TotalPurchaseCost += purchaseItem.TotalCost;
-            
-                PurchaseItemEmployee purchaseItemEmployee = new();
-                purchaseItemEmployee.ItemId = requestItem.ItemId;
-
-                purchaseItemEmployee.RequestedById = Employee.EmployeeId;
-                purchaseItemEmployee.QtyRequested = requestItem.QtyRequested;
-                purchaseItemEmployee.RequestRemark = requestItem.RequestRemark;
-                purchaseItemEmployees.Add(purchaseItemEmployee);
-
+                var purchase = await _purchaseService.RequestMaterial(purchaseDTO);
+                return Ok(purchase.PurchaseId);
             }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
-            purchase.PurchaseItems = purchaseItems;
-            purchase.PurchaseItemEmployees = purchaseItemEmployees;
+        [HttpPost("request/equipment")]
+        public async Task<ActionResult<List<Purchase>>> RequestEquipment (CreateEquipmentPurchaseDTO purchaseDTO)
+        {
+            //if (UserAccount != null && UserAccount.UserRole.CanRequestPurchase != 1) return Forbid();
 
-            context.Purchases.Add(purchase);
-
-            await context.SaveChangesAsync();
-
-            return Ok(purchase.PurchaseId);
+            try
+            {
+                var purchase = await _purchaseService.RequestEquipment(purchaseDTO);
+                return Ok(purchase.PurchaseId);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPost("approve")]
@@ -135,41 +117,31 @@ namespace ERP.Controllers
         {
             //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
 
-            var purchase = context.Purchases
-                 .Where(t => t.PurchaseId == approveDTO.PurchaseId)
-                 .Include(t => t.PurchaseItems)
-                 .FirstOrDefault();
-            if (purchase == null) return NotFound("Request Not Found.");
-
-            purchase.ApproveDate = DateTime.Now;
-            purchase.ApprovedById = Employee.EmployeeId;
-
-            foreach (var requestItem in approveDTO.PurchaseItems)
+            try
             {
-                var purchaseItem = purchase.PurchaseItems
-                    .Where(purchaseItem => purchaseItem.ItemId == requestItem.ItemId)
-                    .FirstOrDefault();
-
-                if (purchaseItem == null) return NotFound($"Purchase Item with Id {requestItem.ItemId} Not Found");
-
-                purchaseItem.QtyApproved = requestItem.QtyApproved;
-                purchaseItem.TotalCost = purchaseItem.Cost * purchaseItem.QtyApproved;
-                purchaseItem.ApproveRemark = requestItem.ApproveRemark;
-
+                var purchase = await _purchaseService.ApprovePurchase(approveDTO);
+                return Ok(purchase);
             }
-
-            purchase.TotalPurchaseCost = 0;
-            
-            foreach (var purchaseItem in purchase.PurchaseItems)
+            catch (KeyNotFoundException ex)
             {
-                purchase.TotalPurchaseCost += purchaseItem.TotalCost;
+                return NotFound(ex.Message);
             }
+        }
 
-            purchase.Status = PURCHASESTATUS.APPROVED;
+        [HttpPost("decline")]
+        public async Task<ActionResult<Purchase>> Decline(ApprovePurchaseDTO declineDTO)
+        {
+            //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
 
-            await context.SaveChangesAsync();
-
-            return Ok(purchase);
+            try
+            {
+                var purchase = await _purchaseService.DeclinePurchase(declineDTO);
+                return Ok(purchase);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpPost("check")]
@@ -177,63 +149,48 @@ namespace ERP.Controllers
         {
             //if (UserAccount != null && UserAccount.UserRole.CanCheckPurchase != 1) return Forbid();
 
-            var purchase = await context.Purchases.FindAsync(checkDTO.PurchaseId);
-
-            if (purchase == null) return NotFound("Request Not Found.");
-
-            purchase.CheckDate = DateTime.Now;
-            purchase.CheckedById = Employee.EmployeeId;
-            purchase.Status = PURCHASESTATUS.CHECKED;
-
-            await context.SaveChangesAsync();
-
-            return Ok(purchase);
+            try
+            {
+                var purchase = await _purchaseService.CheckPurchase(checkDTO);
+                return Ok(purchase);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
+
+        [HttpPost("queue")]
+        public async Task<ActionResult<Purchase>> Queue(CheckPurchaseDTO checkDTO)
+        {
+            //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
+
+            try
+            {
+                var purchase = await _purchaseService.QueuePurchase(checkDTO);
+                return Ok(purchase);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
 
         [HttpPost("requestqueued")]
         public async Task<ActionResult<Purchase>> RequestQueuedPurchase(CheckPurchaseDTO checkDTO)
         {
             //if (UserAccount != null && UserAccount.UserRole.CanCheckPurchase != 1) return Forbid();
 
-            var purchase = await context.Purchases.FindAsync(checkDTO.PurchaseId);
-
-            if (purchase == null) return NotFound("Request Not Found.");
-
-            purchase.Status = PURCHASESTATUS.REQUESTED;
-
-            await context.SaveChangesAsync();
-
-            return Ok(purchase);
-        }
-
-        [HttpPost("decline")]
-        public async Task<ActionResult<Purchase>> Decline(ApprovePurchaseDTO approveDTO)
-        {
-            //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
-
-            var purchase = context.Purchases
-                  .Where(t => t.PurchaseId == approveDTO.PurchaseId)
-                  .Include(t => t.PurchaseItems)
-                  .FirstOrDefault();
-
-            if (purchase == null) return NotFound("Purchase Not Found.");
-
-            purchase.ApproveDate = DateTime.Now;
-            purchase.ApprovedById = Employee.EmployeeId;
-            purchase.TotalPurchaseCost = 0;
-
-            foreach (var purchaseItem in purchase.PurchaseItems)
+            try
             {
-                purchaseItem.QtyApproved = 0;
-
-                purchaseItem.TotalCost = 0;
+                var purchase = await _purchaseService.RequestQueuedPurchase(checkDTO);
+                return Ok(purchase);
             }
-
-            purchase.Status = PURCHASESTATUS.DECLINED;
-
-            await context.SaveChangesAsync();
-
-            return Ok(purchase);
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         [HttpPost("confirm")]
@@ -241,60 +198,15 @@ namespace ERP.Controllers
         {
             //if (UserAccount != null && UserAccount.UserRole.CanApprovePurchase != 1) return Forbid();
 
-            var purchase = context.Purchases
-                 .Where(t => t.PurchaseId == confirmDTO.PurchaseId)
-                 .Include(t => t.PurchaseItems)
-                 .FirstOrDefault();
-
-            if (purchase == null) return NotFound("Request Not Found.");
-
-            foreach (var requestItem in confirmDTO.PurchaseItems)
+            try
             {
-                var purchaseItem = purchase.PurchaseItems
-                    .Where(purchaseItem => purchaseItem.ItemId == requestItem.ItemId)
-                    .FirstOrDefault();
-
-                if (purchaseItem == null) return NotFound($"Purchase Item with Id {requestItem.ItemId} Not Found");
-
-                purchaseItem.QtyPurchased = requestItem.QtyPurchased;
-                purchaseItem.PurchaseRemark = requestItem.PurchaseRemark;
-                purchaseItem.TotalCost = purchaseItem.Cost * purchaseItem.QtyPurchased;
-
+                var purchase = await _purchaseService.ConfirmPurchase(confirmDTO);
+                return Ok(purchase);
             }
-
-            purchase.TotalPurchaseCost = 0;
-            foreach (var purchaseItem in purchase.PurchaseItems)
+            catch (KeyNotFoundException ex)
             {
-                purchase.TotalPurchaseCost += purchaseItem.TotalCost;
+                return NotFound(ex.Message);
             }
-
-            purchase.Status = PURCHASESTATUS.PURCHASED;
-
-            await context.SaveChangesAsync();
-
-            //Add receive
-            Receive receive = new();
-            receive.PurchaseId = purchase.PurchaseId;
-            receive.ReceivingSiteId = purchase.ReceivingSiteId;
-            ICollection<ReceiveItem> receiveItems = new List<ReceiveItem>();
-
-            foreach (var requestItem in purchase.PurchaseItems)
-            {
-                ReceiveItem receiveItem = new();
-                receiveItem.ItemId = requestItem.ItemId;
-                receiveItem.QtyPurchased = requestItem.QtyPurchased;
-
-                receiveItems.Add(receiveItem);
-            }
-
-            receive.ReceiveItems = receiveItems;
-            receive.Status = RECEIVESTATUS.PURCHASED;
-
-            context.Receives.Add(receive);
-
-            await context.SaveChangesAsync();
-
-            return Ok(purchase);
         }
     }
 }

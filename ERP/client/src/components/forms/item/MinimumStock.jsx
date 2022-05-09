@@ -3,7 +3,7 @@ import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
 import Header from "../../layouts/Header";
 import FormRow from "../../fragments/FormRow";
 import { ITEMTYPE } from "../../../Constants";
-import { useQuery, useMutation } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import { fetchMaterials, fetchMinimumStockItems, updateMinimumStockItems } from "../../../api/item";
 import { fetchEquipmentCategories, fetchEquipmentCategory } from "../../../api/category";
 import { ToastContainer, toast } from "react-toastify";
@@ -21,6 +21,7 @@ function initFormValues() {
 function MinimumStock() {
     const [formValues, setFormValues] = useState(initFormValues);
     const [stockValues, setStockValues] = useState([]);
+    const queryClient = useQueryClient();
 
     const toastOption = {
         position: "bottom-right",
@@ -30,7 +31,6 @@ function MinimumStock() {
         pauseOnHover: true,
         draggable: true,
         theme: "dark",
-        // progress: undefined
     };
 
     const materialsQuery = useQuery(["materials"], fetchMaterials);
@@ -66,7 +66,7 @@ function MinimumStock() {
     } = useMutation(updateMinimumStockItems, {
         onSuccess: (res) => {
             toast.success("Minimum Stock Updated Succcessfully", toastOption);
-            setStockValues([]);
+            queryClient.invalidateQueries("minimumstock");
         },
     });
 
@@ -80,7 +80,8 @@ function MinimumStock() {
         );
     }
 
-    function submitUpdate() {
+    function submitUpdate(e) {
+        e.preventDefault();
         if (isSubmitLoading) return;
 
         submit(stockValues);
@@ -192,45 +193,47 @@ function MinimumStock() {
                     </Row>
                 ) : null}
 
-                <Row xs={1} lg={2} className="mx-2">
-                    {stockValues?.map((minStockItem) => (
-                        <Col
-                            key={`${minStockItem.siteId}${minStockItem.itemId}${minStockItem.equipmentModelId}`}
-                        >
-                            <Form.Group className="mb-3">
-                                <Row>
-                                    <Col>
-                                        <Form.Label>{minStockItem.name}</Form.Label>
-                                    </Col>
-                                    <Col>
-                                        <Form.Control
-                                            type="number"
-                                            value={minStockItem.qty}
-                                            onChange={stockValueChanged.bind(
-                                                this,
-                                                minStockItem.itemId,
-                                                minStockItem.equipmentModelId
-                                            )}
-                                        />
-                                    </Col>
-                                </Row>
-                            </Form.Group>
-                        </Col>
-                    ))}
-                </Row>
-
-                {stockValues.length ? (
-                    <Row>
-                        <Col className=" d-grid">
-                            <Button className="btn-teal-dark" onClick={submitUpdate}>
-                                {isSubmitLoading && (
-                                    <Spinner className="me-2" animation="grow" size="sm" />
-                                )}
-                                Update Minimum Stock
-                            </Button>
-                        </Col>
+                <Form onSubmit={submitUpdate}>
+                    <Row xs={1} lg={2} className="mx-2">
+                        {stockValues?.map((minStockItem) => (
+                            <Col
+                                key={`${minStockItem.siteId}${minStockItem.itemId}${minStockItem.equipmentModelId}`}
+                            >
+                                <Form.Group className="mb-3">
+                                    <Row>
+                                        <Col>
+                                            <Form.Label>{minStockItem.name}</Form.Label>
+                                        </Col>
+                                        <Col>
+                                            <Form.Control
+                                                type="number"
+                                                value={minStockItem.qty}
+                                                onChange={stockValueChanged.bind(
+                                                    this,
+                                                    minStockItem.itemId,
+                                                    minStockItem.equipmentModelId
+                                                )}
+                                            />
+                                        </Col>
+                                    </Row>
+                                </Form.Group>
+                            </Col>
+                        ))}
                     </Row>
-                ) : null}
+
+                    {stockValues.length ? (
+                        <Row>
+                            <Col className=" d-grid">
+                                <Button className="btn-teal-dark" type="submit">
+                                    {isSubmitLoading && (
+                                        <Spinner className="me-2" animation="grow" size="sm" />
+                                    )}
+                                    Update Minimum Stock
+                                </Button>
+                            </Col>
+                        </Row>
+                    ) : null}
+                </Form>
                 <ToastContainer />
             </Container>
         </>

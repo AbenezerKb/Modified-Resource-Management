@@ -4,6 +4,7 @@ import { Form, Button, InputGroup } from "react-bootstrap";
 import { FaTrash } from "react-icons/fa";
 import { useQuery } from "react-query";
 import { fetchItem, fetchEquipmentModel } from "../../../../api/item";
+import { fetchDamagedAssets } from "../../../../api/maintenance";
 import { fetchEquipmentCategories, fetchEquipmentCategory } from "../../../../api/category";
 import ConnectionError from "../../../fragments/ConnectionError";
 
@@ -20,6 +21,8 @@ function MaintenanceRequestEquipment({ addedItems, setAddedItems, index }) {
     );
     var itemQuery = useQuery(["item", itemId], () => itemId && fetchItem(itemId));
     var modelQuery = useQuery(["model", modelId], () => modelId && fetchEquipmentModel(modelId));
+
+    var assetsQuery = useQuery(["assets", modelId], () => modelId && fetchDamagedAssets(modelId));
 
     useEffect(() => {
         //Initialize asset number entry array
@@ -247,27 +250,28 @@ function MaintenanceRequestEquipment({ addedItems, setAddedItems, index }) {
                                     required
                                 >
                                     <option value="">Select Asset Number</option>
-                                    {modelQuery.data?.equipmentAssets
-                                        ?.filter(
-                                            (currentItem) =>
-                                                addedItems[index].equipmentAssets.filter(
-                                                    (addedItem) =>
-                                                        addedItem.equipmentAssetId ===
-                                                            currentItem.equipmentAssetId.toString() &&
-                                                        addedItem.equipmentAssetId !==
-                                                            addedItems[index].equipmentAssets[
-                                                                assetIndex
-                                                            ].equipmentAssetId
-                                                ).length === 0
-                                        )
-                                        ?.map((equipmentAsset) => (
-                                            <option
-                                                key={equipmentAsset.equipmentAssetId}
-                                                value={equipmentAsset.equipmentAssetId}
-                                            >
-                                                {equipmentAsset.assetNo}
-                                            </option>
-                                        ))}
+                                    {assetsQuery.data &&
+                                        assetsQuery.data
+                                            ?.filter(
+                                                (currentItem) =>
+                                                    addedItems[index].equipmentAssets.filter(
+                                                        (addedItem) =>
+                                                            addedItem.equipmentAssetId ===
+                                                                currentItem.equipmentAssetId.toString() &&
+                                                            addedItem.equipmentAssetId !==
+                                                                addedItems[index].equipmentAssets[
+                                                                    assetIndex
+                                                                ].equipmentAssetId
+                                                    ).length === 0
+                                            )
+                                            ?.map((equipmentAsset) => (
+                                                <option
+                                                    key={equipmentAsset.equipmentAssetId}
+                                                    value={equipmentAsset.equipmentAssetId}
+                                                >
+                                                    {equipmentAsset.assetNo}
+                                                </option>
+                                            ))}
                                 </Form.Select>
                             </Form.Group>
                         </div>

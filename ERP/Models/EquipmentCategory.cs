@@ -9,6 +9,8 @@ namespace ERP.Models
 
         public string Name { get; set; }
 
+        public string? FileName { get; set; }
+
         public ICollection<Equipment> Equipments { get; set; }
 
     }

@@ -6,7 +6,7 @@
 
         public int ReceivedById { get; set; }
 
-        public int DeliveredById { get; set; }
+        public string DeliveredBy { get; set; }
 
         public string VehiclePlateNo { get; set; } = string.Empty;
 

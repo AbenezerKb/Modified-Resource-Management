@@ -10,6 +10,7 @@ namespace ERP.Services.MaintenanceServices
         Task<Maintenance> FixMaintenance(FixMaintenanceDTO fixDTO);
         Task<List<Maintenance>> GetByCondition();
         Task<Maintenance> GetById(int id);
+        Task<List<EquipmentAsset>> GetItems(int modelId);
         Task<Maintenance> RequestMaintenance(CreateMaintenanceDTO maintenanceDTO);
     }
 }

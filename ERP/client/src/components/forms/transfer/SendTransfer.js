@@ -28,7 +28,6 @@ function SendTransfer({ addedItems, setAddedItems, transfer }) {
 
         const data = {
             transferId: transfer.transferId,
-            sentById: 1, ////////////////////////////
             transferItems: [],
         };
 

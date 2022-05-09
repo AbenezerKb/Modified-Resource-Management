@@ -1,134 +1,143 @@
-import { useState } from "react";
-import { Form, Button, Container } from "react-bootstrap";
-import { FaPlus } from "react-icons/fa";
-import Header from "../../layouts/Header";
-import {ToastContainer,toast} from 'react-toastify'
-import { useQuery, useMutation } from "react-query";
-import { addEquipmentModel } from "../../../api/item";
-import { fetchEquipments } from "../../../api/item";
-import LoadingSpinner from "../../fragments/LoadingSpinner";
-import ConnectionError from "../../fragments/ConnectionError";
+import { useEffect, useState } from "react"
+import { Form, Button, Container } from "react-bootstrap"
+import { FaPlus } from "react-icons/fa"
+import Header from "../../layouts/Header"
+import { ToastContainer, toast } from "react-toastify"
+import { useQuery, useMutation } from "react-query"
+import { addEquipmentModel } from "../../../api/item"
+import { fetchEquipments } from "../../../api/item"
+import LoadingSpinner from "../../fragments/LoadingSpinner"
+import ConnectionError from "../../fragments/ConnectionError"
 
 function EquipmentModel() {
-    const [name, setName] = useState("");
-    const [cost, setCost] = useState(0);
-    const [equipmentItem, setEquipmentItem] = useState(0);
-    const [allEquipmentItems, setAllEquipmentItems] = useState([]);
-    
-    const [isLoading, setIsLoading] = useState(false);
-    const [isError, setIsError] = useState(false);
+  const [name, setName] = useState("")
+  const [cost, setCost] = useState(0)
+  const [defaultItem, setDefaultItem] = useState(0)
+  const [equipmentItem, setEquipmentItem] = useState(0)
+  const [allEquipmentItems, setAllEquipmentItems] = useState([])
 
-    const equipmentItemsQuery = useQuery("equipmentItems", fetchEquipments, {
-        onSuccess: (data) => 
-                setAllEquipmentItems(data),
-        });
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
 
-    const toastOption={
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme:"dark"
-        // progress: undefined
-       }
+  const equipmentItemsQuery = useQuery("equipmentItems", fetchEquipments, {
+    onSuccess: (data) => {
+      setAllEquipmentItems(data)
+      setEquipmentItem(data[0].itemId)
+      setDefaultItem(data[0].itemId)
+    },
+  })
 
-    const {
-        isError: isSubmitError,
-        isLoading: isSubmitLoading,
-        mutate: submitEquipmentModelRequest,
-    } = useMutation(addEquipmentModel, {
-        onSuccess: (res) => {
-            toast.success("Equipment Model Is Successfully Added",toastOption);},
-    });
+  useEffect(() => {
+    setIsLoading(equipmentItemsQuery.isLoading)
+  }, [equipmentItemsQuery.isLoading])
 
-    function submit(e) {
-        e.preventDefault();
-        if (isSubmitLoading) return;
+  useEffect(() => {
+    setIsError(equipmentItemsQuery.isError)
+  }, [equipmentItemsQuery.isError])
 
-        var data = {
-            name: String(name),
-            itemId: Number(equipmentItem),
-            cost: Number(cost),
-        };
+  const toastOption = {
+    position: "bottom-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    theme: "dark",
+  }
 
-        setName("");
-        setEquipmentItem(0);
-        setCost(0);
+  const {
+    isError: isSubmitError,
+    isLoading: isSubmitLoading,
+    mutate: submitEquipmentModelRequest,
+  } = useMutation(addEquipmentModel, {
+    onSuccess: () => {
+      toast.success("Equipment Model Is Successfully Added", toastOption)
+    },
+  })
 
-        submitEquipmentModelRequest(data);
+  function submit(e) {
+    e.preventDefault()
+    if (isSubmitLoading) return
+
+    var data = {
+      name: String(name),
+      itemId: Number(equipmentItem),
+      cost: Number(cost),
     }
 
-    if (isError) return <ConnectionError />;
+    setName("")
+    setEquipmentItem(defaultItem)
+    setCost(0)
 
-    if (isLoading) return <LoadingSpinner />;
+    submitEquipmentModelRequest(data)
+  }
 
-    return (
-        <>
-            <Header title="New Equipment Model" />
+  if (isError || isSubmitError) return <ConnectionError />
 
-            <Container className="my-3 align-self-center">
-                <Form onSubmit={submit}>
-                
-                <div className="col-10 shadow py-5 px-5 mx-auto rounded">
-                    <div className="row">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Item</Form.Label>
-                                <Form.Select
-                                    value={equipmentItem}
-                                    onChange={(e) => setEquipmentItem(e.target.value)}
-                                >
-                                    {allEquipmentItems.map((item) => (
-                                        <option key={item.itemId} value={item.itemId}>
-                                            {item.name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
-                            </Form.Group>
-                        </div>
-                    </div>
-                    <div className="row ">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Equipment Model Name</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                />
-                                
-                            </Form.Group>
-                        </div>
-                    </div>
-                    <div className="row ">
-                        <div className="col">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Model Cost</Form.Label>
-                                <Form.Control
-                                    min="1"
-                                    type="number"
-                                    value={cost}
-                                    onChange={(e) => setCost(e.target.value)}
-                                />
-                            </Form.Group>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="d-grid">
-                            <Button type="submit" className="btn-teal">
-                                <FaPlus className="me-2 mb-1" /> Add Equipment Model
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-                </Form>
-                <ToastContainer/>
-            </Container>
-        </>
+  if (isLoading) return <LoadingSpinner />
 
-    );
+  return (
+    <>
+      <Header title="New Equipment Model" />
+
+      <Container className="my-3 align-self-center">
+        <Form onSubmit={submit}>
+          <div className="col-10 shadow py-5 px-5 mx-auto rounded">
+            <div className="row">
+              <div className="col">
+                <Form.Group className="mb-3">
+                  <Form.Label>Item</Form.Label>
+                  <Form.Select
+                    value={equipmentItem}
+                    onChange={(e) => setEquipmentItem(e.target.value)}
+                  >
+                    {allEquipmentItems.map((item) => (
+                      <option key={item.itemId} value={item.itemId}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+              </div>
+            </div>
+            <div className="row ">
+              <div className="col">
+                <Form.Group className="mb-3">
+                  <Form.Label>Equipment Model Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </Form.Group>
+              </div>
+            </div>
+            <div className="row ">
+              <div className="col">
+                <Form.Group className="mb-3">
+                  <Form.Label>Model Cost</Form.Label>
+                  <Form.Control
+                    min="1"
+                    type="number"
+                    value={cost}
+                    onChange={(e) => setCost(e.target.value)}
+                  />
+                </Form.Group>
+              </div>
+            </div>
+            <div className="row">
+              <div className="d-grid">
+                <Button type="submit" className="btn-teal">
+                  <FaPlus className="me-2 mb-1" /> Add Equipment Model
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Form>
+        <ToastContainer />
+      </Container>
+    </>
+  )
 }
 
-export default EquipmentModel;
+export default EquipmentModel

@@ -13,7 +13,5 @@ namespace ERP.Models
 
         public int? PettyCashLimit { get; set; }
 
-        public ICollection<Store> Stores { get; set; }
-
     }
 }

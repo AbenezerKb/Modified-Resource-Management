@@ -17,6 +17,10 @@ namespace ERP.Models
 
         public int RequestedById { get; set; }
 
+        public Site BuySite { get; set; }
+
+        public int BuySiteId { get; set; }
+
         public DateTime? CheckDate { get; set; }
 
         public Employee CheckedBy { get; set; }

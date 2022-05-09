@@ -178,7 +178,7 @@ function SingleIssue() {
                 )}
             </Form>
         );
-    } 
+    }
 
     const titles = useMemo(
         () => ["Declined Issue", "Approve Issue", "Hand Issue", "Completed Issue"],
@@ -191,7 +191,10 @@ function SingleIssue() {
 
     return (
         <>
-            <Header title={titles[issue.status]} />
+            <Header
+                title={titles[issue.status]}
+                showPrint={issue.status === ISSUESTATUS.HANDED || viewOnly}
+            />
 
             <Container className="my-3">
                 <>

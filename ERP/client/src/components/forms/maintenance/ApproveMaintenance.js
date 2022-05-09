@@ -35,7 +35,6 @@ function ApproveMaintenance({ addedItems, setAddedItems, maintenance }) {
 
         const data = {
             maintenanceId: maintenance.maintenanceId,
-            approvedById: 1, ////////////////////////
             approveRemark: addedItems[0].approveRemark,
         };
 

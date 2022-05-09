@@ -25,7 +25,6 @@ function FixMaintenance({ addedItems, setAddedItems, maintenance }) {
 
         const data = {
             maintenanceId: maintenance.maintenanceId,
-            fixedById: 1, ////////////////////////
             fixRemark: addedItems[0].fixRemark,
         };
 
