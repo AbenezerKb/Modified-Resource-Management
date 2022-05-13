@@ -1,7 +1,7 @@
 import React from "react"
 import Header from "../../layouts/Header"
 import Role from "../../../models/Role"
-import { useState, useMemo, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { Form, Button, Container, InputGroup } from "react-bootstrap"
 import { useParams } from "react-router-dom"
 import { FaEdit } from "react-icons/fa"
@@ -16,6 +16,7 @@ function EditRole() {
 
   const [role, setRole] = useState(new Role())
   const [isError, setIsError] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   var query = useQuery(["role", id], () => fetchRole(id))
 
@@ -32,17 +33,19 @@ function EditRole() {
   useEffect(() => {
     if (query.data === undefined) return
     setRole(query.data)
-    console.log(role)
-  }, [])
+    setIsLoading(false)
+  }, [query.data])
 
-  const { isError: isEditError, mutate: submitEditRole } = useMutation(
-    editRole,
-    {
-      onSuccess: (res) => {
-        toast.success("Role Is Successfully Updated", toastOption)
-      },
-    }
-  )
+  const {
+    isError: isSubmitError,
+    isLoading: isSubmitLoading,
+    error: submitError,
+    mutate: submitEditRole,
+  } = useMutation(editRole, {
+    onSuccess: (res) => {
+      toast.success("Role Is Successfully Updated", toastOption)
+    },
+  })
 
   const handleChange = (event) => {
     setRole((state) => {
@@ -62,12 +65,15 @@ function EditRole() {
 
   function submit(e) {
     e.preventDefault()
-    if (isEditLoading) return
+    if (isSubmitLoading) return
 
     submitEditRole(role)
   }
 
-  if (isError) return <ConnectionError />
+  if (isLoading) return <LoadingSpinner />
+
+  if (isSubmitError)
+    return <ConnectionError status={submitError?.response?.status} />
 
   return (
     <>
@@ -83,8 +89,8 @@ function EditRole() {
                     <Form.Label className="col-3 pt-2 h5">Role Name</Form.Label>
                     <Form.Control
                       type="text"
-                      name="Role"
-                      value={role.Role}
+                      name="role"
+                      value={role.role}
                       onChange={valueChange}
                       required
                     />
@@ -105,8 +111,8 @@ function EditRole() {
                       inline
                       label="Can Edit User Acconunt"
                       type="checkbox"
-                      name="CanEditUser"
-                      checked={role.CanEditUser}
+                      name="canEditUser"
+                      checked={role.canEditUser}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -117,8 +123,8 @@ function EditRole() {
                       inline
                       label="Can View Reports (Is User Finance)"
                       type="checkbox"
-                      name="IsFinance"
-                      checked={role.IsFinance}
+                      name="isFinance"
+                      checked={role.isFinance}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -134,8 +140,8 @@ function EditRole() {
                       inline
                       label="Can View Purchase Requests"
                       type="checkbox"
-                      name="CanViewPurchase"
-                      checked={role.CanViewPurchase}
+                      name="canViewPurchase"
+                      checked={role.canViewPurchase}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -146,8 +152,8 @@ function EditRole() {
                       inline
                       label="Can Request Purchase"
                       type="checkbox"
-                      name="CanRequestPurchase"
-                      checked={role.CanRequestPurchase}
+                      name="canRequestPurchase"
+                      checked={role.canRequestPurchase}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -160,8 +166,8 @@ function EditRole() {
                       inline
                       label="Can Check Purchase"
                       type="checkbox"
-                      name="CanCheckPurchase"
-                      checked={role.CanCheckPurchase}
+                      name="canCheckPurchase"
+                      checked={role.canCheckPurchase}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -172,8 +178,8 @@ function EditRole() {
                       inline
                       label="Can Approve Purchase"
                       type="checkbox"
-                      name="CanApprovePurchase"
-                      checked={role.CanApprovePurchase}
+                      name="canApprovePurchase"
+                      checked={role.canApprovePurchase}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -186,8 +192,8 @@ function EditRole() {
                       inline
                       label="Can Confirm Purchase"
                       type="checkbox"
-                      name="CanConfirmPurchase"
-                      checked={role.CanConfirmPurchase}
+                      name="canConfirmPurchase"
+                      checked={role.canConfirmPurchase}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -203,8 +209,8 @@ function EditRole() {
                       inline
                       label="Can View Bulk Purchase Requests"
                       type="checkbox"
-                      name="CanViewBulkPurchase"
-                      checked={role.CanViewBulkPurchase}
+                      name="canViewBulkPurchase"
+                      checked={role.canViewBulkPurchase}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -215,8 +221,8 @@ function EditRole() {
                       inline
                       label="Can Request Bulk Purchase"
                       type="checkbox"
-                      name="CanRequestBulkPurchase"
-                      checked={role.CanRequestBulkPurchase}
+                      name="canRequestBulkPurchase"
+                      checked={role.canRequestBulkPurchase}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -229,8 +235,8 @@ function EditRole() {
                       inline
                       label="Can Approve Bulk Purchase"
                       type="checkbox"
-                      name="CanApproveBulkPurchase"
-                      checked={role.CanApproveBulkPurchase}
+                      name="canApproveBulkPurchase"
+                      checked={role.canApproveBulkPurchase}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -241,8 +247,8 @@ function EditRole() {
                       inline
                       label="Can Confirm Bulk Purchase"
                       type="checkbox"
-                      name="CanConfirmBulkPurchase"
-                      checked={role.CanConfirmBulkPurchase}
+                      name="canConfirmBulkPurchase"
+                      checked={role.canConfirmBulkPurchase}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -258,8 +264,8 @@ function EditRole() {
                       inline
                       label="Can View Buy Requests"
                       type="checkbox"
-                      name="CanViewBuy"
-                      checked={role.CanViewBuy}
+                      name="canViewBuy"
+                      checked={role.canViewBuy}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -270,8 +276,8 @@ function EditRole() {
                       inline
                       label="Can Request Buy"
                       type="checkbox"
-                      name="CanRequestBuy"
-                      checked={role.CanRequestBuy}
+                      name="canRequestBuy"
+                      checked={role.canRequestBuy}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -284,8 +290,8 @@ function EditRole() {
                       inline
                       label="Can Check Buy"
                       type="checkbox"
-                      name="CanCheckBuy"
-                      checked={role.CanCheckBuy}
+                      name="canCheckBuy"
+                      checked={role.canCheckBuy}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -296,8 +302,8 @@ function EditRole() {
                       inline
                       label="Can Approve Buy"
                       type="checkbox"
-                      name="CanApproveBuy"
-                      checked={role.CanApproveBuy}
+                      name="canApproveBuy"
+                      checked={role.canApproveBuy}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -310,8 +316,8 @@ function EditRole() {
                       inline
                       label="Can Confirm Buy"
                       type="checkbox"
-                      name="CanConfirmBuy"
-                      checked={role.CanConfirmBuy}
+                      name="canConfirmBuy"
+                      checked={role.canConfirmBuy}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -327,8 +333,8 @@ function EditRole() {
                       inline
                       label="Can View Receive Requests"
                       type="checkbox"
-                      name="CanViewReceive"
-                      checked={role.CanViewReceive}
+                      name="canViewReceive"
+                      checked={role.canViewReceive}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -339,8 +345,8 @@ function EditRole() {
                       inline
                       label="Can Receive Item"
                       type="checkbox"
-                      name="CanReceive"
-                      checked={role.CanReceive}
+                      name="canReceive"
+                      checked={role.canReceive}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -353,8 +359,8 @@ function EditRole() {
                       inline
                       label="Can Approve Receive"
                       type="checkbox"
-                      name="CanApproveReceive"
-                      checked={role.CanApproveReceive}
+                      name="canApproveReceive"
+                      checked={role.canApproveReceive}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -370,8 +376,8 @@ function EditRole() {
                       inline
                       label="Can View Issue Requests"
                       type="checkbox"
-                      name="CanViewIssue"
-                      checked={role.CanViewIssue}
+                      name="canViewIssue"
+                      checked={role.canViewIssue}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -382,8 +388,8 @@ function EditRole() {
                       inline
                       label="Can Request An Issue"
                       type="checkbox"
-                      name="CanRequestIssue"
-                      checked={role.CanRequestIssue}
+                      name="canRequestIssue"
+                      checked={role.canRequestIssue}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -396,8 +402,8 @@ function EditRole() {
                       inline
                       label="Can Approve An Issue"
                       type="checkbox"
-                      name="CanApproveIssue"
-                      checked={role.CanApproveIssue}
+                      name="canApproveIssue"
+                      checked={role.canApproveIssue}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -408,8 +414,8 @@ function EditRole() {
                       inline
                       label="Can Hand An Issue"
                       type="checkbox"
-                      name="CanHandIssue"
-                      checked={role.CanHandIssue}
+                      name="canHandIssue"
+                      checked={role.canHandIssue}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -425,8 +431,8 @@ function EditRole() {
                       inline
                       label="Can View Transfer Requests"
                       type="checkbox"
-                      name="CanViewTransfer"
-                      checked={role.CanViewTransfer}
+                      name="canViewTransfer"
+                      checked={role.canViewTransfer}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -437,8 +443,8 @@ function EditRole() {
                       inline
                       label="Can Request Transfer"
                       type="checkbox"
-                      name="CanRequestTransfer"
-                      checked={role.CanRequestTransfer}
+                      name="canRequestTransfer"
+                      checked={role.canRequestTransfer}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -451,8 +457,8 @@ function EditRole() {
                       inline
                       label="Can Receive Transfer"
                       type="checkbox"
-                      name="CanReceiveTransfer"
-                      checked={role.CanReceiveTransfer}
+                      name="canReceiveTransfer"
+                      checked={role.canReceiveTransfer}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -463,8 +469,8 @@ function EditRole() {
                       inline
                       label="Can Approve Transfer"
                       type="checkbox"
-                      name="CanApproveTransfer"
-                      checked={role.CanApproveTransfer}
+                      name="canApproveTransfer"
+                      checked={role.canApproveTransfer}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -477,8 +483,8 @@ function EditRole() {
                       inline
                       label="Can Send Transfer"
                       type="checkbox"
-                      name="CanSendTransfer"
-                      checked={role.CanSendTransfer}
+                      name="canSendTransfer"
+                      checked={role.canSendTransfer}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -494,8 +500,8 @@ function EditRole() {
                       inline
                       label="Can View Borrow Requests"
                       type="checkbox"
-                      name="CanViewBorrow"
-                      checked={role.CanViewBorrow}
+                      name="canViewBorrow"
+                      checked={role.canViewBorrow}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -506,8 +512,8 @@ function EditRole() {
                       inline
                       label="Can Request Borrow"
                       type="checkbox"
-                      name="CanRequestBorrow"
-                      checked={role.CanRequestBorrow}
+                      name="canRequestBorrow"
+                      checked={role.canRequestBorrow}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -520,8 +526,8 @@ function EditRole() {
                       inline
                       label="Can Approve Borrow"
                       type="checkbox"
-                      name="CanApproveBorrow"
-                      checked={role.CanApproveBorrow}
+                      name="canApproveBorrow"
+                      checked={role.canApproveBorrow}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -532,8 +538,8 @@ function EditRole() {
                       inline
                       label="Can Hand Borrow"
                       type="checkbox"
-                      name="CanHandBorrow"
-                      checked={role.CanHandBorrow}
+                      name="canHandBorrow"
+                      checked={role.canHandBorrow}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -546,8 +552,8 @@ function EditRole() {
                       inline
                       label="Can Return Borrow"
                       type="checkbox"
-                      name="CanReturnBorrow"
-                      checked={role.CanReturnBorrow}
+                      name="canReturnBorrow"
+                      checked={role.canReturnBorrow}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -563,8 +569,8 @@ function EditRole() {
                       inline
                       label="Can View Maintenance Requests"
                       type="checkbox"
-                      name="CanViewMaintenance"
-                      checked={role.CanViewMaintenance}
+                      name="canViewMaintenance"
+                      checked={role.canViewMaintenance}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -575,8 +581,8 @@ function EditRole() {
                       inline
                       label="Can Request Maintenance"
                       type="checkbox"
-                      name="CanRequestMaintenance"
-                      checked={role.CanRequestMaintenance}
+                      name="canRequestMaintenance"
+                      checked={role.canRequestMaintenance}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -589,8 +595,8 @@ function EditRole() {
                       inline
                       label="Can Fix Maintenance"
                       type="checkbox"
-                      name="CanFixMaintenance"
-                      checked={role.CanFixMaintenance}
+                      name="canFixMaintenance"
+                      checked={role.canFixMaintenance}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -601,8 +607,8 @@ function EditRole() {
                       inline
                       label="Can Approve Maintenance"
                       type="checkbox"
-                      name="CanApproveMaintenance"
-                      checked={role.CanApproveMaintenance}
+                      name="canApproveMaintenance"
+                      checked={role.canApproveMaintenance}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>
@@ -618,8 +624,8 @@ function EditRole() {
                       inline
                       label="Can Get Stock Notification"
                       type="checkbox"
-                      name="CanGetStockNotification"
-                      checked={role.CanGetStockNotification}
+                      name="canGetStockNotification"
+                      checked={role.canGetStockNotification}
                       onChange={handleChange}
                     ></Form.Check>
                   </Form.Group>

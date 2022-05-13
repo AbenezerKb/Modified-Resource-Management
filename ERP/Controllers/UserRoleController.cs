@@ -102,14 +102,64 @@ namespace ERP.Controllers
         [HttpPost("edit")]
         public async Task<ActionResult<UserRole>> EditRole(UserRole role)
         {
-            var editRole = context.UserRoles.Where(role => role.RoleId == role.RoleId)
+            var userRole = context.UserRoles.Where(role => role.RoleId == role.RoleId)
                .FirstOrDefault();
 
-            if (editRole == null) return NotFound("Role Not Found.");
+            if (userRole == null) return NotFound("Role Not Found.");
 
-            editRole = role;
+            userRole.Role = role.Role;
 
-            return Ok(editRole);
+            userRole.CanRequestBorrow = role.CanRequestBorrow;
+            userRole.CanApproveBorrow = role.CanApproveBorrow;
+            userRole.CanHandBorrow = role.CanHandBorrow;
+            userRole.CanReturnBorrow = role.CanReturnBorrow;
+            userRole.CanViewBorrow = role.CanViewBorrow;
+
+            userRole.CanRequestBuy = role.CanRequestBuy;
+            userRole.CanCheckBuy = role.CanCheckBuy;
+            userRole.CanApproveBuy = role.CanApproveBuy;
+            userRole.CanConfirmBuy = role.CanConfirmBuy;
+            userRole.CanViewBuy = role.CanViewBuy;
+
+            userRole.CanReceive = role.CanReceive;
+            userRole.CanApproveReceive = role.CanApproveReceive;
+            userRole.CanViewReceive = role.CanViewReceive;
+
+            userRole.CanEditUser = role.CanEditUser;
+
+            userRole.CanRequestPurchase = role.CanRequestPurchase;
+            userRole.CanCheckPurchase = role.CanCheckPurchase;
+            userRole.CanApprovePurchase = role.CanApprovePurchase;
+            userRole.CanConfirmPurchase = role.CanConfirmPurchase;
+            userRole.CanViewPurchase = role.CanViewPurchase;
+
+            userRole.CanRequestBulkPurchase = role.CanRequestBulkPurchase;
+            userRole.CanApproveBulkPurchase = role.CanApproveBulkPurchase;
+            userRole.CanConfirmBulkPurchase = role.CanConfirmBulkPurchase;
+            userRole.CanViewBulkPurchase = role.CanViewBulkPurchase;
+
+            userRole.CanFixMaintenance = role.CanFixMaintenance;
+            userRole.CanApproveMaintenance = role.CanApproveMaintenance;
+            userRole.CanRequestMaintenance = role.CanRequestMaintenance;
+            userRole.CanViewMaintenance = role.CanViewMaintenance;
+
+            userRole.CanRequestIssue = role.CanRequestIssue;
+            userRole.CanApproveIssue = role.CanApproveIssue;
+            userRole.CanHandIssue = role.CanHandIssue;
+            userRole.CanViewIssue = role.CanViewIssue;
+
+            userRole.CanRequestTransfer = role.CanRequestTransfer;
+            userRole.CanApproveTransfer = role.CanApproveTransfer;
+            userRole.CanReceiveTransfer = role.CanReceiveTransfer;
+            userRole.CanSendTransfer = role.CanSendTransfer;
+            userRole.CanViewTransfer = role.CanViewTransfer;
+
+            userRole.CanGetStockNotification = role.CanGetStockNotification;
+            userRole.IsFinance = role.IsFinance;
+
+            await context.SaveChangesAsync();
+
+            return Ok(userRole);
         }
     }
 }

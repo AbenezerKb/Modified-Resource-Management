@@ -1,4 +1,4 @@
-import { Form, InputGroup, Table } from "react-bootstrap"
+import { Form } from "react-bootstrap"
 import PropTypes from "prop-types"
 import { useQuery } from "react-query"
 import { fetchEquipmentModel } from "../../../../api/item"
@@ -101,11 +101,6 @@ function ReceiveApproveItem({ addedItems, setAddedItems, index }) {
       </div>
     </div>
   )
-}
-
-ReceiveApproveItem.propTypes = {
-  addedItems: PropTypes.array.isRequired,
-  index: PropTypes.number.isRequired,
 }
 
 export default ReceiveApproveItem

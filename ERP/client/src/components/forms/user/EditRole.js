@@ -42,15 +42,10 @@ function NewRole() {
 
   function valueChanged(e) {
     tempRole[e.target.name] = e.target.checked
-    //setRole(tempRole)
-    console.log(role)
-    console.log(tempRole)
   }
 
   function submit(e) {
     e.preventDefault()
-
-    console.log(tempRole)
 
     submitNewRole(tempRole)
 
@@ -74,7 +69,6 @@ function NewRole() {
                     <Form.Control
                       type="text"
                       onChange={(e) => {
-                        console.log(e.target.value)
                         tempRole.Role = e.target.value
                       }}
                       required

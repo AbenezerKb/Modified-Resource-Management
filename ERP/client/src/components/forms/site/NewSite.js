@@ -52,7 +52,8 @@ function NewSite() {
 
   if (isLoading) return <LoadingSpinner />
 
-  if (isError) return <ConnectionError />
+  if (isSubmitError)
+    return <ConnectionError status={submitError?.response?.status} />
 
   return (
     <>

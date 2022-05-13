@@ -184,6 +184,21 @@ namespace ERP.Services.ItemServices
             return items;
         }
 
+        public async Task<List<EquipmentModel>> GetEquipmentModels()
+        {
+            var models = await _context.EquipmentModels
+                .Include(model => model.Equipment)
+                .ThenInclude(equipment => equipment.Item)
+                .Include(model => model.EquipmentAssets)
+                .OrderBy(model => model.ItemId)
+                .ToListAsync();
+
+            if (models == null) throw new KeyNotFoundException("Equipment Model Not Found");
+
+            return models;
+        }
+
+
         public async Task<Item> GetById(int id)
         {
             var item = await _context.Items
@@ -202,6 +217,8 @@ namespace ERP.Services.ItemServices
         {
             var model = await _context.EquipmentModels
                 .Where(model => model.EquipmentModelId == modelId)
+                .Include(model => model.Equipment)
+                .ThenInclude(equipment => equipment.Item)
                 .Include(model => model.EquipmentAssets)
                 .FirstOrDefaultAsync();
 
@@ -265,6 +282,139 @@ namespace ERP.Services.ItemServices
             }
 
             return qty;
+        }
+
+        public async Task<Item> CreateMaterialItem(CreateMaterialItemDTO materialItemDTO)
+        {
+            Item item = new();
+            item.Type = ITEMTYPE.MATERIAL;
+            item.Name = materialItemDTO.Name;
+
+            _context.Items.Add(item);
+
+            await _context.SaveChangesAsync();
+
+            Material material = new();
+            material.ItemId = item.ItemId;
+            material.Spec = materialItemDTO.Spec;
+            material.Unit = materialItemDTO.Unit;
+            material.Cost = materialItemDTO.Cost;
+            material.IsTransferable = materialItemDTO.IsTransferable;
+
+            _context.Materials.Add(material);
+
+            await _context.SaveChangesAsync();
+
+            return item;
+        }
+
+        public async Task<Item> CreateEquipmentItem(CreateEquipmentItemDTO equipmentItemDTO)
+        {
+            Item item = new();
+            item.Type = ITEMTYPE.EQUIPMENT;
+            item.Name = equipmentItemDTO.Name;
+
+
+            _context.Items.Add(item);
+
+            await _context.SaveChangesAsync();
+
+            Equipment equipment = new();
+            equipment.ItemId = item.ItemId;
+            equipment.Unit = equipmentItemDTO.Unit;
+            equipment.Description = equipmentItemDTO.Description;
+            equipment.EquipmentCategoryId = equipmentItemDTO.EquipmentCategoryId;
+
+            _context.Equipments.Add(equipment);
+
+            await _context.SaveChangesAsync();
+
+            return item;
+        }
+
+        public async Task<EquipmentCategory> CreateEquipmentCategory(CreateEquipmentCategoryDTO equipmentCategoryDTO)
+        {
+            EquipmentCategory equipmentCategory = new();
+            equipmentCategory.Name = equipmentCategoryDTO.Name;
+            equipmentCategory.FileName = equipmentCategoryDTO.FileName;
+
+            _context.EquipmentCategories.Add(equipmentCategory);
+
+            await _context.SaveChangesAsync();
+
+            return equipmentCategory;
+        }
+
+        public async Task<EquipmentModel> CreateEquipmentModel(CreateEquipmentModelDTO equipmentModelDTO)
+        {
+            EquipmentModel equipmentModel = new();
+            equipmentModel.ItemId = equipmentModelDTO.ItemId;
+            equipmentModel.Name = equipmentModelDTO.Name;
+            equipmentModel.Cost = equipmentModelDTO.Cost;
+
+            _context.EquipmentModels.Add(equipmentModel);
+
+            await _context.SaveChangesAsync();
+
+            return equipmentModel;
+        }
+
+        public async Task<Item> EditMaterial(EditMaterialItemDTO materialItemDTO)
+        {
+            var item = await _context.Items
+               .Where(item => item.ItemId == materialItemDTO.ItemId)
+               .Include(i => i.Material)
+               .FirstOrDefaultAsync();
+
+            if (item == null) throw new KeyNotFoundException("Item Not Found");
+
+            item.Name = materialItemDTO.Name;
+
+            item.Material.Spec = materialItemDTO.Spec;
+            item.Material.Unit = materialItemDTO.Unit;
+            item.Material.Cost = materialItemDTO.Cost;
+            item.Material.IsTransferable = materialItemDTO.IsTransferable;
+
+            await _context.SaveChangesAsync();
+
+            return item;
+        }
+
+
+        public async Task<Item> EditEquipment(EditEquipmentItemDTO equipmentItemDTO)
+        {
+            var item = await _context.Items
+               .Where(item => item.ItemId == equipmentItemDTO.ItemId)
+               .Include(i => i.Equipment)
+               .FirstOrDefaultAsync();
+
+            if (item == null) throw new KeyNotFoundException("Item Not Found");
+
+            item.Name = equipmentItemDTO.Name;
+
+            item.Equipment.Unit = equipmentItemDTO.Unit;
+            item.Equipment.Description = equipmentItemDTO.Description;
+            item.Equipment.EquipmentCategoryId = equipmentItemDTO.EquipmentCategoryId;
+
+            await _context.SaveChangesAsync();
+
+            return item;
+        }
+
+        public async Task<EquipmentModel> EditEquipmentModel(EditEquipmentModelDTO equipmentModelDTO)
+        {
+            var equipmentModel = await _context.EquipmentModels
+               .Where(model => model.EquipmentModelId == equipmentModelDTO.EquipmentModelId)
+               .FirstOrDefaultAsync();
+
+            if (equipmentModel == null) throw new KeyNotFoundException("Item Not Found");
+
+            equipmentModel.Name = equipmentModelDTO.Name;
+            equipmentModel.Cost = equipmentModelDTO.Cost;
+
+            await _context.SaveChangesAsync();
+
+            return equipmentModel;
         }
     }
 }

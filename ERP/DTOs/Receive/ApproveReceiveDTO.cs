@@ -2,7 +2,7 @@
 {
     public class ApproveReceiveDTO
     {
-        public int ReceieveId { get; set; }
+        public int ReceiveId { get; set; }
 
     }
 

@@ -28,6 +28,7 @@ function SingleEmployee() {
   const [allUserRole, setAllUserRole] = useState([])
   const [allSite, setAllSite] = useState([])
 
+  const [isError, setIsError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
   var query = useQuery(["employee", id], () => fetchEmployee(id))

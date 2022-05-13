@@ -29,6 +29,9 @@ export const fetchQty = (data) =>
 export const fetchEquipmentModel = (modelId) =>
   api.get(`/item/equipmentmodel/${modelId}`).then((res) => res.data)
 
+export const fetchEquipmentModels = () =>
+  api.get("/item/equipmentmodels").then((res) => res.data)
+
 export const editMaterial = (data) => api.post("/item/material/edit", data)
 
 export const editEquipment = (data) => api.post("/item/equipment/edit", data)

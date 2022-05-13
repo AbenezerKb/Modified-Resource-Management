@@ -21,6 +21,8 @@ namespace ERP.Models
 
         public ICollection<BorrowItem> BorrowItems { get; set; }
 
+        public ICollection<BulkPurchaseItem> BulkPurchaseItems { get; set; }
+        
         public ICollection<PurchaseItem> PurchaseItems { get; set; }
 
         public ICollection<BuyItem> BuyItems { get; set; }

@@ -70,7 +70,7 @@ function EquipmentItem() {
     setName("")
     setUnit("")
     setDescription("")
-    setEquipmentCategory(1)
+    setEquipmentCategory(defaultEquipmentCategory)
 
     submitEquipmentRequest(data)
   }

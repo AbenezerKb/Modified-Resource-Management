@@ -1,25 +1,30 @@
-import { useState, useEffect } from "react"
-import { Form, Button, Container } from "react-bootstrap"
-import { FaEdit } from "react-icons/fa"
+import React from "react"
 import Header from "../../layouts/Header"
-import { fetchSite, editSite } from "../../../api/site"
+import { useEffect, useState } from "react"
+import { Form, Button, Container } from "react-bootstrap"
 import { useParams } from "react-router-dom"
-import { useQuery, useMutation } from "react-query"
+import { FaEdit } from "react-icons/fa"
 import { ToastContainer, toast } from "react-toastify"
-import ConnectionError from "../../fragments/ConnectionError"
+import { useQuery, useMutation } from "react-query"
+import { editEquipmentModel, fetchEquipmentModel } from "../../../api/item"
 import LoadingSpinner from "../../fragments/LoadingSpinner"
+import ConnectionError from "../../fragments/ConnectionError"
 
-function EditSite() {
-  const { id } = useParams()
+function EditEquipmentModel() {
+  const { equipmentModelId } = useParams()
+  const modelId = equipmentModelId
 
   const [name, setName] = useState("")
-  const [location, setLocation] = useState("")
-  const [pettyCashLimit, setPettyCashLimit] = useState(1000)
+  const [cost, setCost] = useState(0)
+  const [equipmentItem, setEquipmentItem] = useState(0)
 
+  const [isLoading, setIsLoading] = useState(false)
   const [isError, setIsError] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
 
-  var query = useQuery(["role", id], () => fetchSite(id))
+  var query = useQuery(
+    ["model", modelId],
+    () => modelId && fetchEquipmentModel(modelId)
+  )
 
   const toastOption = {
     position: "bottom-right",
@@ -34,19 +39,18 @@ function EditSite() {
   useEffect(() => {
     if (query.data === undefined) return
     setName(query.data.name)
-    setLocation(query.data.location)
-    setPettyCashLimit(query.data.pettyCashLimit)
+    setCost(query.data.cost)
+    setEquipmentItem(query.data.equipment.item.name)
     setIsLoading(false)
   }, [query.data])
 
   const {
     isError: isSubmitError,
     isLoading: isSubmitLoading,
-    error: submitError,
-    mutate: submitEditSite,
-  } = useMutation(editSite, {
-    onSuccess: (res) => {
-      toast.success("Site Is Successfully Updated", toastOption)
+    mutate: submitEquipmentModelRequest,
+  } = useMutation(editEquipmentModel, {
+    onSuccess: () => {
+      toast.success("Equipment Model Is Successfully Updated", toastOption)
     },
   })
 
@@ -55,30 +59,41 @@ function EditSite() {
     if (isSubmitLoading) return
 
     var data = {
-      siteId: id,
+      equipmentModelId: equipmentModelId,
       name: String(name),
-      location: String(location),
-      pettyCashLimit: Number(pettyCashLimit),
+      cost: Number(cost),
     }
 
-    submitEditSite(data)
+    submitEquipmentModelRequest(data)
   }
+
+  if (isError || isSubmitError) return <ConnectionError />
 
   if (isLoading) return <LoadingSpinner />
 
-  if (isSubmitError)
-    return <ConnectionError status={submitError?.response?.status} />
-
   return (
     <>
-      <Header title="Edit Site" />
+      <Header title="New Equipment Model" />
+
       <Container className="my-3 align-self-center">
         <Form onSubmit={submit}>
-          <div className="col-10 mx-auto shadow py-5 px-5 rounded">
+          <div className="col-10 shadow py-5 px-5 mx-auto rounded">
+            <div className="row">
+              <div className="col">
+                <Form.Group className="mb-3">
+                  <Form.Label>Item</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={equipmentItem}
+                    readOnly
+                  ></Form.Control>
+                </Form.Group>
+              </div>
+            </div>
             <div className="row ">
               <div className="col">
                 <Form.Group className="mb-3">
-                  <Form.Label>Site Name</Form.Label>
+                  <Form.Label>Equipment Model Name</Form.Label>
                   <Form.Control
                     type="text"
                     value={name}
@@ -90,42 +105,30 @@ function EditSite() {
             <div className="row ">
               <div className="col">
                 <Form.Group className="mb-3">
-                  <Form.Label>Location</Form.Label>
+                  <Form.Label>Model Cost</Form.Label>
                   <Form.Control
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                  />
-                </Form.Group>
-              </div>
-            </div>
-            <div className="row ">
-              <div className="col">
-                <Form.Group className="mb-3">
-                  <Form.Label>Petty Cash Limit</Form.Label>
-                  <Form.Control
+                    min="1"
                     type="number"
-                    value={pettyCashLimit}
-                    onChange={(e) => setPettyCashLimit(e.target.value)}
+                    value={cost}
+                    onChange={(e) => setCost(e.target.value)}
                   />
                 </Form.Group>
               </div>
             </div>
-
             <div className="row">
               <div className="d-grid">
                 <Button type="submit" className="btn-teal">
-                  <FaEdit className="me-2 mb-1" /> Update Site
+                  <FaEdit className="me-2 mb-1" /> Update Equipment Model
                 </Button>
               </div>
             </div>
           </div>
         </Form>
+
         <ToastContainer />
       </Container>
-      <ToastContainer />
     </>
   )
 }
 
-export default EditSite
+export default EditEquipmentModel

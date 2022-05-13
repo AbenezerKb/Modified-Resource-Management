@@ -113,6 +113,15 @@ namespace ERP.Controllers
 
         }
 
+        [HttpGet("equipmentmodels")]
+        public async Task<ActionResult<List<EquipmentModel>>> GetEquipmentModels()
+        {
+            var models = await _itemService.GetEquipmentModels();
+                
+            return Ok(models);
+
+        }
+
         [HttpGet("material")]
         public async Task<ActionResult<List<Item>>> GetMaterial()
         {
@@ -148,24 +157,7 @@ namespace ERP.Controllers
         [HttpPost("material/add")]
         public async Task<ActionResult<List<Item>>> CreateMaterialItem(CreateMaterialItemDTO materialItemDTO)
         {
-            Item item = new();
-            item.Type = ITEMTYPE.MATERIAL;
-            item.Name = materialItemDTO.Name;
-
-            context.Items.Add(item);
-
-            await context.SaveChangesAsync();
-
-            Material material = new();
-            material.ItemId = item.ItemId;
-            material.Spec = materialItemDTO.Spec;
-            material.Unit = materialItemDTO.Unit;
-            material.Cost = materialItemDTO.Cost;
-            material.IsTransferable = materialItemDTO.IsTransferable;
-
-            context.Materials.Add(material);
-
-            await context.SaveChangesAsync();
+            var item = await _itemService.CreateMaterialItem(materialItemDTO);
 
             return Ok(item);
         }
@@ -173,24 +165,7 @@ namespace ERP.Controllers
         [HttpPost("equipment/add")]
         public async Task<ActionResult<List<Item>>> CreateEquipmentItem(CreateEquipmentItemDTO equipmentItemDTO)
         {
-            Item item = new();
-            item.Type = ITEMTYPE.EQUIPMENT;
-            item.Name = equipmentItemDTO.Name;
-
-
-            context.Items.Add(item);
-
-            await context.SaveChangesAsync();
-
-            Equipment equipment = new();
-            equipment.ItemId = item.ItemId;
-            equipment.Unit = equipmentItemDTO.Unit;
-            equipment.Description = equipmentItemDTO.Description;
-            equipment.EquipmentCategoryId = equipmentItemDTO.EquipmentCategoryId;
-
-            context.Equipments.Add(equipment);
-
-            await context.SaveChangesAsync();
+            var item = await _itemService.CreateEquipmentItem(equipmentItemDTO);
 
             return Ok(item);
         }
@@ -198,13 +173,7 @@ namespace ERP.Controllers
         [HttpPost("equipmentcategory/add")]
         public async Task<ActionResult<List<EquipmentCategory>>> CreateEquipmentCategory(CreateEquipmentCategoryDTO equipmentCategoryDTO)
         {
-            EquipmentCategory equipmentCategory = new();
-            equipmentCategory.Name = equipmentCategoryDTO.Name;
-            equipmentCategory.FileName = equipmentCategoryDTO.FileName;
-
-            context.EquipmentCategories.Add(equipmentCategory);
-
-            await context.SaveChangesAsync();
+            var equipmentCategory = await _itemService.CreateEquipmentCategory(equipmentCategoryDTO);
 
             return Ok(equipmentCategory);
         }
@@ -212,18 +181,53 @@ namespace ERP.Controllers
         [HttpPost("equipmentmodel/add")]
         public async Task<ActionResult<List<EquipmentModel>>> CreateEquipmentModel(CreateEquipmentModelDTO equipmentModelDTO)
         {
-            EquipmentModel equipmentModel = new();
-            equipmentModel.ItemId = equipmentModelDTO.ItemId;
-            equipmentModel.Name = equipmentModelDTO.Name;
-            equipmentModel.Cost = equipmentModelDTO.Cost;
-
-            context.EquipmentModels.Add(equipmentModel);
-
-            await context.SaveChangesAsync();
+            var equipmentModel = await _itemService.CreateEquipmentModel(equipmentModelDTO);
 
             return Ok(equipmentModel);
         }
-        
+
+        [HttpPost("material/edit")]
+        public async Task<ActionResult<List<EquipmentModel>>> EditMaterial(EditMaterialItemDTO materialItemDTO)
+        {
+            try
+            {
+                var item = await _itemService.EditMaterial(materialItemDTO);
+                return Ok(item);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPost("equipment/edit")]
+        public async Task<ActionResult<List<EquipmentModel>>> EditEquipmentl(EditEquipmentItemDTO equipmentItemDTO)
+        {
+            try
+            {
+                var item = await _itemService.EditEquipment(equipmentItemDTO);
+                return Ok(item);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPost("equipmentmodel/edit")]
+        public async Task<ActionResult<List<EquipmentModel>>> EditEquipmentModel(EditEquipmentModelDTO equipmentModelDTO)
+        {
+            try
+            {
+                var equipmentModel = await _itemService.EditEquipmentModel(equipmentModelDTO);
+                return Ok(equipmentModel);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
         [HttpPost("qty")]
         public async Task<ActionResult<int>> GetItemSiteQty(GetQtyDTO getQtyDTO)
         {

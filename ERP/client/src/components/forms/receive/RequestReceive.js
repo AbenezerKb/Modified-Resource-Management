@@ -42,7 +42,6 @@ function RequestReceive({ addedItems, setAddedItems, receive }) {
       data.receiveItems.push(tempItem)
     }
 
-    console.log(data)
     submitRequestReceive(data)
   }
 

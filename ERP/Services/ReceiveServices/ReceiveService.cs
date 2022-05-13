@@ -174,7 +174,9 @@ namespace ERP.Services.ReceiveServices
 
         public async Task<Receive> ApproveReceive(ApproveReceiveDTO approveDTO)
         {
-            var receive = await _context.Receives.FindAsync(approveDTO.ReceieveId);
+            var receive = _context.Receives
+                .Where(receive => receive.ReceiveId == approveDTO.ReceiveId)
+                .FirstOrDefault();
 
             if (receive == null) throw new KeyNotFoundException("Receive Not Found.");
 
