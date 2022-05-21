@@ -2,7 +2,7 @@
 {
     public class GENERALREPORTSELECTION
     {
-        public const string INSTOCK = "InStock"; 
+        public const string INSTOCK = "InStock";
         public const string MINSTOCK = "MinStock";
         public const string PURCHASED = "Purchased";
         public const string RECEIVED = "Received";
@@ -12,7 +12,7 @@
         public const string TRANSFERREDIN = "TransferredIn";
         public const string TRANSFERREDOUT = "TransferredOut";
         public const string DAMAGED = "Damaged";
-   
+
     }
 
     public class GENERALREPORTGROUPBY
@@ -53,7 +53,7 @@
         public const string RECEIVEDBY = "ReceivedBy";
         public const string SENDSITE = "SendSite";
         public const string RECEIVESITE = "ReceiveSite";
-        
+
     }
 
     public class PURCHASEREPORTGROUPBY
@@ -190,6 +190,10 @@
         public const string BUY = "buyNotification";
         public const string MINEQUIPMENT = "equipmentMinNotification";
         public const string MINMATERIAL = "materialMinNotification";
+        public const string TaskDeadline = "taskDeadlineNotification";
+        public const string WeeklyTaskPlanSent = "weeklyTaskPlanSentNotification";
+        public const string MainTaskCompletion = "mainTaskCompletionNotification";
+        
     }
 
     public class TRANSFERSTATUS

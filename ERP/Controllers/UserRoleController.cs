@@ -32,11 +32,11 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<UserRole>>> Get()
         {
             var roles = await context.UserRoles.ToListAsync();
-            
+
             return Ok(roles);
         }
 
-        [Authorize(Roles = "Employee")]
+        // [Authorize(Roles = "Employee")]
         [HttpPost("add")]
         public async Task<ActionResult<UserRole>> AddNew(UserRole role)
         {
@@ -66,7 +66,7 @@ namespace ERP.Controllers
             userRole.CanApprovePurchase = role.CanApprovePurchase;
             userRole.CanConfirmPurchase = role.CanConfirmPurchase;
             userRole.CanViewPurchase = role.CanViewPurchase;
-            
+
             userRole.CanRequestBulkPurchase = role.CanRequestBulkPurchase;
             userRole.CanApproveBulkPurchase = role.CanApproveBulkPurchase;
             userRole.CanConfirmBulkPurchase = role.CanConfirmBulkPurchase;

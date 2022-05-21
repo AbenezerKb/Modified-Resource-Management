@@ -20,7 +20,8 @@ builder.Services.AddCors(options =>
                       {
                           builder//.WithOrigins("http://localhost:3000")
                           .AllowAnyOrigin()
-                          .AllowAnyHeader();
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
                       });
 });
 
@@ -36,7 +37,10 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 
 builder.Services.AddControllers().AddJsonOptions(x =>
                 x.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull);
-
+builder.Services.AddControllers().AddJsonOptions(op =>
+{
+    op.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -44,30 +48,31 @@ builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddSwaggerGen(options => {
-    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-    {
-        Description = "Standard Authorization header using the Bearer scheme (\"bearer {token}\")",
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
+builder.Services.AddSwaggerGen(options =>
+{
+    // options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    // {
+    //     Description = "Standard Authorization header using the Bearer scheme (\"bearer {token}\")",
+    //     In = ParameterLocation.Header,
+    //     Name = "Authorization",
+    //     Type = SecuritySchemeType.ApiKey
+    // });
 
-    options.OperationFilter<SecurityRequirementsOperationFilter>();
+    // options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
-            ValidateIssuer = false,
-            ValidateAudience = false
-        };
-    });
+// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//     .AddJwtBearer(options =>
+//     {
+//         options.TokenValidationParameters = new TokenValidationParameters
+//         {
+//             ValidateIssuerSigningKey = true,
+//             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+//                 .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+//             ValidateIssuer = false,
+//             ValidateAudience = false
+//         };
+//     });
 
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -77,6 +82,12 @@ builder.Services.AddAppServices();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<DataContext>();
+    context.Database.Migrate();
+}
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -88,9 +99,9 @@ app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
 
-app.UseAuthentication();
+// app.UseAuthentication();
 
-app.UseAuthorization();
+// app.UseAuthorization();
 
 app.MapControllers();
 
