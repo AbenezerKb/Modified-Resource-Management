@@ -29,9 +29,9 @@ namespace ERP.Controllers
             if (!_userService.UserRole.IsAdmin)
                 return Forbid();
 
-            List<Notification> deadlineNotififcations = await _notificationService.Get(NOTIFICATIONTYPE.TaskDeadline, 0, siteId);
-            List<Notification> weeklyPlanNotifications = await _notificationService.Get(NOTIFICATIONTYPE.WeeklyTaskPlanSent, 0, siteId);
-            List<Notification> taskCompletionNotifications = await _notificationService.Get(NOTIFICATIONTYPE.MainTaskCompletion, 0, siteId);
+            List<Notification> deadlineNotififcations = await _notificationService.Get(NOTIFICATIONTYPE.TaskDeadline, -1, siteId);
+            List<Notification> weeklyPlanNotifications = await _notificationService.Get(NOTIFICATIONTYPE.WeeklyTaskPlanSent, -1, siteId);
+            List<Notification> taskCompletionNotifications = await _notificationService.Get(NOTIFICATIONTYPE.MainTaskCompletion, -1, siteId);
 
 
             List<Notification> allNotifications = new();

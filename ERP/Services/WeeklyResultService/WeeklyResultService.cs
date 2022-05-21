@@ -102,22 +102,30 @@ namespace ERP.Services.WeeklyResultService
                     }
                     wrv.PerformanceSheet.PerformancePoint = wrv.Value;
                 });
-                // var mainTaskId = weeklyResult.Results.First().SubTask?.TaskId;
-                // if (mainTaskId == null) throw new ItemNotFoundException($"Couldn't find a Task with id={mainTaskId}");
-
-                // var performanceSheet = await dbContext.PerformanceSheets.Where(ps => ps.ProjectTaskId == mainTaskId).FirstOrDefaultAsync();
-
-                // if (performanceSheet == null) throw new ItemNotFoundException($"Couldn't find a Performance sheet which was associated with a task with taskId={mainTaskId}");
-
-                // performanceSheet.PerformancePoint = (float)weeklyResult.GetTotalTasksProgress();
-                // Console.WriteLine("Performance Sheet new Value : " + performanceSheet.PerformancePoint);
-                // dbContext.PerformanceSheets.Update(performanceSheet);
-
-
-
             }
             dbContext.WeeklyResults.Update(weeklyResult);
-
+            //Check if the main tasks are completed
+            List<int> mainTaskIds = weeklyResult.Results.Select(wrv => wrv.SubTask!.TaskId).ToList();
+            var mainTasks = dbContext.Tasks.Where(t => mainTaskIds.Contains(t.Id))
+                                           .Include(t => t.SubTasks)
+                                           .ThenInclude(mt => mt.ProjectTask)
+                                           .ThenInclude(pt => pt!.Project)
+                                           .ToList();
+            // add notification    
+            mainTasks.ForEach(async mt =>
+            {
+                if (mt.IsCompleted())
+                {
+                    await dbContext.Notifications.AddAsync(new Notification
+                    {
+                        Title = "Task Completed",
+                        Content = $"{mt.Name} has been completed",
+                        Type = NOTIFICATIONTYPE.MainTaskCompletion,
+                        Status = -1,
+                        SiteId = mt.Project!.SiteId
+                    });
+                }
+            });
             await dbContext.SaveChangesAsync();
             return weeklyResult;
         }

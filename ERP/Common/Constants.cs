@@ -193,7 +193,7 @@
         public const string TaskDeadline = "taskDeadlineNotification";
         public const string WeeklyTaskPlanSent = "weeklyTaskPlanSentNotification";
         public const string MainTaskCompletion = "mainTaskCompletionNotification";
-        
+
     }
 
     public class TRANSFERSTATUS
@@ -249,7 +249,6 @@
         public const int APPROVED = 3;
         public const int PURCHASED = 4;
     }
-
     public class BUYSTATUS
     {
         public const int DECLINED = 0;

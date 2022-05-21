@@ -9,9 +9,9 @@ namespace ERP.Models
         public string Name { get; set; } = string.Empty;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public string SiteId { get; set; } = string.Empty;
-        public string ManagerId { get; set; } = string.Empty;
-        public string CoordinatorId { get; set; } = string.Empty;
+        public int SiteId { get; set; }
+        public int ManagerId { get; set; }
+        public int CoordinatorId { get; set; }
         public Status Status { get; set; }
         [JsonIgnore]
         public List<ProjectTask> Tasks { get; set; } = new();
