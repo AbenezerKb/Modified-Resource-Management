@@ -1,4 +1,5 @@
 ﻿using ERP.Context;
+using ERP.DTOs.Others;
 using ERP.Models;
 using ERP.Services.NotificationServices;
 using ERP.Services.User;
@@ -22,6 +23,29 @@ namespace ERP.Controllers
             _userService = userService;
         }
 
+        [HttpGet("ProjectManagement")]
+        public async Task<ActionResult<CustomApiResponse>> GetNotificationsByType([FromQuery] int siteId)
+        {
+            if (!_userService.UserRole.IsAdmin)
+                return Forbid();
+
+            List<Notification> deadlineNotififcations = await _notificationService.Get(NOTIFICATIONTYPE.TaskDeadline, 0, siteId);
+            List<Notification> weeklyPlanNotifications = await _notificationService.Get(NOTIFICATIONTYPE.WeeklyTaskPlanSent, 0, siteId);
+            List<Notification> taskCompletionNotifications = await _notificationService.Get(NOTIFICATIONTYPE.MainTaskCompletion, 0, siteId);
+
+
+            List<Notification> allNotifications = new();
+            allNotifications.AddRange(deadlineNotififcations);
+            allNotifications.AddRange(weeklyPlanNotifications);
+            allNotifications.AddRange(taskCompletionNotifications);
+
+            return Ok(new CustomApiResponse
+            {
+                Message = "Success",
+                Data = allNotifications.OrderByDescending(n => n.Date).ToList()
+            });
+
+        }
         [HttpGet("all")]
         public async Task<ActionResult<List<Notification>>> GetAll()
         {

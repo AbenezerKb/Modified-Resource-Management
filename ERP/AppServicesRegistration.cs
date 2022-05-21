@@ -19,6 +19,16 @@ using ERP.Services.EquipmentAssetServices;
 using ERP.Services.MiscServices;
 using ERP.Services.FileServices;
 using ERP.Services.DamageServices;
+using ERP.Services.ProjectService;
+using ERP.Services.ProjectTaskService;
+using ERP.Services.SubTaskService;
+using ERP.Services.WeeklyResultService;
+using ERP.Services.ProjectManagementReportService;
+using ERP.Services.ProjectManagementAnalyticsService;
+using ERP.Services.SettingService;
+using ERP.Services.BackgroundServices;
+using ERP.Services.PerformanceSheetService;
+using ERP.Services.WeeklyPlanService;
 
 namespace ERP
 {
@@ -47,7 +57,21 @@ namespace ERP
             services.AddScoped<IBulkPurchaseService, BulkPurchaseService>();
             services.AddScoped<IReceiveService, ReceiveService>();
             services.AddScoped<IDamageService, DamageService>();
+            #region TaskManagement Services
+            services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IProjectTaskService, ProjectTaskService>();
+            services.AddScoped<ISubTaskService, SubTaskService>();
+            services.AddScoped<IWeeklyPlanService, WeeklyPlanService>();
+            services.AddScoped<IWeeklyResultService, WeeklyResultService>();
+            services.AddScoped<IPerformanceSheetService, PerformanceSheetService>();
+            services.AddScoped<IProjectManagementReportService, ProjectManagementReportService>();
+            services.AddScoped<IProjectManagementAnalyticsService, ProjectManagementAnalyticsService>();
+            services.AddScoped<ISettingsService, SettingsService>();
 
+            services.AddHostedService<NotificationBackgroundService>();
+
+
+            #endregion
         }
     }
 }

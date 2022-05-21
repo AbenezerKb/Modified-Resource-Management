@@ -1,4 +1,5 @@
 ﻿using ERP.Models;
+using ERP.Models.Others;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERP.Context
@@ -24,17 +25,17 @@ namespace ERP.Context
         public DbSet<Buy> Buys { get; set; }
 
         public DbSet<BuyItem> BuyItems { get; set; }
-        
+
         public DbSet<Purchase> Purchases { get; set; }
 
         public DbSet<PurchaseItem> PurchaseItems { get; set; }
-        
+
         public DbSet<BulkPurchase> BulkPurchases { get; set; }
-        
+
         public DbSet<BulkPurchaseItem> BulkPurchaseItems { get; set; }
-                
+
         public DbSet<PurchaseItemEmployee> PurchaseItemEmployees { get; set; }
-        
+
         public DbSet<Receive> Receives { get; set; }
 
         public DbSet<ReceiveItem> ReceiveItems { get; set; }
@@ -83,6 +84,19 @@ namespace ERP.Context
 
         public DbSet<Miscellaneous> Miscellaneouses { get; set; }
 
+        #region TaskManagement DbSets
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectTask> Tasks { get; set; }
+        public DbSet<SubTask> SubTasks { get; set; }
+        public DbSet<WeeklyPlan> WeeklyPlans { get; set; }
+        public DbSet<WeeklyResult> WeeklyResults { get; set; }
+        public DbSet<WeeklyResultValue> WeeklyResultValues { get; set; }
+        public DbSet<PerformanceSheet> PerformanceSheets { get; set; }
+        public DbSet<WeeklyPlanValue> WeeklyPlanValues { get; set; }
+        public DbSet<Setting> Settings { get; set; }
+
+        #endregion
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
@@ -100,7 +114,7 @@ namespace ERP.Context
 
             modelBuilder.Entity<TransferItemEquipmentAsset>()
                 .HasKey(o => new { o.TransferId, o.ItemId, o.EquipmentModelId, o.EquipmentAssetId });
-            
+
             modelBuilder.Entity<BorrowItem>()
                 .HasKey(o => new { o.BorrowId, o.ItemId, o.EquipmentModelId });
 
@@ -112,13 +126,13 @@ namespace ERP.Context
 
             modelBuilder.Entity<PurchaseItem>()
                 .HasKey(o => new { o.PurchaseId, o.ItemId, o.EquipmentModelId });
-            
+
             modelBuilder.Entity<BulkPurchaseItem>()
                 .HasKey(o => new { o.BulkPurchaseId, o.ItemId, o.EquipmentModelId });
 
             modelBuilder.Entity<PurchaseItemEmployee>()
                 .HasKey(o => new { o.PurchaseId, o.ItemId, o.EquipmentModelId, o.RequestedById });
-            
+
             modelBuilder.Entity<ReceiveItem>()
                 .HasKey(o => new { o.ReceiveId, o.ItemId, o.EquipmentModelId });
 
@@ -260,7 +274,7 @@ namespace ERP.Context
                   .HasOne(i => i.RequestedBy)
                   .WithMany()
                   .OnDelete(DeleteBehavior.Restrict);
-            
+
             modelBuilder.Entity<BulkPurchase>()
                    .HasOne(i => i.ApprovedBy)
                    .WithMany()
@@ -343,6 +357,108 @@ namespace ERP.Context
                 .WithMany(o => o.BorrowEquipmentAssets)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            #region TaskManagement Config 
+            modelBuilder.Entity<Project>()
+            .Property(p => p.Status)
+            .HasConversion(v => v.ToString(),
+            v => (Models.Others.Status)Enum.Parse(typeof(Models.Others.Status), v));
+
+            modelBuilder.Entity<WeeklyResult>()
+            .Property(wr => wr.Staus)
+            .HasConversion(v => v.ToString(),
+            v => (Models.Others.Status)Enum.Parse(typeof(Models.Others.Status), v));
+
+            modelBuilder
+            .Entity<ProjectTask>()
+            .HasOne<Project>(t => t.Project)
+            .WithMany(p => p.Tasks)
+            .HasForeignKey(t => t.ProjectId);
+
+            modelBuilder
+            .Entity<SubTask>()
+            .HasOne(sub => sub.ProjectTask)
+            .WithMany(t => t.SubTasks)
+            .HasForeignKey(sub => sub.TaskId);
+
+
+            // modelBuilder.Entity<WeeklyPlan>().HasKey(wp => new { wp.WeekNo, wp.Year });
+            // modelBuilder.Entity<WeeklyResult>().HasKey(wr => new { wr.WeekNo, wr.Year });
+
+
+            modelBuilder.Entity<WeeklyPlan>()
+            .HasMany(wp => wp.PlanValues)
+            .WithOne(wpv => wpv.WeeklyPlan)
+            .HasForeignKey(w => w.WeeklyPlanId);
+
+            modelBuilder.Entity<WeeklyPlan>()
+            .HasOne(wp => wp.WeeklyResult)
+            .WithOne(wr => wr.WeeklyPlan)
+            .HasForeignKey<WeeklyResult>(wr => wr.WeeklyPlanId);
+
+
+            modelBuilder
+                .Entity<WeeklyPlan>()
+                .HasOne(wp => wp.Project)
+                .WithMany()
+                .HasForeignKey(wp => wp.ProjectId);
+
+            modelBuilder
+                        .Entity<WeeklyResultValue>()
+                        .HasOne(wrv => wrv.WeeklyResult)
+                        .WithMany(wr => wr.Results)
+                        .HasForeignKey(wrv => wrv.WeeklyResultId);
+
+            modelBuilder.Entity<WeeklyResultValue>()
+                      .HasOne(wrv => wrv.SubTask)
+                      .WithMany(s => s.WeeklyResultValues)
+                      .HasForeignKey(wrv => wrv.SubTaskId);
+
+            modelBuilder.Entity<PerformanceSheet>()
+                        .HasOne(ps => ps.ProjectTask)
+                        .WithMany()
+                        .HasForeignKey(ps => ps.ProjectTaskId);
+            modelBuilder.Entity<PerformanceSheet>()
+            .HasOne(ps => ps.WeeklyResultValue)
+            .WithOne(wrv => wrv.PerformanceSheet)
+            .HasForeignKey<PerformanceSheet>(ps => ps.WeeklyResultValueId);
+
+
+
+            //Seeding Data
+
+            modelBuilder.Entity<Setting>().HasData(new Setting
+            {
+                Id = 1,
+                Name = "DeadlineNotificationDay",
+                Description = "Before how many days should a deadline notification be sent",
+                Value = "10"
+            });
+            Console.WriteLine("Data Seeded");
+
+
+
+            #endregion
+        }
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var added = ChangeTracker.Entries<IAuditableEntity>().Where(E => E.State == EntityState.Added).ToList();
+            var now = DateTime.Now;
+            added.ForEach(E =>
+            {
+                E.Property(x => x.CreatedAt).CurrentValue = now;
+                E.Property(x => x.UpdatedAt).CurrentValue = now;
+
+            });
+
+            var modified = ChangeTracker.Entries<IAuditableEntity>().Where(E => E.State == EntityState.Modified).ToList();
+
+            modified.ForEach(E =>
+            {
+                E.Property(x => x.UpdatedAt).CurrentValue = now;
+
+            });
+
+            return base.SaveChangesAsync();
         }
     }
 }

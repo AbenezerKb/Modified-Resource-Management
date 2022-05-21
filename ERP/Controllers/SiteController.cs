@@ -41,12 +41,12 @@ namespace ERP.Controllers
             return Ok(sites);
         }
 
-        [Authorize(Roles = "Employee")]
+        // [Authorize(Roles = "Employee")]
         [HttpPost]
         public async Task<ActionResult<Site>> AddSite(Site request)
         {
             var site = await _siteService.AddSite(request);
-            
+
             return Ok(site);
         }
 
