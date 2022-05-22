@@ -72,44 +72,32 @@ namespace ERP.Services.WeeklyResultService
                                }
                            );
             });
+            //TODO: Remove to add notification
+            // List<int> mainTaskIds = weeklyResult.Results.Select(wrv => wrv.SubTask!.TaskId).ToList();
+            // var mainTasks = dbContext.Tasks.Where(t => mainTaskIds.Contains(t.Id))
+            //                                .Include(t => t.SubTasks)
+            //                                .ThenInclude(mt => mt.ProjectTask)
+            //                                .ThenInclude(pt => pt!.Project)
+            //                                .ToList();
+            // // add notification    
+            // mainTasks.ForEach(async mt =>
+            // {
+            //     if (mt.IsCompleted())
+            //     {
+            //         await dbContext.Notifications.AddAsync(new Notification
+            //         {
+            //             Title = "Task Completed",
+            //             Content = $"{mt.Name} has been completed",
+            //             Type = NOTIFICATIONTYPE.MainTaskCompletion,
+            //             Status = -1,
+            //             SiteId = mt.Project!.SiteId
+            //         });
+            //     }
+            // });
 
             await dbContext.SaveChangesAsync();
             return weeklyResult;
         }
-
-        // public async Task<WeeklyResult> UpdateWeeklyResultApproval(int weeklyResultId, int employeeId, bool isApproved)
-        // {
-        //     var weeklyResult = await dbContext.WeeklyResults.Where(wr => wr.Id == weeklyResultId)
-        //                                                     .Include(wr => wr.Results)
-        //                                                     .ThenInclude(wr => wr.PerformanceSheet)
-        //                                                     .Include(wr => wr.Results)
-        //                                                     .ThenInclude(wr => wr.SubTask)
-        //                                                     .FirstOrDefaultAsync();
-
-        //     if (weeklyResult == null) throw new ItemNotFoundException($"Weekly Result not found with WeeklyResultId= {weeklyResultId}");
-
-        //     weeklyResult.Staus = isApproved ? Models.Others.Status.Approved : Models.Others.Status.Declined;
-
-        //     weeklyResult.ApprovedBy = employeeId;
-
-        //     if (isApproved)
-        //     {
-        //         weeklyResult.Results.ForEach(wrv =>
-        //         {
-        //             if (wrv.SubTask != null)
-        //             {
-        //                 wrv.SubTask!.Progress = wrv.Value;
-        //             }
-        //             wrv.PerformanceSheet.PerformancePoint = wrv.Value;
-        //         });
-
-
-        //     }
-        //     dbContext.WeeklyResults.Update(weeklyResult);
-
-        //     await dbContext.SaveChangesAsync();
-        //     return weeklyResult;
-        // }
 
         public Task<List<WeeklyResult>> GetAll()
         {

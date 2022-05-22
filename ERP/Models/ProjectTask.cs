@@ -38,6 +38,15 @@ namespace ERP.Models
             return SubTasks.Sum(s => s.Budget);
 
         }
+        public object GetSubTaskSummery()
+        {
+            var summery = SubTasks.Select(s => new
+            {
+                SubTaskName = s.Name,
+                Budget = s.Budget
+            }).ToList();
+            return summery;
+        }
 
     }
 }
