@@ -30,7 +30,7 @@ namespace ERP.Services.BackgroundServices
                     CheckForTaskDeadlineAsync,
                     null,
                     TimeSpan.Zero,
-                    TimeSpan.FromHours(5)
+                    TimeSpan.FromHours(24)
                 );
             });
             return Task.CompletedTask;

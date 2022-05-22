@@ -64,11 +64,12 @@ namespace ERP.Services.WeeklyPlanService
             };
 
             await dbContext.WeeklyPlans.AddAsync(newPlan);
-            await dbContext.Notifications.AddAsync(new Notification
-            {
 
-
-            });
+            // await dbContext.Notifications.AddAsync(new Notification
+            // {
+            //     Title = "Plan added",
+            //     Type = "Weekly Plan",
+            // });
             //TODO: Add 'Weekly Plan Sent' Notification Here
             await dbContext.SaveChangesAsync();
 

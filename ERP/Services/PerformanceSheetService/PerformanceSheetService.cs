@@ -16,9 +16,9 @@ namespace ERP.Services.PerformanceSheetService
 
         public async Task<List<PerformanceSheet>> GetAllByProjectId(int projectId)
         {
-            List<PerformanceSheet> sheets = await dbContext.PerformanceSheets.Include(ps => ps.ProjectTask)
-                                                          .Where(ps => ps.ProjectTask!.ProjectId == projectId)
-                                                          .Include(ps => ps.WeeklyResultValue)
+            List<PerformanceSheet> sheets = await dbContext.PerformanceSheets
+                                                          .Where(ps => ps.ProjectId == projectId)
+
                                                           .ToListAsync();
             if (!sheets.Any()) throw new ItemNotFoundException($"Performance sheets not found with ProjectId={projectId}");
 
@@ -27,23 +27,21 @@ namespace ERP.Services.PerformanceSheetService
         public async Task<List<PerformanceSheet>> GetAllByProjectIdAndEmployeeId(int employeeId, int projectId)
         {
             List<PerformanceSheet> sheets = await dbContext.PerformanceSheets
-                                                          .Where(ps => ps.ProjectTask!.ProjectId == projectId && ps.EmployeeId == employeeId)
-                                                          .Include(ps => ps.WeeklyResultValue)
+                                                          .Where(ps => ps.ProjectId == projectId && ps.EmployeeId == employeeId)
+
                                                           .ToListAsync();
-            if (!sheets.Any()) throw new ItemNotFoundException($"Performance sheets not found with ProjectId={projectId}");
+            if (!sheets.Any()) throw new ItemNotFoundException($"Performance sheets not found with EmployeeId={employeeId} and ProjectId={projectId}");
 
             return sheets;
         }
 
-        public async Task<List<PerformanceSheet>> GetAllByTaskIdAndProjectId(int taskId, int projectId)
+        public async Task<PerformanceSheet> RemoveSheet(int performanceSheetId)
         {
-            List<PerformanceSheet> sheets = await dbContext.PerformanceSheets.Include(ps => ps.ProjectTask)
-                                                                             .Where(ps => ps.ProjectTaskId == taskId && ps.ProjectTask!.ProjectId == projectId)
-                                                                             .ToListAsync();
-            if (!sheets.Any()) throw new ItemNotFoundException($"Performance sheets not found with TaskId={taskId}");
-
-            return sheets;
-
+            var sheet = await dbContext.PerformanceSheets.Where(ps => ps.Id == performanceSheetId).FirstOrDefaultAsync();
+            if (sheet == null) throw new ItemNotFoundException($"Performance sheet not found with Id={performanceSheetId}");
+            dbContext.PerformanceSheets.Remove(sheet);
+            await dbContext.SaveChangesAsync();
+            return sheet;
         }
     }
 

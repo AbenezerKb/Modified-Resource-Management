@@ -6,6 +6,7 @@ namespace ERP.DTOs.ProjectTask
     {
         [Required]
         public string Name { get; set; } = string.Empty;
+        public bool IsSubContractorWork { get; set; } = false;
         [Required]
         public DateTime StartDate { get; set; }
         [Required]

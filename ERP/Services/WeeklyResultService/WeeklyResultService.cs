@@ -25,7 +25,6 @@ namespace ERP.Services.WeeklyResultService
             var weeklyResult = new WeeklyResult
             {
                 Remark = weeklyResultDto.Remark,
-                Staus = Models.Others.Status.Pending,
                 WeeklyPlanId = weeklyResultDto.WeeklyPlanId,
             };
 
@@ -38,6 +37,10 @@ namespace ERP.Services.WeeklyResultService
             if (weeklyPlan == null) throw new ItemNotFoundException($"Weekly plan not found with WeeklyPlanId={weeklyResultDto.WeeklyPlanId}");
             weeklyResultDto.Results.ForEach(wr =>
             {
+                var subTask = weeklyPlan.PlanValues.Where(wpv => wpv.SubTaskId == wr.SubTaskId).Select(wpv => wpv.SubTask).FirstOrDefault();
+                if (subTask == null) throw new ItemNotFoundException($"SubTask not found with SubTaskId={wr.SubTaskId}");
+
+                subTask.Progress = wr.Value;
 
                 weeklyResult.Results.Add(new WeeklyResultValue
                 {
@@ -48,79 +51,65 @@ namespace ERP.Services.WeeklyResultService
             });
 
             await dbContext.WeeklyResults.AddAsync(weeklyResult);
-            //save the changes now before using WeeklyResultValue.Id, since it will not be available before it's saved to db
-            await dbContext.SaveChangesAsync();
 
-            //Generate PerformanceSheet for each professional
-            weeklyPlan.PlanValues.ForEach(async pv =>
+            //Generate PerformanceSheet for each professional for their weekly planned work
+            var performedTasksByEmployee = weeklyPlan.PlanValues.GroupBy(pv => pv.PerformedBy)
+            .Select(pvg => new
             {
-                var weeklyResultValue = weeklyResult.Results.Where(wr => wr.SubTaskId == pv.SubTaskId).FirstOrDefault();
-                if (weeklyResultValue != null)
-                {
-                    await dbContext.PerformanceSheets.AddAsync(
-                         new PerformanceSheet
-                         {
-                             WeeklyResultValueId = weeklyResultValue.Id,
-                             EmployeeId = pv.PerformedBy,
-                             ProjectTaskId = pv.SubTask!.TaskId,
-                             Date = DateTime.Now,
-                             PerformancePoint = 0
-                         }
-                     );
-                }
+                PerformedBy = pvg.Key,
+                SubTasks = pvg.Select(pvg => pvg.SubTask)
+            }).ToList();
+            performedTasksByEmployee.ForEach(async ptbe =>
+            {
 
+                await dbContext.PerformanceSheets.AddAsync(
+                               new PerformanceSheet
+                               {
+                                   EmployeeId = ptbe.PerformedBy,
+                                   Date = DateTime.Now,
+                                   PerformancePoint = (float)ptbe.SubTasks.Average(st => st!.Progress),
+                                   ProjectId = weeklyPlan.ProjectId
+                               }
+                           );
             });
 
-
-
             await dbContext.SaveChangesAsync();
             return weeklyResult;
         }
 
-        public async Task<WeeklyResult> UpdateWeeklyResultApproval(int weeklyResultId, int employeeId, bool isApproved)
-        {
-            var weeklyResult = await dbContext.WeeklyResults.Where(wr => wr.Id == weeklyResultId)
-                                                            .Include(wr => wr.Results)
-                                                            .ThenInclude(wr => wr.PerformanceSheet)
-                                                            .Include(wr => wr.Results)
-                                                            .ThenInclude(wr => wr.SubTask)
-                                                            .FirstOrDefaultAsync();
+        // public async Task<WeeklyResult> UpdateWeeklyResultApproval(int weeklyResultId, int employeeId, bool isApproved)
+        // {
+        //     var weeklyResult = await dbContext.WeeklyResults.Where(wr => wr.Id == weeklyResultId)
+        //                                                     .Include(wr => wr.Results)
+        //                                                     .ThenInclude(wr => wr.PerformanceSheet)
+        //                                                     .Include(wr => wr.Results)
+        //                                                     .ThenInclude(wr => wr.SubTask)
+        //                                                     .FirstOrDefaultAsync();
 
-            if (weeklyResult == null) throw new ItemNotFoundException($"Weekly Result not found with WeeklyResultId= {weeklyResultId}");
+        //     if (weeklyResult == null) throw new ItemNotFoundException($"Weekly Result not found with WeeklyResultId= {weeklyResultId}");
 
-            weeklyResult.Staus = isApproved ? Models.Others.Status.Approved : Models.Others.Status.Declined;
+        //     weeklyResult.Staus = isApproved ? Models.Others.Status.Approved : Models.Others.Status.Declined;
 
-            weeklyResult.ApprovedBy = employeeId;
+        //     weeklyResult.ApprovedBy = employeeId;
 
-            if (isApproved)
-            {
-                weeklyResult.Results.ForEach(wrv =>
-                {
-                    if (wrv.SubTask != null)
-                    {
-                        wrv.SubTask!.Progress = wrv.Value;
-                    }
-                    wrv.PerformanceSheet.PerformancePoint = wrv.Value;
-                });
-                // var mainTaskId = weeklyResult.Results.First().SubTask?.TaskId;
-                // if (mainTaskId == null) throw new ItemNotFoundException($"Couldn't find a Task with id={mainTaskId}");
-
-                // var performanceSheet = await dbContext.PerformanceSheets.Where(ps => ps.ProjectTaskId == mainTaskId).FirstOrDefaultAsync();
-
-                // if (performanceSheet == null) throw new ItemNotFoundException($"Couldn't find a Performance sheet which was associated with a task with taskId={mainTaskId}");
-
-                // performanceSheet.PerformancePoint = (float)weeklyResult.GetTotalTasksProgress();
-                // Console.WriteLine("Performance Sheet new Value : " + performanceSheet.PerformancePoint);
-                // dbContext.PerformanceSheets.Update(performanceSheet);
+        //     if (isApproved)
+        //     {
+        //         weeklyResult.Results.ForEach(wrv =>
+        //         {
+        //             if (wrv.SubTask != null)
+        //             {
+        //                 wrv.SubTask!.Progress = wrv.Value;
+        //             }
+        //             wrv.PerformanceSheet.PerformancePoint = wrv.Value;
+        //         });
 
 
+        //     }
+        //     dbContext.WeeklyResults.Update(weeklyResult);
 
-            }
-            dbContext.WeeklyResults.Update(weeklyResult);
-
-            await dbContext.SaveChangesAsync();
-            return weeklyResult;
-        }
+        //     await dbContext.SaveChangesAsync();
+        //     return weeklyResult;
+        // }
 
         public Task<List<WeeklyResult>> GetAll()
         {

@@ -8,10 +8,8 @@ namespace ERP.Models
         public int EmployeeId { get; set; }
         public float PerformancePoint { get; set; }
         public string Remark { get; set; } = string.Empty;
-        public int WeeklyResultValueId { get; set; }
-        public WeeklyResultValue WeeklyResultValue { get; set; }
-        public int? ProjectTaskId { get; set; }
-        public ProjectTask? ProjectTask { get; set; }
+        public int ProjectId { get; set; }
+        public Project? Project { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

@@ -363,10 +363,10 @@ namespace ERP.Context
             .HasConversion(v => v.ToString(),
             v => (Models.Others.Status)Enum.Parse(typeof(Models.Others.Status), v));
 
-            modelBuilder.Entity<WeeklyResult>()
-            .Property(wr => wr.Staus)
-            .HasConversion(v => v.ToString(),
-            v => (Models.Others.Status)Enum.Parse(typeof(Models.Others.Status), v));
+            // modelBuilder.Entity<WeeklyResult>()
+            // .Property(wr => wr.Staus)
+            // .HasConversion(v => v.ToString(),
+            // v => (Models.Others.Status)Enum.Parse(typeof(Models.Others.Status), v));
 
             modelBuilder
             .Entity<ProjectTask>()
@@ -414,14 +414,9 @@ namespace ERP.Context
                       .HasForeignKey(wrv => wrv.SubTaskId);
 
             modelBuilder.Entity<PerformanceSheet>()
-                        .HasOne(ps => ps.ProjectTask)
+                        .HasOne(ps => ps.Project)
                         .WithMany()
-                        .HasForeignKey(ps => ps.ProjectTaskId);
-            modelBuilder.Entity<PerformanceSheet>()
-            .HasOne(ps => ps.WeeklyResultValue)
-            .WithOne(wrv => wrv.PerformanceSheet)
-            .HasForeignKey<PerformanceSheet>(ps => ps.WeeklyResultValueId);
-
+                        .HasForeignKey(ps => ps.ProjectId);
 
 
             //Seeding Data
@@ -432,6 +427,97 @@ namespace ERP.Context
                 Name = "DeadlineNotificationDay",
                 Description = "Before how many days should a deadline notification be sent",
                 Value = "10"
+            });
+            modelBuilder.Entity<UserRole>().HasData(new UserRole
+            {
+                RoleId = 1,
+                Role = "Admin",
+                CanEditUser = true,
+
+                CanRequestPurchase = true,
+
+                CanApprovePurchase = true,
+
+                CanCheckPurchase = true,
+
+
+                CanViewPurchase = true,
+
+                CanConfirmPurchase = true,
+
+
+                CanViewBulkPurchase = true,
+
+                CanRequestBulkPurchase = true,
+
+                CanApproveBulkPurchase = true,
+
+                CanConfirmBulkPurchase = true,
+
+                CanRequestBuy = true,
+
+                CanApproveBuy = true,
+
+                CanCheckBuy = true,
+
+                CanViewBuy = true,
+
+                CanConfirmBuy = true,
+
+                CanReceive = true,
+
+                CanApproveReceive = true,
+
+
+                CanViewReceive = true,
+
+                CanRequestIssue = true,
+
+                CanApproveIssue = true,
+
+
+                CanHandIssue = true,
+
+
+                CanViewIssue = true,
+
+
+                CanRequestBorrow = true,
+
+                CanApproveBorrow = true,
+
+
+                CanHandBorrow = true,
+
+
+                CanViewBorrow = true,
+
+                CanReturnBorrow = true,
+
+                CanRequestTransfer = true,
+
+                CanApproveTransfer = true,
+
+                CanSendTransfer = true,
+
+
+                CanReceiveTransfer = true,
+
+                CanViewTransfer = true,
+
+                CanRequestMaintenance = true,
+
+                CanApproveMaintenance = true,
+
+
+                CanFixMaintenance = true,
+
+
+                CanViewMaintenance = true,
+
+                CanGetStockNotification = true
+
+
             });
             Console.WriteLine("Data Seeded");
 
