@@ -14,13 +14,12 @@ namespace ERP.Services.PerformanceSheetService
             dbContext = context;
         }
 
-        public async Task<List<PerformanceSheet>> GetAllByProjectId(int projectId)
+        public async Task<List<PerformanceSheet>> GetAllEmployeePerformanceSheetsByProjectId(int projectId)
         {
             List<PerformanceSheet> sheets = await dbContext.PerformanceSheets
-                                                          .Where(ps => ps.ProjectId == projectId)
-
+                                                          .Where(ps => ps.ProjectId == projectId && ps.EmployeeId != null)
                                                           .ToListAsync();
-            if (!sheets.Any()) throw new ItemNotFoundException($"Performance sheets not found with ProjectId={projectId}");
+            if (!sheets.Any()) throw new ItemNotFoundException($"Employee performance sheets not found with ProjectId={projectId}");
 
             return sheets;
         }
@@ -28,9 +27,18 @@ namespace ERP.Services.PerformanceSheetService
         {
             List<PerformanceSheet> sheets = await dbContext.PerformanceSheets
                                                           .Where(ps => ps.ProjectId == projectId && ps.EmployeeId == employeeId)
-
                                                           .ToListAsync();
-            if (!sheets.Any()) throw new ItemNotFoundException($"Performance sheets not found with EmployeeId={employeeId} and ProjectId={projectId}");
+            if (!sheets.Any()) throw new ItemNotFoundException($"Employee performance sheets not found with EmployeeId={employeeId} and ProjectId={projectId}");
+
+            return sheets;
+        }
+
+        public async Task<List<PerformanceSheet>> GetAllByProjectIdAndSubContractorId(int subContractorId, int projectId)
+        {
+            List<PerformanceSheet> sheets = await dbContext.PerformanceSheets
+                                                         .Where(ps => ps.ProjectId == projectId && ps.SubContractorId == subContractorId)
+                                                         .ToListAsync();
+            if (!sheets.Any()) throw new ItemNotFoundException($"Subcontractor performance sheets not found with SubContractorId={subContractorId} and ProjectId={projectId}");
 
             return sheets;
         }
@@ -42,6 +50,17 @@ namespace ERP.Services.PerformanceSheetService
             dbContext.PerformanceSheets.Remove(sheet);
             await dbContext.SaveChangesAsync();
             return sheet;
+        }
+
+        public async Task<List<PerformanceSheet>> GetAllSubcontractorPerformanceSheetsByProjectId(int projectId)
+        {
+            List<PerformanceSheet> sheets = await dbContext.PerformanceSheets
+                                                          .Where(ps => ps.ProjectId == projectId && ps.SubContractorId != null)
+                                                          .ToListAsync();
+            if (!sheets.Any()) throw new ItemNotFoundException($"Subcontractor performance sheets not found with ProjectId={projectId}");
+
+            return sheets;
+
         }
     }
 

@@ -12,6 +12,14 @@ namespace ERP.Models
 
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public float Progress
+        {
+            get
+            {
+                return (float)GetTaskProgress();
+            }
+        }
+
 
         public int ProjectId { get; set; }
         [JsonIgnore]

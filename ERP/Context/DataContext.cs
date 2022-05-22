@@ -380,6 +380,7 @@ namespace ERP.Context
             .WithMany(t => t.SubTasks)
             .HasForeignKey(sub => sub.TaskId);
 
+            modelBuilder.Entity<ProjectTask>().Ignore(p => p.Progress);
 
             // modelBuilder.Entity<WeeklyPlan>().HasKey(wp => new { wp.WeekNo, wp.Year });
             // modelBuilder.Entity<WeeklyResult>().HasKey(wr => new { wr.WeekNo, wr.Year });

@@ -51,54 +51,64 @@ namespace ERP.Services.WeeklyResultService
             });
 
             await dbContext.WeeklyResults.AddAsync(weeklyResult);
-
-            //Generate PerformanceSheet for each professional for their weekly planned work
-            var performedTasksByEmployee = weeklyPlan.PlanValues.GroupBy(pv => pv.PerformedBy)
-            .Select(pvg => new
-            {
-                PerformedBy = pvg.Key,
-                SubTasks = pvg.Select(pvg => pvg.SubTask)
-            }).ToList();
-            performedTasksByEmployee.ForEach(async ptbe =>
-            {
-
-                await dbContext.PerformanceSheets.AddAsync(
-                               new PerformanceSheet
-                               {
-                                   EmployeeId = ptbe.PerformedBy,
-                                   Date = DateTime.Now,
-                                   PerformancePoint = (float)ptbe.SubTasks.Average(st => st!.Progress),
-                                   ProjectId = weeklyPlan.ProjectId
-                               }
-                           );
-            });
-            //TODO: Remove to add notification
-            // List<int> mainTaskIds = weeklyResult.Results.Select(wrv => wrv.SubTask!.TaskId).ToList();
-            // var mainTasks = dbContext.Tasks.Where(t => mainTaskIds.Contains(t.Id))
-            //                                .Include(t => t.SubTasks)
-            //                                .ThenInclude(mt => mt.ProjectTask)
-            //                                .ThenInclude(pt => pt!.Project)
-            //                                .ToList();
-            // // add notification    
-            // mainTasks.ForEach(async mt =>
-            // {
-            //     if (mt.IsCompleted())
-            //     {
-            //         await dbContext.Notifications.AddAsync(new Notification
-            //         {
-            //             Title = "Task Completed",
-            //             Content = $"{mt.Name} has been completed",
-            //             Type = NOTIFICATIONTYPE.MainTaskCompletion,
-            //             Status = -1,
-            //             SiteId = mt.Project!.SiteId
-            //         });
-            //     }
-            // });
+            await GenerateEmployeePerformanceSheet(weeklyPlan);
 
             await dbContext.SaveChangesAsync();
             return weeklyResult;
         }
 
+
+        private Task GenerateEmployeePerformanceSheet(WeeklyPlan weeklyPlan)
+        {
+            //Generate PerformanceSheet for each professional for their weekly planned work
+            var tasksPerformedByEmployees = weeklyPlan.PlanValues.Where(p => !p.IsAssignedForSubContractor()).GroupBy(pv => pv.PerformedBy)
+            .Select(pvg => new
+            {
+                PerformedBy = pvg.Key,
+                SubTasks = pvg.Select(pvg => pvg.SubTask)
+            }).ToList();
+
+            var tasksPerformedBySubcontractors = weeklyPlan.PlanValues.Where(p => p.IsAssignedForSubContractor()).GroupBy(pv => pv.SubContractorId)
+            .Select(pvg => new
+            {
+                PerformedBy = pvg.Key,
+                SubTasks = pvg.Select(pvg => pvg.SubTask)
+            }).ToList();
+
+
+            //generate employees performance sheet
+            tasksPerformedByEmployees.ForEach(async tpbe =>
+            {
+
+                await dbContext.PerformanceSheets.AddAsync(
+                               new PerformanceSheet
+                               {
+                                   EmployeeId = tpbe.PerformedBy!.Value,
+                                   Date = DateTime.Now,
+                                   PerformancePoint = (float)tpbe.SubTasks.Average(st => st!.Progress),
+                                   ProjectId = weeklyPlan.ProjectId,
+                                   Remark = $"Tasks Assigned: {string.Join(',', tpbe.SubTasks.Select(t => t!.Name))}"
+                               }
+                           );
+            });
+            //generate sucontractors performance sheet
+            tasksPerformedBySubcontractors.ForEach(async tpbs =>
+         {
+
+             await dbContext.PerformanceSheets.AddAsync(
+                            new PerformanceSheet
+                            {
+                                SubContractorId = tpbs!.PerformedBy!.Value,
+                                Date = DateTime.Now,
+                                PerformancePoint = (float)tpbs.SubTasks.Average(st => st!.Progress),
+                                ProjectId = weeklyPlan.ProjectId,
+                                Remark = $"Tasks Assigned: {string.Join(',', tpbs.SubTasks.Select(t => t!.Name))}"
+                            }
+                        );
+         });
+
+            return Task.CompletedTask;
+        }
         public Task<List<WeeklyResult>> GetAll()
         {
             return dbContext.WeeklyResults.Include(wr => wr.Results).ToListAsync();

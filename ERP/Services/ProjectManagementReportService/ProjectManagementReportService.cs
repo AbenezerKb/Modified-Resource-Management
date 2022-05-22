@@ -29,22 +29,22 @@ namespace ERP.Services.ProjectManagementReportService
             }
 
             // ProjectManagementReportDto report = new();
-            var projectTasks = await dbContext.Tasks.Where(t => (t.CreatedAt.Date.Day >= StartDate.Day && t.CreatedAt.Day <= EndDate.Day) && t.ProjectId == projectId)
+            var projectTasks = await dbContext.Tasks.Where(t => (t.StartDate >= StartDate && t.EndDate <= EndDate) && t.ProjectId == projectId)
                                                      .Include(t => t.SubTasks).ToListAsync();
 
 
-            var pendingTasks = projectTasks.Where(t => !t.IsCompleted()).Select(t => new
+            var pendingTasks = projectTasks.Where(t => !t.IsSubContractorWork && !t.IsCompleted()).Select(t => new
             {
                 TaskId = t.Id,
                 TaskName = t.Name,
-                Progress = (float)t.GetTaskProgress(),
+                Progress = (float)t.Progress,
                 Status = "Pending"
             });
-            var completedTasks = projectTasks.Where(t => t.IsCompleted()).Select(t => new
+            var completedTasks = projectTasks.Where(t => !t.IsSubContractorWork && t.IsCompleted()).Select(t => new
             {
                 TaskId = t.Id,
                 TaskName = t.Name,
-                Progress = (float)t.GetTaskProgress(),
+                Progress = (float)t.Progress,
                 Status = "Completed"
             });
             List<object> budgetsummery = new();
@@ -52,30 +52,30 @@ namespace ERP.Services.ProjectManagementReportService
             {
                 budgetsummery.AddRange(t.SubTasks.Select(s => new
                 {
+                    SubTaskId = s.Id,
                     SubTaskName = s.Name,
                     Budget = s.Budget
                 }).ToList());
             });
-            // report.MaterialsUsed = 0;
-            // report.EquipementsUsed = 0;
 
-            // report.SubContractorWorksCompleted = 0;
-            // report.BudgetExpensed = (float)getTotalBudget(projectTasks); ;
-
-            // report.ReportDate = DateTime.Now;
-
-            // report.ProjectId = projectId;
+            var subContractorWorks = projectTasks.Where(t => t.IsSubContractorWork)
+                                             .Select(t => new
+                                             {
+                                                 TaskName = t.Name,
+                                                 Progress = t.Progress,
+                                                 Status = t.IsCompleted() ? "Completed" : "Pending"
+                                             }).ToList();
             return new
             {
                 Tasks = new
                 {
                     Completed = completedTasks,
                     Pending = pendingTasks,
+                    SubContractorWorks = subContractorWorks,
                     ProjectId = projectId
                 },
                 Budgets = new
                 {
-                    // which tasks, how much budget
                     Summery = budgetsummery
                 },
                 Resources = new
@@ -92,7 +92,7 @@ namespace ERP.Services.ProjectManagementReportService
                 },
                 Consultants = new
                 {
-                    //Uknown
+                    //Which consultants participated on the project
                 },
                 Workforces = new
                 {
@@ -101,8 +101,8 @@ namespace ERP.Services.ProjectManagementReportService
                 Incidents = new
                 {
                     // list all incidents occured on the project between the specified Dates
-
-                }
+                },
+                ReportDate = DateTime.Now
             };
 
         }

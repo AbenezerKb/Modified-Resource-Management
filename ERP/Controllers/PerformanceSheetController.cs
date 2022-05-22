@@ -5,7 +5,7 @@ using ERP.Services.PerformanceSheetService;
 using Microsoft.AspNetCore.Mvc;
 namespace ERP.Controllers
 {
-    [Route("api/performanceSheet")]
+    [Route("api/performanceSheets")]
     [ApiController]
     public class PerformanceSheetController : ControllerBase
     {
@@ -15,26 +15,55 @@ namespace ERP.Controllers
         {
             performanceSheetService = sheetService;
         }
-        [HttpGet]
-        public async Task<ActionResult<CustomApiResponse>> GetAllPerformanceSheets([FromQuery] int? employeeId, [FromQuery] int projectId)
+
+
+        [HttpGet("employees")]
+        public async Task<ActionResult<CustomApiResponse>> GetAllEmployeePerformanceSheets([FromQuery] int projectId)
         {
             try
             {
-                if (employeeId == null)
+                return Ok(new CustomApiResponse
                 {
-                    return Ok(new CustomApiResponse
-                    {
-                        Data = await performanceSheetService.GetAllByProjectId(projectId)
-                    });
-                }
-                else
+                    Data = await performanceSheetService.GetAllEmployeePerformanceSheetsByProjectId(projectId)
+                });
+            }
+            catch (ItemNotFoundException infe)
+            {
+                return NotFound(new CustomApiResponse
                 {
-                    return Ok(new CustomApiResponse
-                    {
-                        Data = await performanceSheetService.GetAllByProjectIdAndEmployeeId(employeeId.Value, projectId)
-                    });
+                    Message = infe.Message
+                });
+            }
+        }
+        [HttpGet("subContractors")]
+        public async Task<ActionResult<CustomApiResponse>> GetAllSubcontractorPerformanceSheets([FromQuery] int projectId)
+        {
+            try
+            {
+                return Ok(new CustomApiResponse
+                {
+                    Data = await performanceSheetService.GetAllSubcontractorPerformanceSheetsByProjectId(projectId)
+                });
+            }
+            catch (ItemNotFoundException infe)
+            {
+                return NotFound(new CustomApiResponse
+                {
+                    Message = infe.Message
+                });
+            }
+        }
 
-                }
+        [HttpGet("employees/{employeeId:int}")]
+        public async Task<ActionResult<CustomApiResponse>> GetEmployeePerformanceSheet(int employeeId, [FromQuery] int projectId)
+        {
+            try
+            {
+                return Ok(new CustomApiResponse
+                {
+                    Data = await performanceSheetService.GetAllByProjectIdAndEmployeeId(employeeId, projectId)
+                });
+
             }
             catch (ItemNotFoundException infe)
             {
@@ -45,8 +74,32 @@ namespace ERP.Controllers
 
             }
 
+        }
+        [HttpGet("subContractors/{subContractorId:int}")]
+        public async Task<ActionResult<CustomApiResponse>> GetSubContractorPerformanceSheet(int subContractorId, [FromQuery] int projectId)
+        {
+            try
+            {
+                return Ok(new CustomApiResponse
+                {
+                    Data = await performanceSheetService.GetAllByProjectIdAndSubContractorId(subContractorId, projectId)
+                });
+
+
+            }
+            catch (ItemNotFoundException infe)
+            {
+                return NotFound(new CustomApiResponse
+                {
+                    Message = infe.Message
+                });
+
+            }
 
         }
+
+
+
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<CustomApiResponse>> RemovePerformanceSheet(int id)
@@ -72,5 +125,8 @@ namespace ERP.Controllers
             }
 
         }
+
+
     }
+
 }

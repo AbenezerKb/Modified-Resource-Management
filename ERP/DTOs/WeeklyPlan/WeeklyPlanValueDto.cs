@@ -6,8 +6,9 @@ namespace ERP.DTOs.WeeklyPlan
     {
         [Required]
         public int SubTaskId { get; set; }
-        [Required]
-        public int PerformedBy { get; set; }
+
+        public int? PerformedBy { get; set; }
+        public int? SubContractorId { get; set; }
     }
 
 }

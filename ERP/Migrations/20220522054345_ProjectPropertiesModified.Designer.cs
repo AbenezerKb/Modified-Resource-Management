@@ -4,6 +4,7 @@ using ERP.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220522054345_ProjectPropertiesModified")]
+    partial class ProjectPropertiesModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -826,7 +828,7 @@ namespace ERP.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EmployeeId")
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<float>("PerformancePoint")
@@ -838,9 +840,6 @@ namespace ERP.Migrations
                     b.Property<string>("Remark")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("SubContractorId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -1643,8 +1642,8 @@ namespace ERP.Migrations
                     b.Property<int>("WeekNo")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("WeekStartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1664,10 +1663,7 @@ namespace ERP.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("PerformedBy")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SubContractorId")
+                    b.Property<int>("PerformedBy")
                         .HasColumnType("int");
 
                     b.Property<int?>("SubTaskId")

@@ -28,9 +28,22 @@ namespace ERP.Services.ProjectTaskService
                 Name = taskDto.Name,
                 StartDate = taskDto.StartDate,
                 EndDate = taskDto.EndDate,
-                ProjectId = taskDto.ProjectId
+                ProjectId = taskDto.ProjectId,
+                IsSubContractorWork = taskDto.IsSubContractorWork
 
             };
+            if (taskDto.IsSubContractorWork)
+            {
+                task.SubTasks.Add(new SubTask
+                {
+                    Name = task.Name,
+                    StartDate = task.StartDate,
+                    EndDate = task.EndDate,
+                    Priority = TaskConstant.MAXPRIORITYVALUE,
+                    Budget = taskDto.Budget,
+                    Progress = 0,
+                });
+            }
             project.Tasks.Add(task);
             await DbContext.SaveChangesAsync();
             return task;
@@ -83,6 +96,18 @@ namespace ERP.Services.ProjectTaskService
             return tasks;
 
         }
+
+        public async Task<List<ProjectTask>> GetSubContractorWorks(int projectId)
+        {
+            var project = await DbContext.Projects.Where(p => p.Id == projectId)
+                                                  .Include(p => p.Tasks)
+                                                  .ThenInclude(t => t.SubTasks)
+                                                  .FirstOrDefaultAsync();
+            if (project == null) throw new ItemNotFoundException($"Project not found with ProjectId={projectId}");
+            return project.Tasks.Where(t => t.IsSubContractorWork).ToList();
+
+        }
+
 
         public async Task<ProjectTask> Remove(int id)
         {
