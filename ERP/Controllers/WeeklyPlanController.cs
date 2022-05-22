@@ -22,6 +22,17 @@ namespace ERP.Controllers
         {
             try
             {
+                if (weeklyPlanDto.PlanValues.Any(wpv => wpv.PerformedBy != null && wpv.SubContractorId != null))
+                {
+
+                    return BadRequest(
+                        new CustomApiResponse
+                        {
+                            Message = "Both PerformedBy (employeeId) and SubContractorId can not be set at the same time, please assign the work to either the employee or the subcontractor"
+                        }
+                    );
+                }
+
                 return Ok(new CustomApiResponse
                 {
                     Message = "Success",
@@ -48,7 +59,39 @@ namespace ERP.Controllers
 
             }
         }
+        [HttpPut("{weeklyPlanId:int}")]
+        public async Task<ActionResult<CustomApiResponse>> UpdateWeeklyPlan(int weeklyPlanId, WeeklyPlanDto weeklyPlanDto)
+        {
+            if (weeklyPlanDto.PlanValues.Any(wpv => wpv.PerformedBy != null && wpv.SubContractorId != null))
+            {
 
+                return BadRequest(
+                    new CustomApiResponse
+                    {
+                        Message = "Both PerformedBy (employeeId) and SubContractorId can not be set at the same time, please assign the work to either the employee or the subcontractor"
+                    }
+                );
+            }
+            try
+            {
+                return Ok(
+                    new CustomApiResponse
+                    {
+                        Message = "Success",
+                        Data = await weeklyPlanService.Update(weeklyPlanId, weeklyPlanDto)
+                    }
+                );
+            }
+            catch (ItemNotFoundException infe)
+            {
+                return NotFound(
+                    new CustomApiResponse
+                    {
+                        Message = infe.Message
+                    }
+                    );
+            }
+        }
         [HttpGet]
         public async Task<ActionResult<CustomApiResponse>> GetPlansWith([FromQuery] int projectId, [FromQuery] int? week, [FromQuery] int? month, [FromQuery] int? year)
         {
@@ -114,14 +157,25 @@ namespace ERP.Controllers
         }
 
         [HttpPost("{weeklyPlanId}/tasks")]
-        public async Task<ActionResult<CustomApiResponse>> AddTaskToWeeklyPlan(int weeklyPlanId, [FromQuery] int subTaskId, [FromQuery] int performedBy)
+        public async Task<ActionResult<CustomApiResponse>> AddTaskToWeeklyPlan(int weeklyPlanId, [FromBody] WeeklyPlanValueDto weeklyPlanValueDto)
         {
+            if (weeklyPlanValueDto.PerformedBy != null && weeklyPlanValueDto.SubContractorId != null)
+            {
+
+                return BadRequest(
+                    new CustomApiResponse
+                    {
+                        Message = "Both PerformedBy (employeeId) and SubContractorId can not be set at the same time, please assign the work to either the employee or the subcontractor"
+                    }
+                );
+            }
             try
             {
+
                 return Ok(new CustomApiResponse
                 {
                     Message = "Success",
-                    Data = await weeklyPlanService.AddTask(subTaskId, performedBy, weeklyPlanId)
+                    Data = await weeklyPlanService.AddTask(weeklyPlanId, weeklyPlanValueDto)
                 });
 
             }

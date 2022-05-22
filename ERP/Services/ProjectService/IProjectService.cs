@@ -1,6 +1,8 @@
 ﻿using ERP.Models;
 using ERP.DTOs.Project;
 using ERP.DTOs.TaskProgressSheet;
+using ERP.DTOs.TaskSchedule;
+
 namespace ERP.Services.ProjectService
 {
     public interface IProjectService
@@ -14,5 +16,8 @@ namespace ERP.Services.ProjectService
         Task<List<Project>> GetByName(string name);
         Task<List<Project>> GetByNameAndSiteId(string name, int siteId);
         Task<List<TaskProgressSheetDto>> GetTaskProgressSheet(int projectId);
+        Task<List<TaskScheduleDto>> GetCrashSchedule(int projectId);
+        Task<List<TaskScheduleDto>> GetActualSchedule(int projectId);
+
     }
 }

@@ -21,13 +21,23 @@ namespace ERP.Services.WeeklyPlanService
         {
             return Task.FromResult(sample.Where(s => !all.Contains(s)).ToList());
         }
+
+        private async Task<bool> PlanExists(WeeklyPlanDto weeklyPlanDto)
+        {
+            // var weekEndDate = weeklyPlanDto.WeekStartDate.AddDays(7);
+            var plans = await dbContext.WeeklyPlans
+                      .AsNoTracking().Where(p => p.ProjectId == weeklyPlanDto.ProjectId)
+                      .ToListAsync();
+            // return plans.Any(p => p.WeekStartDate >= weeklyPlanDto.WeekStartDate
+            //            && p.WeekStartDate.AddDays(7) <= weekEndDate);
+            return plans.Any(p => ISOWeek.GetWeekOfYear(p.WeekStartDate) == ISOWeek.GetWeekOfYear(weeklyPlanDto.WeekStartDate));
+        }
         public async Task<WeeklyPlan> Add(WeeklyPlanDto weeklyPlanDto)
         {
-            var planExists = await dbContext.WeeklyPlans
-            .AnyAsync(p =>
-             p.WeekNo == weeklyPlanDto.WeekNo && p.Year == weeklyPlanDto.Year && p.ProjectId == weeklyPlanDto.ProjectId);
 
-            if (planExists) throw new ItemAlreadyExistException($"Weekly Plan already created for week={weeklyPlanDto.WeekNo}, year={weeklyPlanDto.Year} and ProjectId={weeklyPlanDto.ProjectId}");
+            var project = await dbContext.Projects.FindAsync(weeklyPlanDto.ProjectId);
+            if (project == null) throw new ItemNotFoundException($"Project not found with PrjectId={weeklyPlanDto.ProjectId}");
+            if (await PlanExists(weeklyPlanDto)) throw new ItemAlreadyExistException($"Weekly Plan already exist with WeekStartDate=${weeklyPlanDto.WeekStartDate} and ProjectId={weeklyPlanDto.ProjectId}");
 
 
             if (!await dbContext.Projects.AnyAsync(p => p.Id == weeklyPlanDto.ProjectId)) throw new ItemNotFoundException($"Project not found with projectId={weeklyPlanDto.ProjectId}");
@@ -44,19 +54,26 @@ namespace ERP.Services.WeeklyPlanService
 
             weeklyPlanDto.PlanValues.ForEach(wp =>
             {
-
-                planValues.Add(new WeeklyPlanValue
+                WeeklyPlanValue value = new WeeklyPlanValue
                 {
-                    PerformedBy = wp.PerformedBy,
                     SubTaskId = wp.SubTaskId,
+                };
+                if (wp.PerformedBy != null)
+                {
+                    value.PerformedBy = wp.PerformedBy;
+                }
+                else
+                {
+                    value.SubContractorId = wp.SubContractorId;
+                }
 
-                });
+                planValues.Add(value);
             });
 
             var newPlan = new WeeklyPlan
             {
-                WeekNo = weeklyPlanDto.WeekNo,
-                Year = weeklyPlanDto.Year,
+                WeekNo = ISOWeek.GetWeekOfYear(weeklyPlanDto.WeekStartDate),
+                WeekStartDate = weeklyPlanDto.WeekStartDate,
                 Remark = weeklyPlanDto.Remark,
                 ProjectId = weeklyPlanDto.ProjectId,
                 PlanValues = planValues,
@@ -77,24 +94,32 @@ namespace ERP.Services.WeeklyPlanService
 
         }
 
-        public async Task<WeeklyPlanValue> AddTask(int subTaskId, int performedBy, int weeklyPlanId)
+        public async Task<WeeklyPlanValue> AddTask(int weeklyPlanId, WeeklyPlanValueDto weeklyPlanValueDto)
         {
             var weeklyPlan = await GetById(weeklyPlanId);
-            var subTask = await dbContext.SubTasks.FindAsync(subTaskId);
+            var subTask = await dbContext.SubTasks.FindAsync(weeklyPlanValueDto.SubTaskId);
 
-            if (subTask == null) throw new ItemNotFoundException($"SubTask not found with subTaskId={subTaskId}");
-            if (weeklyPlan.PlanValues.Any(t => t.SubTaskId == subTaskId))
-                throw new ItemAlreadyExistException($"SubTask with id={subTaskId} has already been added to weekly plan");
+            if (subTask == null) throw new ItemNotFoundException($"SubTask not found with subTaskId={weeklyPlanValueDto.SubTaskId}");
+            if (weeklyPlan.PlanValues.Any(t => t.SubTaskId == weeklyPlanValueDto.SubTaskId))
+                throw new ItemAlreadyExistException($"SubTask with id={weeklyPlanValueDto.SubTaskId} has already been added to weekly plan");
             //TODO: check if employee exists with the given id
             var planValue = new WeeklyPlanValue
             {
-                SubTaskId = subTaskId,
-                PerformedBy = performedBy,
+                SubTaskId = weeklyPlanValueDto.SubTaskId,
                 WeeklyPlanId = weeklyPlanId
             };
-            weeklyPlan.PlanValues.Add(planValue);
-            await dbContext.SaveChangesAsync();
+            if (weeklyPlanValueDto.PerformedBy != null)
+            {
+                planValue.PerformedBy = weeklyPlanValueDto.PerformedBy;
+            }
+            else
+            {
+                planValue.SubContractorId = weeklyPlanValueDto.SubContractorId;
+            }
 
+            weeklyPlan.PlanValues.Add(planValue);
+
+            await dbContext.SaveChangesAsync();
             return planValue;
         }
 
@@ -112,16 +137,14 @@ namespace ERP.Services.WeeklyPlanService
         public async Task<List<WeeklyPlan>> GetByMonthYear(int month, int year, int projectId)
         {
 
-            var yearlyPlans = await dbContext.WeeklyPlans.Where(wp => wp.ProjectId == projectId && wp.Year == year)
+            var plans = await dbContext.WeeklyPlans.Where(wp => wp.ProjectId == projectId && wp.WeekStartDate.Month == month && wp.WeekStartDate.Year == year)
                                                          .Include(p => p.PlanValues)
                                                          .ThenInclude(wpv => wpv.SubTask)
+                                                         .OrderBy(wp => wp.WeekStartDate)
                                                          .ToListAsync();
 
-            var monthlyPlans = yearlyPlans.Where(wp => ISOWeek.ToDateTime(year, wp.WeekNo, DayOfWeek.Monday).Month
-            == month)
-                                          .ToList();
-            if (monthlyPlans == null || monthlyPlans.Count == 0) throw new ItemNotFoundException($"Monthly plan not found with week={month} and year={year}");
-            return monthlyPlans;
+            if (plans == null || plans.Count == 0) throw new ItemNotFoundException($"Monthly plan not found with week={month} and year={year}");
+            return plans;
         }
 
         public async Task<List<WeeklyPlan>> GetByProjectId(int projectId)
@@ -136,7 +159,7 @@ namespace ERP.Services.WeeklyPlanService
 
         public async Task<WeeklyPlan> GetByWeekAndYear(int week, int year, int projectId)
         {
-            var weeklyPlan = (await dbContext.WeeklyPlans.Where(p => p.ProjectId == projectId && p.WeekNo == week && p.Year == year)
+            var weeklyPlan = (await dbContext.WeeklyPlans.Where(p => p.ProjectId == projectId && p.WeekNo == week && p.WeekStartDate.Year == year)
                                                         .Include(p => p.PlanValues)
                                                         .ThenInclude(wpv => wpv.SubTask)
                                                         .ToListAsync())
@@ -167,6 +190,21 @@ namespace ERP.Services.WeeklyPlanService
             return planValue;
         }
 
+        public async Task<WeeklyPlan> Update(int planId, WeeklyPlanDto weeklyPlanDto)
+        {
+            var project = await dbContext.Projects.FindAsync(weeklyPlanDto.ProjectId);
+            if (project == null) throw new ItemNotFoundException($"Project not found with PrjectId={weeklyPlanDto.ProjectId}");
+            var weeklyPlan = await GetById(planId);
 
+            if (weeklyPlan.WeekStartDate != weeklyPlanDto.WeekStartDate)
+            {
+                weeklyPlan.WeekStartDate = weeklyPlanDto.WeekStartDate;
+                weeklyPlan.WeekNo = ISOWeek.GetWeekOfYear(weeklyPlanDto.WeekStartDate);
+
+            }
+            weeklyPlan.Remark = weeklyPlanDto.Remark;
+            await dbContext.SaveChangesAsync();
+            return weeklyPlan;
+        }
     }
 }

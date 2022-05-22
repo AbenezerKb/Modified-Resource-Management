@@ -81,6 +81,12 @@ namespace ERP.Services.SubTaskService
 
             subTask.Name = subTaskDto.Name;
             subTask.Priority = subTaskDto.Priority;
+            //if the subTask was not completed before and it is now completed
+            if (!subTask.isCompleted() && subTaskDto.Progress == 100)
+            {
+                //TODO: Add Notification here
+            }
+
             subTask.Progress = subTaskDto.Progress;
             subTask.Budget = subTaskDto.Budget;
             subTask.StartDate = subTaskDto.StartDate;

@@ -13,6 +13,7 @@ namespace ERP.Services.ProjectTaskService
         Task<ProjectTask> GetById(int id);
         Task<List<ProjectTask>> GetByName(string name);
         Task<List<ProjectTask>> GetByNameAndProjectId(string name, int projectId);
+        Task<List<ProjectTask>> GetSubContractorWorks(int projectId);
 
 
     }

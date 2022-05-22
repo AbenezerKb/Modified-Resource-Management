@@ -278,5 +278,9 @@
         public const int MATERIAL = 1;
         public const int EQUIPMENT = 2;
     }
+    public class TaskConstant
+    {
+        public const int MAXPRIORITYVALUE = 5;
+    }
 
 }

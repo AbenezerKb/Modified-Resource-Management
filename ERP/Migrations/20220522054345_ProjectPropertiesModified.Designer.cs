@@ -4,6 +4,7 @@ using ERP.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220522054345_ProjectPropertiesModified")]
+    partial class ProjectPropertiesModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,7 +41,7 @@ namespace ERP.Migrations
 
                     b.HasKey("AssetDamageId");
 
-                    b.ToTable("AssetDamages", (string)null);
+                    b.ToTable("AssetDamages");
                 });
 
             modelBuilder.Entity("ERP.Models.AssetNumberId", b =>
@@ -64,7 +66,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("AssetNumberIds", (string)null);
+                    b.ToTable("AssetNumberIds");
                 });
 
             modelBuilder.Entity("ERP.Models.Borrow", b =>
@@ -109,7 +111,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("SiteId");
 
-                    b.ToTable("Borrows", (string)null);
+                    b.ToTable("Borrows");
                 });
 
             modelBuilder.Entity("ERP.Models.BorrowItem", b =>
@@ -146,7 +148,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("BorrowItems", (string)null);
+                    b.ToTable("BorrowItems");
                 });
 
             modelBuilder.Entity("ERP.Models.BorrowItemEquipmentAsset", b =>
@@ -183,7 +185,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("ReturnId");
 
-                    b.ToTable("BorrowItemEquipmentAssets", (string)null);
+                    b.ToTable("BorrowItemEquipmentAssets");
                 });
 
             modelBuilder.Entity("ERP.Models.BulkPurchase", b =>
@@ -218,7 +220,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("RequestedById");
 
-                    b.ToTable("BulkPurchases", (string)null);
+                    b.ToTable("BulkPurchases");
                 });
 
             modelBuilder.Entity("ERP.Models.BulkPurchaseItem", b =>
@@ -260,7 +262,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("BulkPurchaseItems", (string)null);
+                    b.ToTable("BulkPurchaseItems");
                 });
 
             modelBuilder.Entity("ERP.Models.Buy", b =>
@@ -316,7 +318,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("RequestedById");
 
-                    b.ToTable("Buys", (string)null);
+                    b.ToTable("Buys");
                 });
 
             modelBuilder.Entity("ERP.Models.BuyItem", b =>
@@ -355,7 +357,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("BuyItems", (string)null);
+                    b.ToTable("BuyItems");
                 });
 
             modelBuilder.Entity("ERP.Models.Employee", b =>
@@ -397,7 +399,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("UserRoleId");
 
-                    b.ToTable("Employees", (string)null);
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("ERP.Models.Equipment", b =>
@@ -420,7 +422,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("EquipmentCategoryId");
 
-                    b.ToTable("Equipments", (string)null);
+                    b.ToTable("Equipments");
                 });
 
             modelBuilder.Entity("ERP.Models.EquipmentAsset", b =>
@@ -460,7 +462,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("EquipmentModelId");
 
-                    b.ToTable("EquipmentAssets", (string)null);
+                    b.ToTable("EquipmentAssets");
                 });
 
             modelBuilder.Entity("ERP.Models.EquipmentCategory", b =>
@@ -480,7 +482,7 @@ namespace ERP.Migrations
 
                     b.HasKey("EquipmentCategoryId");
 
-                    b.ToTable("EquipmentCategories", (string)null);
+                    b.ToTable("EquipmentCategories");
                 });
 
             modelBuilder.Entity("ERP.Models.EquipmentModel", b =>
@@ -505,7 +507,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("EquipmentModels", (string)null);
+                    b.ToTable("EquipmentModels");
                 });
 
             modelBuilder.Entity("ERP.Models.EquipmentSiteQty", b =>
@@ -531,7 +533,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("SiteId");
 
-                    b.ToTable("EquipmentSiteQties", (string)null);
+                    b.ToTable("EquipmentSiteQties");
                 });
 
             modelBuilder.Entity("ERP.Models.Issue", b =>
@@ -576,7 +578,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("SiteId");
 
-                    b.ToTable("Issues", (string)null);
+                    b.ToTable("Issues");
                 });
 
             modelBuilder.Entity("ERP.Models.IssueItem", b =>
@@ -610,7 +612,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("IssueItems", (string)null);
+                    b.ToTable("IssueItems");
                 });
 
             modelBuilder.Entity("ERP.Models.Item", b =>
@@ -630,7 +632,7 @@ namespace ERP.Migrations
 
                     b.HasKey("ItemId");
 
-                    b.ToTable("Items", (string)null);
+                    b.ToTable("Items");
                 });
 
             modelBuilder.Entity("ERP.Models.Maintenance", b =>
@@ -703,7 +705,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("SiteId");
 
-                    b.ToTable("Maintenances", (string)null);
+                    b.ToTable("Maintenances");
                 });
 
             modelBuilder.Entity("ERP.Models.Material", b =>
@@ -727,7 +729,7 @@ namespace ERP.Migrations
 
                     b.HasKey("ItemId");
 
-                    b.ToTable("Materials", (string)null);
+                    b.ToTable("Materials");
                 });
 
             modelBuilder.Entity("ERP.Models.MaterialSiteQty", b =>
@@ -748,7 +750,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("SiteId");
 
-                    b.ToTable("MaterialSiteQties", (string)null);
+                    b.ToTable("MaterialSiteQties");
                 });
 
             modelBuilder.Entity("ERP.Models.Miscellaneous", b =>
@@ -762,7 +764,7 @@ namespace ERP.Migrations
 
                     b.HasKey("Key");
 
-                    b.ToTable("Miscellaneouses", (string)null);
+                    b.ToTable("Miscellaneouses");
                 });
 
             modelBuilder.Entity("ERP.Models.Notification", b =>
@@ -809,7 +811,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("SiteId");
 
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("ERP.Models.PerformanceSheet", b =>
@@ -826,7 +828,7 @@ namespace ERP.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EmployeeId")
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<float>("PerformancePoint")
@@ -838,9 +840,6 @@ namespace ERP.Migrations
                     b.Property<string>("Remark")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("SubContractorId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -984,7 +983,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("RequestedById");
 
-                    b.ToTable("Purchases", (string)null);
+                    b.ToTable("Purchases");
                 });
 
             modelBuilder.Entity("ERP.Models.PurchaseItem", b =>
@@ -1026,7 +1025,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("PurchaseItems", (string)null);
+                    b.ToTable("PurchaseItems");
                 });
 
             modelBuilder.Entity("ERP.Models.PurchaseItemEmployee", b =>
@@ -1055,7 +1054,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("RequestedById");
 
-                    b.ToTable("PurchaseItemEmployees", (string)null);
+                    b.ToTable("PurchaseItemEmployees");
                 });
 
             modelBuilder.Entity("ERP.Models.Receive", b =>
@@ -1108,7 +1107,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("ReceivingSiteId");
 
-                    b.ToTable("Receives", (string)null);
+                    b.ToTable("Receives");
                 });
 
             modelBuilder.Entity("ERP.Models.ReceiveItem", b =>
@@ -1135,7 +1134,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("ReceiveItems", (string)null);
+                    b.ToTable("ReceiveItems");
                 });
 
             modelBuilder.Entity("ERP.Models.Return", b =>
@@ -1161,7 +1160,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("SiteId");
 
-                    b.ToTable("Returns", (string)null);
+                    b.ToTable("Returns");
                 });
 
             modelBuilder.Entity("ERP.Models.Setting", b =>
@@ -1219,7 +1218,7 @@ namespace ERP.Migrations
 
                     b.HasKey("SiteId");
 
-                    b.ToTable("Sites", (string)null);
+                    b.ToTable("Sites");
                 });
 
             modelBuilder.Entity("ERP.Models.Store", b =>
@@ -1241,7 +1240,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("SiteId");
 
-                    b.ToTable("Stores", (string)null);
+                    b.ToTable("Stores");
                 });
 
             modelBuilder.Entity("ERP.Models.SubTask", b =>
@@ -1305,8 +1304,8 @@ namespace ERP.Migrations
                     b.Property<int?>("ApprovedById")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DeliveredById")
-                        .HasColumnType("int");
+                    b.Property<string>("DeliveredBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ReceiveDate")
                         .HasColumnType("datetime2");
@@ -1342,8 +1341,6 @@ namespace ERP.Migrations
 
                     b.HasIndex("ApprovedById");
 
-                    b.HasIndex("DeliveredById");
-
                     b.HasIndex("ReceiveSiteId");
 
                     b.HasIndex("ReceivedById");
@@ -1354,7 +1351,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("SentById");
 
-                    b.ToTable("Transfers", (string)null);
+                    b.ToTable("Transfers");
                 });
 
             modelBuilder.Entity("ERP.Models.TransferItem", b =>
@@ -1394,7 +1391,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("ItemId");
 
-                    b.ToTable("TransferItems", (string)null);
+                    b.ToTable("TransferItems");
                 });
 
             modelBuilder.Entity("ERP.Models.TransferItemEquipmentAsset", b =>
@@ -1415,7 +1412,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("EquipmentAssetId");
 
-                    b.ToTable("TransferItemEquipmentAssets", (string)null);
+                    b.ToTable("TransferItemEquipmentAssets");
                 });
 
             modelBuilder.Entity("ERP.Models.UserAccount", b =>
@@ -1438,7 +1435,7 @@ namespace ERP.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("UserAccounts", (string)null);
+                    b.ToTable("UserAccounts");
                 });
 
             modelBuilder.Entity("ERP.Models.UserRole", b =>
@@ -1572,9 +1569,6 @@ namespace ERP.Migrations
 
                     b.HasKey("RoleId");
 
-<<<<<<< HEAD
-                    b.ToTable("UserRoles", (string)null);
-=======
                     b.ToTable("UserRoles");
 
                     b.HasData(
@@ -1622,7 +1616,6 @@ namespace ERP.Migrations
                             IsFinance = false,
                             Role = "Admin"
                         });
->>>>>>> 0670918 (Code refactored and features added)
                 });
 
             modelBuilder.Entity("ERP.Models.WeeklyPlan", b =>
@@ -1649,8 +1642,8 @@ namespace ERP.Migrations
                     b.Property<int>("WeekNo")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("WeekStartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1670,10 +1663,7 @@ namespace ERP.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("PerformedBy")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SubContractorId")
+                    b.Property<int>("PerformedBy")
                         .HasColumnType("int");
 
                     b.Property<int?>("SubTaskId")
@@ -2424,11 +2414,6 @@ namespace ERP.Migrations
                         .HasForeignKey("ApprovedById")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("ERP.Models.Employee", "DeliveredBy")
-                        .WithMany()
-                        .HasForeignKey("DeliveredById")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("ERP.Models.Site", "ReceiveSite")
                         .WithMany()
                         .HasForeignKey("ReceiveSiteId")
@@ -2458,8 +2443,6 @@ namespace ERP.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ApprovedBy");
-
-                    b.Navigation("DeliveredBy");
 
                     b.Navigation("ReceiveSite");
 

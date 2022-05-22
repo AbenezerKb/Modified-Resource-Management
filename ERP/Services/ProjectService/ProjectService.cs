@@ -5,6 +5,7 @@ using ERP.DTOs.Project;
 using ERP.Models.Others;
 using Microsoft.EntityFrameworkCore;
 using ERP.DTOs.TaskProgressSheet;
+using ERP.DTOs.TaskSchedule;
 
 namespace ERP.Services.ProjectService
 {
@@ -18,6 +19,31 @@ namespace ERP.Services.ProjectService
 
         }
 
+        public async Task<List<TaskScheduleDto>> GetActualSchedule(int projectId)
+        {
+            List<TaskScheduleDto> actualSchedule = new();
+            var weeklyPlans = await dbContext.WeeklyPlans.AsNoTracking().Where(wp => wp.ProjectId == projectId)
+                                                   .Include(wp => wp.PlanValues)
+                                                   .ThenInclude(wpv => wpv.SubTask)
+                                                   .ToListAsync();
+            weeklyPlans.ForEach(wp =>
+            {
+                var weekEndDate = wp.WeekStartDate.AddDays(7);
+                var weeklySchedule = wp.PlanValues.Select(wpv => new TaskScheduleDto
+                {
+                    TaskName = wpv.SubTask!.Name,
+                    Priority = wpv.SubTask.Priority,
+                    StartDate = wp.WeekStartDate,
+                    EndDate = weekEndDate
+                });
+
+                actualSchedule.AddRange(weeklySchedule);
+
+            });
+
+
+            return actualSchedule;
+        }
 
         public async Task<List<Project>> GetByName(string name)
         {
@@ -50,6 +76,27 @@ namespace ERP.Services.ProjectService
             return projects;
         }
 
+        public async Task<List<TaskScheduleDto>> GetCrashSchedule(int projectId)
+        {
+            List<SubTask> subTasks = await dbContext.SubTasks.AsNoTracking()
+                                                             .Include(st => st.ProjectTask)
+                                                             .Where(st => st.ProjectTask!.ProjectId == projectId)
+                                                             .OrderBy(st => st.StartDate)
+                                                             .ToListAsync();
+
+            List<TaskScheduleDto> crashSchedule = subTasks.Select(st =>
+              new TaskScheduleDto
+              {
+                  TaskName = st.Name,
+                  Priority = st.Priority,
+                  StartDate = st.StartDate,
+                  EndDate = st.EndDate
+              }).ToList();
+
+            return crashSchedule;
+
+        }
+
         public async Task<List<TaskProgressSheetDto>> GetTaskProgressSheet(int projectId)
         {
             var project = await dbContext.Projects.Where(p => p.Id == projectId)
@@ -63,8 +110,9 @@ namespace ERP.Services.ProjectService
             List<TaskProgressSheetDto> taskProgressSheets = project.Tasks.Select(t =>
             new TaskProgressSheetDto
             {
-                TaskName = t.Name,
-                Progress = (float)t.GetTaskProgress()
+                MainTaskId = t.Id,
+                MainTaskName = t.Name,
+                Progress = (float)t.Progress
 
             }).ToList();
 

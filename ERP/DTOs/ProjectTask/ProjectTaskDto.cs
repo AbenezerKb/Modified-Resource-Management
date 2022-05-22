@@ -11,6 +11,7 @@ namespace ERP.DTOs.ProjectTask
         public DateTime StartDate { get; set; }
         [Required]
         public DateTime EndDate { get; set; }
+        public float Budget { get; set; }
         [Required]
         public int ProjectId { get; set; }
     }

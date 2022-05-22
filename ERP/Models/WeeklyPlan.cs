@@ -6,9 +6,8 @@ namespace ERP.Models
     public class WeeklyPlan : IAuditableEntity
     {
         public int Id { get; set; }
+        public DateTime WeekStartDate { get; set; }
         public int WeekNo { get; set; }
-
-        public int Year { get; set; }
         public string Remark { get; set; } = string.Empty;
         public List<WeeklyPlanValue> PlanValues { get; set; } = new();
         [JsonIgnore]

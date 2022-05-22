@@ -7,6 +7,7 @@ using ERP.DTOs.Project;
 using ERP.Exceptions;
 using ERP.Models;
 using ERP.Helpers;
+using ERP.Services.ProjectTaskService;
 
 namespace ERP.Controllers
 {
@@ -15,15 +16,17 @@ namespace ERP.Controllers
     public class ProjectController : ControllerBase
     {
         private readonly IProjectService projectService;
+        private readonly IProjectTaskService projectTaskService;
         private readonly IProjectManagementReportService projectManagementReportService;
         private readonly IProjectManagementAnalyticsService projectManagementAnalyticsService;
         public ProjectController(IProjectService service,
          IProjectManagementReportService projectManagementReportService,
-          IProjectManagementAnalyticsService projectManagementAnalyticsService)
+          IProjectManagementAnalyticsService projectManagementAnalyticsService, IProjectTaskService projectTaskService)
         {
             projectService = service;
             this.projectManagementReportService = projectManagementReportService;
             this.projectManagementAnalyticsService = projectManagementAnalyticsService;
+            this.projectTaskService = projectTaskService;
         }
 
 
@@ -86,6 +89,26 @@ namespace ERP.Controllers
                 return NotFound(new CustomApiResponse { Message = infe.Message });
             }
         }
+
+        [HttpGet("{id:int}/subContractorWorks")]
+
+        public async Task<ActionResult<ProjectTask>> GetSubContractingWorks(int id)
+        {
+            try
+            {
+                return Ok(new CustomApiResponse
+                {
+                    Data = await projectTaskService.GetSubContractorWorks(id),
+                    Message = "Success"
+                });
+            }
+            catch (ItemNotFoundException infe)
+            {
+                return NotFound(new CustomApiResponse { Message = infe.Message });
+            }
+
+        }
+
         [HttpGet("{id:int}/report")]
 
         public async Task<ActionResult<CustomApiResponse>> GetReport(int id, [FromQuery] DateTime StartDate, [FromQuery] DateTime EndDate)
@@ -142,6 +165,49 @@ namespace ERP.Controllers
                     {
                         Message = "Success",
                         Data = await projectService.GetTaskProgressSheet(id)
+                    }
+                );
+            }
+            catch (ItemNotFoundException infe)
+            {
+                return NotFound(new CustomApiResponse
+                {
+                    Message = infe.Message
+                });
+            }
+        }
+        [HttpGet("{id:int}/crashSchedule")]
+        public async Task<ActionResult<CustomApiResponse>> GetCrashSchedule(int id)
+        {
+            try
+            {
+                return Ok(
+                    new CustomApiResponse
+                    {
+                        Message = "Success",
+                        Data = await projectService.GetCrashSchedule(id)
+                    }
+                );
+            }
+            catch (ItemNotFoundException infe)
+            {
+                return NotFound(new CustomApiResponse
+                {
+                    Message = infe.Message
+                });
+            }
+
+        }
+        [HttpGet("{id:int}/actualSchedule")]
+        public async Task<ActionResult<CustomApiResponse>> GetActualSchedule(int id)
+        {
+            try
+            {
+                return Ok(
+                    new CustomApiResponse
+                    {
+                        Message = "Success",
+                        Data = await projectService.GetActualSchedule(id)
                     }
                 );
             }
