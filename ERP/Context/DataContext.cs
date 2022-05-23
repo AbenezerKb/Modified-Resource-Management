@@ -419,8 +419,9 @@ namespace ERP.Context
                         .WithMany()
                         .HasForeignKey(ps => ps.ProjectId);
 
+            #endregion
 
-            //Seeding Data
+            #region Data Seeding
 
             modelBuilder.Entity<Setting>().HasData(new Setting
             {
@@ -432,7 +433,8 @@ namespace ERP.Context
             modelBuilder.Entity<UserRole>().HasData(new UserRole
             {
                 RoleId = 1,
-                Role = "Admin",
+                Role = "Employee",
+                IsAdmin = true,
                 CanEditUser = true,
 
                 CanRequestPurchase = true,
@@ -519,12 +521,20 @@ namespace ERP.Context
                 CanGetStockNotification = true
 
 
-            });
+            }
+            // new UserRole
+            // {
+            //     RoleId = 1,
+            //     Role = ""
+            // }
+            );
+
+
             Console.WriteLine("Data Seeded");
 
+            #endregion 
 
 
-            #endregion
         }
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

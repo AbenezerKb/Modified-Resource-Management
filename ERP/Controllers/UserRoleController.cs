@@ -36,7 +36,7 @@ namespace ERP.Controllers
             return Ok(roles);
         }
 
-        // [Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Employee")]
         [HttpPost("add")]
         public async Task<ActionResult<UserRole>> AddNew(UserRole role)
         {
