@@ -1572,57 +1572,7 @@ namespace ERP.Migrations
 
                     b.HasKey("RoleId");
 
-<<<<<<< HEAD
                     b.ToTable("UserRoles", (string)null);
-=======
-                    b.ToTable("UserRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            RoleId = 1,
-                            CanApproveBorrow = true,
-                            CanApproveBulkPurchase = true,
-                            CanApproveBuy = true,
-                            CanApproveIssue = true,
-                            CanApproveMaintenance = true,
-                            CanApprovePurchase = true,
-                            CanApproveReceive = true,
-                            CanApproveTransfer = true,
-                            CanCheckBuy = true,
-                            CanCheckPurchase = true,
-                            CanConfirmBulkPurchase = true,
-                            CanConfirmBuy = true,
-                            CanConfirmPurchase = true,
-                            CanEditUser = true,
-                            CanFixMaintenance = true,
-                            CanGetStockNotification = true,
-                            CanHandBorrow = true,
-                            CanHandIssue = true,
-                            CanReceive = true,
-                            CanReceiveTransfer = true,
-                            CanRequestBorrow = true,
-                            CanRequestBulkPurchase = true,
-                            CanRequestBuy = true,
-                            CanRequestIssue = true,
-                            CanRequestMaintenance = true,
-                            CanRequestPurchase = true,
-                            CanRequestTransfer = true,
-                            CanReturnBorrow = true,
-                            CanSendTransfer = true,
-                            CanViewBorrow = true,
-                            CanViewBulkPurchase = true,
-                            CanViewBuy = true,
-                            CanViewIssue = true,
-                            CanViewMaintenance = true,
-                            CanViewPurchase = true,
-                            CanViewReceive = true,
-                            CanViewTransfer = true,
-                            IsAdmin = false,
-                            IsFinance = false,
-                            Role = "Admin"
-                        });
->>>>>>> 0670918 (Code refactored and features added)
                 });
 
             modelBuilder.Entity("ERP.Models.WeeklyPlan", b =>
