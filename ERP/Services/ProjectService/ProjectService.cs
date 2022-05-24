@@ -30,7 +30,7 @@ namespace ERP.Services.ProjectService
 
         }
 
-        public async Task<List<Project>> GetByNameAndSiteId(string name, string siteId)
+        public async Task<List<Project>> GetByNameAndSiteId(string name, int siteId)
         {
             var projects = await dbContext.Projects.Where(p => p.SiteId == siteId && p.Name.ToLower().Contains(name.ToLower())).ToListAsync();
             if (!projects.Any())
@@ -40,7 +40,7 @@ namespace ERP.Services.ProjectService
             return projects;
         }
 
-        public async Task<List<Project>> GetBySiteId(string siteId)
+        public async Task<List<Project>> GetBySiteId(int siteId)
         {
             var projects = await dbContext.Projects.Where(p => p.SiteId == siteId).ToListAsync();
             if (!projects.Any())

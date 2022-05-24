@@ -47,7 +47,7 @@ namespace ERP.Controllers
 
         }
         [HttpGet]
-        public async Task<ActionResult<CustomApiResponse>> GetProjects([FromQuery] string? siteId, [FromQuery] string? name)
+        public async Task<ActionResult<CustomApiResponse>> GetProjects([FromQuery] int? siteId, [FromQuery] string? name)
         {
             try
             {
@@ -197,16 +197,16 @@ namespace ERP.Controllers
         }
 
 
-        private async Task<List<Project>> FilterProjectsBy(string? name, string? siteId)
+        private async Task<List<Project>> FilterProjectsBy(string? name, int? siteId)
         {
             List<Project> projects = new List<Project>();
             if (siteId != null && name != null)
             {
-                projects = await projectService.GetByNameAndSiteId(name, siteId);
+                projects = await projectService.GetByNameAndSiteId(name, siteId.Value);
             }
             else if (siteId != null)
             {
-                projects = await projectService.GetBySiteId(siteId);
+                projects = await projectService.GetBySiteId(siteId.Value);
 
             }
             else if (name != null)

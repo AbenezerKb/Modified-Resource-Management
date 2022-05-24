@@ -47,8 +47,15 @@ namespace ERP.Services.ProjectManagementReportService
                 Progress = (float)t.GetTaskProgress(),
                 Status = "Completed"
             });
-
-
+            List<object> budgetsummery = new();
+            projectTasks.ForEach(t =>
+            {
+                budgetsummery.AddRange(t.SubTasks.Select(s => new
+                {
+                    SubTaskName = s.Name,
+                    Budget = s.Budget
+                }).ToList());
+            });
             // report.MaterialsUsed = 0;
             // report.EquipementsUsed = 0;
 
@@ -69,7 +76,7 @@ namespace ERP.Services.ProjectManagementReportService
                 Budgets = new
                 {
                     // which tasks, how much budget
-                    UsedOn = new { }
+                    Summery = budgetsummery
                 },
                 Resources = new
                 {
