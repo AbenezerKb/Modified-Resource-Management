@@ -102,7 +102,7 @@ namespace ERP.Controllers
         [HttpPost("edit")]
         public async Task<ActionResult<UserRole>> EditRole(UserRole role)
         {
-            var userRole = context.UserRoles.Where(role => role.RoleId == role.RoleId)
+            var userRole = context.UserRoles.Where(ro => ro.RoleId == role.RoleId)
                .FirstOrDefault();
 
             if (userRole == null) return NotFound("Role Not Found.");
