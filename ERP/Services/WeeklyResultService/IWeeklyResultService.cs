@@ -10,7 +10,7 @@ namespace ERP.Services.WeeklyResultService
         Task<WeeklyResult> GetByWeeklyPlanId(int weeklyPlanId);
         Task<WeeklyResult> GetById(int weeklyResultId);
         Task<List<WeeklyResult>> GetAll();
-        Task<WeeklyResult> UpdateWeeklyResultApproval(int weeklyResultId, int employeeId, bool isApproved);
+        // Task<WeeklyResult> UpdateWeeklyResultApproval(int weeklyResultId, int employeeId, bool isApproved);
         Task<WeeklyResult> Remove(int weeklyResultId);
     }
 

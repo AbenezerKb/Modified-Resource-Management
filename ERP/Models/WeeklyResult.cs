@@ -8,7 +8,6 @@ namespace ERP.Models
     {
         public int Id { get; set; }
         public string Remark { get; set; } = string.Empty;
-        public Status Staus { get; set; }
         public int? ApprovedBy { get; set; }
         public int WeeklyPlanId { get; set; }
         [JsonIgnore]

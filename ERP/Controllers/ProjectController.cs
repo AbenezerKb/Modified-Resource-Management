@@ -132,6 +132,27 @@ namespace ERP.Controllers
 
             }
         }
+        [HttpGet("{id:int}/taskProgressSheet")]
+        public async Task<ActionResult<CustomApiResponse>> GetTaskProgressSheet(int id)
+        {
+            try
+            {
+                return Ok(
+                    new CustomApiResponse
+                    {
+                        Message = "Success",
+                        Data = await projectService.GetTaskProgressSheet(id)
+                    }
+                );
+            }
+            catch (ItemNotFoundException infe)
+            {
+                return NotFound(new CustomApiResponse
+                {
+                    Message = infe.Message
+                });
+            }
+        }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<CustomApiResponse>> DeleteProject(int id)

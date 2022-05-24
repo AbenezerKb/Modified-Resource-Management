@@ -12,8 +12,6 @@ namespace ERP.Models
         public int WeeklyResultId { get; set; }
         [JsonIgnore]
         public WeeklyResult? WeeklyResult { get; set; }
-        [JsonIgnore]
-        public PerformanceSheet PerformanceSheet { get; set; }
         public int? SubTaskId { get; set; }
 
         [JsonIgnore]

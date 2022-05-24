@@ -1,5 +1,6 @@
 ﻿using ERP.Models;
 using ERP.DTOs.Project;
+using ERP.DTOs.TaskProgressSheet;
 namespace ERP.Services.ProjectService
 {
     public interface IProjectService
@@ -12,5 +13,6 @@ namespace ERP.Services.ProjectService
         Task<List<Project>> GetBySiteId(string siteId);
         Task<List<Project>> GetByName(string name);
         Task<List<Project>> GetByNameAndSiteId(string name, string siteId);
+        Task<List<TaskProgressSheetDto>> GetTaskProgressSheet(int projectId);
     }
 }

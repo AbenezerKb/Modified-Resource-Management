@@ -4,6 +4,7 @@ using ERP.Exceptions;
 using ERP.DTOs.Project;
 using ERP.Models.Others;
 using Microsoft.EntityFrameworkCore;
+using ERP.DTOs.TaskProgressSheet;
 
 namespace ERP.Services.ProjectService
 {
@@ -47,6 +48,27 @@ namespace ERP.Services.ProjectService
                 throw new ItemNotFoundException($"Projects not found with siteId={siteId}");
             }
             return projects;
+        }
+
+        public async Task<List<TaskProgressSheetDto>> GetTaskProgressSheet(int projectId)
+        {
+            var project = await dbContext.Projects.Where(p => p.Id == projectId)
+                                                .Include(p => p.Tasks)
+                                                .ThenInclude(p => p.SubTasks)
+                                                .FirstOrDefaultAsync();
+            if (project == null)
+            {
+                throw new ItemNotFoundException($"Project not found with ProjectId={projectId}");
+            }
+            List<TaskProgressSheetDto> taskProgressSheets = project.Tasks.Select(t =>
+            new TaskProgressSheetDto
+            {
+                TaskName = t.Name,
+                Progress = (float)t.GetTaskProgress()
+
+            }).ToList();
+
+            return taskProgressSheets;
         }
 
         async Task<Project> IProjectService.Add(ProjectDto projectDto)

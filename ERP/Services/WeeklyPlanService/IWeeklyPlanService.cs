@@ -14,6 +14,7 @@ namespace ERP.Services.WeeklyPlanService
         Task<WeeklyPlan> Remove(int weeklyPlanId);
         Task<WeeklyPlanValue> AddTask(int subTaskId, int performedBy, int weeklyPlanId);
         Task<WeeklyPlanValue> RemovePlannedTask(int subTaskId, int weeklyPlanId);
+            
     }
 
 }
