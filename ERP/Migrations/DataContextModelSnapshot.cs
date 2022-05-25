@@ -860,12 +860,8 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-<<<<<<< HEAD
                     b.Property<int?>("CoordinatorId")
                         .IsRequired()
-=======
-                    b.Property<int>("CoordinatorId")
->>>>>>> 1f294a0192fe1540788e27d59e9ffc6e262b41d3
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -896,7 +892,6 @@ namespace ERP.Migrations
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
                     b.HasIndex("CoordinatorId");
 
                     b.HasIndex("ManagerId")
@@ -905,8 +900,6 @@ namespace ERP.Migrations
                     b.HasIndex("SiteId")
                         .IsUnique();
 
-=======
->>>>>>> 1f294a0192fe1540788e27d59e9ffc6e262b41d3
                     b.ToTable("Projects");
                 });
 
