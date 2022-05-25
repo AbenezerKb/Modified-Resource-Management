@@ -52,6 +52,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSwaggerGen(options =>
 {
+<<<<<<< HEAD
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
         Description = "Standard Authorization header using the Bearer scheme (\"bearer {token}\")",
@@ -59,22 +60,31 @@ builder.Services.AddSwaggerGen(options =>
         Name = "Authorization",
         Type = SecuritySchemeType.ApiKey
     });
+=======
+    // options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    // {
+    //     Description = "Standard Authorization header using the Bearer scheme (\"bearer {token}\")",
+    //     In = ParameterLocation.Header,
+    //     Name = "Authorization",
+    //     Type = SecuritySchemeType.ApiKey
+    // });
+>>>>>>> 1f294a0192fe1540788e27d59e9ffc6e262b41d3
 
-    options.OperationFilter<SecurityRequirementsOperationFilter>();
+    // options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
-            ValidateIssuer = false,
-            ValidateAudience = false
-        };
-    });
+// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//     .AddJwtBearer(options =>
+//     {
+//         options.TokenValidationParameters = new TokenValidationParameters
+//         {
+//             ValidateIssuerSigningKey = true,
+//             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+//                 .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+//             ValidateIssuer = false,
+//             ValidateAudience = false
+//         };
+//     });
 
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -103,9 +113,9 @@ app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
 
-app.UseAuthentication();
+// app.UseAuthentication();
 
-app.UseAuthorization();
+// app.UseAuthorization();
 
 app.MapControllers();
 

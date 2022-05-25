@@ -13,7 +13,6 @@ namespace ERP.Controllers
 {
     [Route("api/tasks")]
     [ApiController]
-
     public class ProjectTaskController : ControllerBase
     {
         private readonly IProjectTaskService tasksService;

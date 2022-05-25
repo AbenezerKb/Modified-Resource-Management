@@ -4,6 +4,7 @@ using ERP.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220522040759_PerformanceSheetModified")]
+    partial class PerformanceSheetModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -826,7 +828,7 @@ namespace ERP.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EmployeeId")
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<float>("PerformancePoint")
@@ -838,9 +840,6 @@ namespace ERP.Migrations
                     b.Property<string>("Remark")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("SubContractorId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -860,13 +859,9 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-<<<<<<< HEAD
-                    b.Property<int?>("CoordinatorId")
+                    b.Property<string>("CoordinatorId")
                         .IsRequired()
-=======
-                    b.Property<int>("CoordinatorId")
->>>>>>> 1f294a0192fe1540788e27d59e9ffc6e262b41d3
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -874,15 +869,17 @@ namespace ERP.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ManagerId")
-                        .HasColumnType("int");
+                    b.Property<string>("ManagerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SiteId")
-                        .HasColumnType("int");
+                    b.Property<string>("SiteId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -896,17 +893,6 @@ namespace ERP.Migrations
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
-                    b.HasIndex("CoordinatorId");
-
-                    b.HasIndex("ManagerId")
-                        .IsUnique();
-
-                    b.HasIndex("SiteId")
-                        .IsUnique();
-
-=======
->>>>>>> 1f294a0192fe1540788e27d59e9ffc6e262b41d3
                     b.ToTable("Projects");
                 });
 
@@ -923,9 +909,6 @@ namespace ERP.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsSubContractorWork")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1659,8 +1642,8 @@ namespace ERP.Migrations
                     b.Property<int>("WeekNo")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("WeekStartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1680,143 +1663,7 @@ namespace ERP.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("PerformedBy")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SubContractorId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SubTaskId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("WeeklyPlanId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubTaskId");
-
-                    b.HasIndex("WeeklyPlanId");
-
-                    b.ToTable("WeeklyPlanValues");
-                });
-
-            modelBuilder.Entity("ERP.Models.WeeklyResult", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("ApprovedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Remark")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("WeeklyPlanId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WeeklyPlanId")
-                        .IsUnique();
-
-                    b.ToTable("WeeklyResults");
-                });
-
-            modelBuilder.Entity("ERP.Models.WeeklyResultValue", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("SubTaskId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WeeklyResultId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubTaskId");
-
-                    b.HasIndex("WeeklyResultId");
-
-                    b.ToTable("WeeklyResultValues");
-                });
-
-            modelBuilder.Entity("ERP.Models.WeeklyPlan", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Remark")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("WeekNo")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("WeekStartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("WeeklyPlans");
-                });
-
-            modelBuilder.Entity("ERP.Models.WeeklyPlanValue", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("PerformedBy")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SubContractorId")
+                    b.Property<int>("PerformedBy")
                         .HasColumnType("int");
 
                     b.Property<int?>("SubTaskId")
@@ -2362,33 +2209,6 @@ namespace ERP.Migrations
                         .IsRequired();
 
                     b.Navigation("Project");
-                });
-
-            modelBuilder.Entity("ERP.Models.Project", b =>
-                {
-                    b.HasOne("ERP.Models.Employee", "Coordinator")
-                        .WithMany()
-                        .HasForeignKey("CoordinatorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ERP.Models.Employee", "Manager")
-                        .WithOne()
-                        .HasForeignKey("ERP.Models.Project", "ManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ERP.Models.Site", "Site")
-                        .WithOne()
-                        .HasForeignKey("ERP.Models.Project", "SiteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Coordinator");
-
-                    b.Navigation("Manager");
-
-                    b.Navigation("Site");
                 });
 
             modelBuilder.Entity("ERP.Models.ProjectTask", b =>

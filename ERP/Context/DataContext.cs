@@ -362,6 +362,7 @@ namespace ERP.Context
             .Property(p => p.Status)
             .HasConversion(v => v.ToString(),
             v => (Models.Others.Status)Enum.Parse(typeof(Models.Others.Status), v));
+<<<<<<< HEAD
             modelBuilder.Entity<Project>()
                 .HasOne(p => p.Site)
                 .WithOne();
@@ -375,6 +376,13 @@ namespace ERP.Context
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
 
+=======
+
+            // modelBuilder.Entity<WeeklyResult>()
+            // .Property(wr => wr.Staus)
+            // .HasConversion(v => v.ToString(),
+            // v => (Models.Others.Status)Enum.Parse(typeof(Models.Others.Status), v));
+>>>>>>> 1f294a0192fe1540788e27d59e9ffc6e262b41d3
 
             modelBuilder
             .Entity<ProjectTask>()
@@ -390,6 +398,7 @@ namespace ERP.Context
 
             modelBuilder.Entity<ProjectTask>().Ignore(p => p.Progress);
 
+<<<<<<< HEAD
             modelBuilder.Entity<WeeklyPlanValue>()
              .HasOne(wpv => wpv.WeeklyPlan)
              .WithMany(wp => wp.PlanValues)
@@ -397,6 +406,18 @@ namespace ERP.Context
 
 
             modelBuilder.Entity<WeeklyPlan>()
+=======
+            // modelBuilder.Entity<WeeklyPlan>().HasKey(wp => new { wp.WeekNo, wp.Year });
+            // modelBuilder.Entity<WeeklyResult>().HasKey(wr => new { wr.WeekNo, wr.Year });
+
+
+            modelBuilder.Entity<WeeklyPlan>()
+            .HasMany(wp => wp.PlanValues)
+            .WithOne(wpv => wpv.WeeklyPlan)
+            .HasForeignKey(w => w.WeeklyPlanId);
+
+            modelBuilder.Entity<WeeklyPlan>()
+>>>>>>> 1f294a0192fe1540788e27d59e9ffc6e262b41d3
             .HasOne(wp => wp.WeeklyResult)
             .WithOne(wr => wr.WeeklyPlan)
             .HasForeignKey<WeeklyResult>(wr => wr.WeeklyPlanId);
@@ -435,6 +456,107 @@ namespace ERP.Context
                 Description = "Before how many days should a deadline notification be sent",
                 Value = "10"
             });
+<<<<<<< HEAD
+=======
+            modelBuilder.Entity<UserRole>().HasData(new UserRole
+            {
+                RoleId = 1,
+                Role = "Employee",
+                IsAdmin = true,
+                CanEditUser = true,
+
+                CanRequestPurchase = true,
+
+                CanApprovePurchase = true,
+
+                CanCheckPurchase = true,
+
+
+                CanViewPurchase = true,
+
+                CanConfirmPurchase = true,
+
+
+                CanViewBulkPurchase = true,
+
+                CanRequestBulkPurchase = true,
+
+                CanApproveBulkPurchase = true,
+
+                CanConfirmBulkPurchase = true,
+
+                CanRequestBuy = true,
+
+                CanApproveBuy = true,
+
+                CanCheckBuy = true,
+
+                CanViewBuy = true,
+
+                CanConfirmBuy = true,
+
+                CanReceive = true,
+
+                CanApproveReceive = true,
+
+
+                CanViewReceive = true,
+
+                CanRequestIssue = true,
+
+                CanApproveIssue = true,
+
+
+                CanHandIssue = true,
+
+
+                CanViewIssue = true,
+
+
+                CanRequestBorrow = true,
+
+                CanApproveBorrow = true,
+
+
+                CanHandBorrow = true,
+
+
+                CanViewBorrow = true,
+
+                CanReturnBorrow = true,
+
+                CanRequestTransfer = true,
+
+                CanApproveTransfer = true,
+
+                CanSendTransfer = true,
+
+
+                CanReceiveTransfer = true,
+
+                CanViewTransfer = true,
+
+                CanRequestMaintenance = true,
+
+                CanApproveMaintenance = true,
+
+
+                CanFixMaintenance = true,
+
+
+                CanViewMaintenance = true,
+
+                CanGetStockNotification = true
+
+
+            }
+            // new UserRole
+            // {
+            //     RoleId = 1,
+            //     Role = ""
+            // }
+            );
+>>>>>>> 1f294a0192fe1540788e27d59e9ffc6e262b41d3
 
 
             Console.WriteLine("Data Seeded");

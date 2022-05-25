@@ -156,28 +156,6 @@ namespace ERP.Controllers
 
         }
 
-        // [HttpPost("{weeklyResultId:int}/approval")]
-        // public async Task<ActionResult<CustomApiResponse>> ApproveWeeklyResult(int weeklyResultId, [FromBody] WeeklyResultApprovalDto approvalDto)
-        // {
-        //     try
-        //     {
-        //         return Ok(new CustomApiResponse
-        //         {
-        //             Message = "Success",
-        //             Data = await weeklyResultService.UpdateWeeklyResultApproval(weeklyResultId, approvalDto.employeeId, approvalDto.isApproved)
-        //         });
-        //     }
-        //     catch (ItemNotFoundException infe)
-        //     {
-        //         return NotFound(
-        //             new CustomApiResponse
-        //             {
-        //                 Message = infe.Message
-        //             }
-        //         );
-        //     }
-
-        // }
 
     }
 
