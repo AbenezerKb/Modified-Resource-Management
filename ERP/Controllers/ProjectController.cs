@@ -32,7 +32,7 @@ namespace ERP.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "OfficeEngineer")]
+        [Authorize(Roles = "OfficeEngineer,Coordinator,Admin")]
         async public Task<ActionResult<CustomApiResponse>> AddProject([FromBody] ProjectDto projectDto)
         {
             try
