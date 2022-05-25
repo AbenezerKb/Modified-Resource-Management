@@ -3,6 +3,7 @@ using ERP.DTOs.WeeklyPlan;
 using ERP.Exceptions;
 using ERP.Models;
 using ERP.Services.WeeklyPlanService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERP.Controllers
@@ -18,6 +19,7 @@ namespace ERP.Controllers
             weeklyPlanService = service;
         }
         [HttpPost]
+        [Authorize(Roles = "ProjectManager,Admin")]
         public async Task<ActionResult<CustomApiResponse>> CreateNewPlan([FromBody] WeeklyPlanDto weeklyPlanDto)
         {
             try
@@ -60,6 +62,7 @@ namespace ERP.Controllers
             }
         }
         [HttpPut("{weeklyPlanId:int}")]
+        [Authorize(Roles = "ProjectManager,ProjectCoordinator,Admin")]
         public async Task<ActionResult<CustomApiResponse>> UpdateWeeklyPlan(int weeklyPlanId, WeeklyPlanDto weeklyPlanDto)
         {
             if (weeklyPlanDto.PlanValues.Any(wpv => wpv.PerformedBy != null && wpv.SubContractorId != null))
@@ -92,6 +95,8 @@ namespace ERP.Controllers
                     );
             }
         }
+
+        [Authorize(Roles = "ProjectManager,ProjectCoordinator,OfficeEngineer,SiteEngineer,Admin")]
         [HttpGet]
         public async Task<ActionResult<CustomApiResponse>> GetPlansWith([FromQuery] int projectId, [FromQuery] int? week, [FromQuery] int? month, [FromQuery] int? year)
         {
@@ -156,6 +161,7 @@ namespace ERP.Controllers
 
         }
 
+        [Authorize(Roles = "ProjectManager,ProjectCoordinator,Admin")]
         [HttpPost("{weeklyPlanId}/tasks")]
         public async Task<ActionResult<CustomApiResponse>> AddTaskToWeeklyPlan(int weeklyPlanId, [FromBody] WeeklyPlanValueDto weeklyPlanValueDto)
         {
@@ -196,6 +202,7 @@ namespace ERP.Controllers
                 );
             }
         }
+        [Authorize(Roles = "ProjectManager,ProjectCoordinator,Admin")]
         [HttpDelete("{weeklyPlanId:int}")]
         public async Task<ActionResult<CustomApiResponse>> RemoveWeeklyPlan(int weeklyPlanId)
         {
@@ -216,6 +223,8 @@ namespace ERP.Controllers
             }
 
         }
+
+        [Authorize(Roles = "ProjectManager,ProjectCoordinator,Admin")]
         [HttpDelete("tasks/{subTaskId:int}")]
         public async Task<ActionResult<CustomApiResponse>> RemovePlannedTask(int subTaskId, [FromQuery] int weeklyPlanId)
         {

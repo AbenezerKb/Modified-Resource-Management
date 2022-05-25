@@ -362,11 +362,19 @@ namespace ERP.Context
             .Property(p => p.Status)
             .HasConversion(v => v.ToString(),
             v => (Models.Others.Status)Enum.Parse(typeof(Models.Others.Status), v));
+            modelBuilder.Entity<Project>()
+                .HasOne(p => p.Site)
+                .WithOne();
 
-            // modelBuilder.Entity<WeeklyResult>()
-            // .Property(wr => wr.Staus)
-            // .HasConversion(v => v.ToString(),
-            // v => (Models.Others.Status)Enum.Parse(typeof(Models.Others.Status), v));
+
+            modelBuilder.Entity<Project>()
+                .HasOne(p => p.Manager)
+                .WithOne();
+            modelBuilder.Entity<Project>()
+                .HasOne(p => p.Coordinator)
+                .WithMany()
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             modelBuilder
             .Entity<ProjectTask>()
@@ -382,14 +390,11 @@ namespace ERP.Context
 
             modelBuilder.Entity<ProjectTask>().Ignore(p => p.Progress);
 
-            // modelBuilder.Entity<WeeklyPlan>().HasKey(wp => new { wp.WeekNo, wp.Year });
-            // modelBuilder.Entity<WeeklyResult>().HasKey(wr => new { wr.WeekNo, wr.Year });
+            modelBuilder.Entity<WeeklyPlanValue>()
+             .HasOne(wpv => wpv.WeeklyPlan)
+             .WithMany(wp => wp.PlanValues)
+             .HasForeignKey(w => w.WeeklyPlanId);
 
-
-            modelBuilder.Entity<WeeklyPlan>()
-            .HasMany(wp => wp.PlanValues)
-            .WithOne(wpv => wpv.WeeklyPlan)
-            .HasForeignKey(w => w.WeeklyPlanId);
 
             modelBuilder.Entity<WeeklyPlan>()
             .HasOne(wp => wp.WeeklyResult)
@@ -430,104 +435,6 @@ namespace ERP.Context
                 Description = "Before how many days should a deadline notification be sent",
                 Value = "10"
             });
-            modelBuilder.Entity<UserRole>().HasData(new UserRole
-            {
-                RoleId = 1,
-                Role = "Employee",
-                IsAdmin = true,
-                CanEditUser = true,
-
-                CanRequestPurchase = true,
-
-                CanApprovePurchase = true,
-
-                CanCheckPurchase = true,
-
-
-                CanViewPurchase = true,
-
-                CanConfirmPurchase = true,
-
-
-                CanViewBulkPurchase = true,
-
-                CanRequestBulkPurchase = true,
-
-                CanApproveBulkPurchase = true,
-
-                CanConfirmBulkPurchase = true,
-
-                CanRequestBuy = true,
-
-                CanApproveBuy = true,
-
-                CanCheckBuy = true,
-
-                CanViewBuy = true,
-
-                CanConfirmBuy = true,
-
-                CanReceive = true,
-
-                CanApproveReceive = true,
-
-
-                CanViewReceive = true,
-
-                CanRequestIssue = true,
-
-                CanApproveIssue = true,
-
-
-                CanHandIssue = true,
-
-
-                CanViewIssue = true,
-
-
-                CanRequestBorrow = true,
-
-                CanApproveBorrow = true,
-
-
-                CanHandBorrow = true,
-
-
-                CanViewBorrow = true,
-
-                CanReturnBorrow = true,
-
-                CanRequestTransfer = true,
-
-                CanApproveTransfer = true,
-
-                CanSendTransfer = true,
-
-
-                CanReceiveTransfer = true,
-
-                CanViewTransfer = true,
-
-                CanRequestMaintenance = true,
-
-                CanApproveMaintenance = true,
-
-
-                CanFixMaintenance = true,
-
-
-                CanViewMaintenance = true,
-
-                CanGetStockNotification = true
-
-
-            }
-            // new UserRole
-            // {
-            //     RoleId = 1,
-            //     Role = ""
-            // }
-            );
 
 
             Console.WriteLine("Data Seeded");

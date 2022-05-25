@@ -47,7 +47,11 @@ namespace ERP.Services.ProjectService
 
         public async Task<List<Project>> GetByName(string name)
         {
-            var projects = await dbContext.Projects.Where(p => p.Name.ToLower().Contains(name.ToLower())).ToListAsync();
+            var projects = await dbContext.Projects.Where(p => p.Name.ToLower().Contains(name.ToLower()))
+                .Include(p => p.Coordinator)
+                .Include(p => p.Manager)
+                .Include(p => p.Site)
+                .ToListAsync();
             if (!projects.Any())
             {
                 throw new ItemNotFoundException($"Projects not found with name={name}");
@@ -58,7 +62,11 @@ namespace ERP.Services.ProjectService
 
         public async Task<List<Project>> GetByNameAndSiteId(string name, int siteId)
         {
-            var projects = await dbContext.Projects.Where(p => p.SiteId == siteId && p.Name.ToLower().Contains(name.ToLower())).ToListAsync();
+            var projects = await dbContext.Projects.Where(p => p.SiteId == siteId && p.Name.ToLower().Contains(name.ToLower()))
+                 .Include(p => p.Coordinator)
+                .Include(p => p.Manager)
+                .Include(p => p.Site)
+                .ToListAsync();
             if (!projects.Any())
             {
                 throw new ItemNotFoundException($"Projects not found with name={name} and siteId={siteId}");
@@ -68,7 +76,11 @@ namespace ERP.Services.ProjectService
 
         public async Task<List<Project>> GetBySiteId(int siteId)
         {
-            var projects = await dbContext.Projects.Where(p => p.SiteId == siteId).ToListAsync();
+            var projects = await dbContext.Projects.Where(p => p.SiteId == siteId)
+                .Include(p => p.Coordinator)
+                .Include(p => p.Manager)
+                .Include(p => p.Site)
+                .ToListAsync();
             if (!projects.Any())
             {
                 throw new ItemNotFoundException($"Projects not found with siteId={siteId}");
@@ -122,6 +134,23 @@ namespace ERP.Services.ProjectService
         async Task<Project> IProjectService.Add(ProjectDto projectDto)
         {
 
+            var site = await dbContext.Sites.FirstOrDefaultAsync(s => s.SiteId == projectDto.SiteId);
+            if (site == null)
+            {
+                throw new ItemNotFoundException($"Site not found with SiteId={projectDto.SiteId}");
+            }
+            var manager = await dbContext.Employees.FirstOrDefaultAsync(e => e.EmployeeId == projectDto.ManagerId);
+            if (manager == null)
+            {
+                throw new ItemNotFoundException($"Manager not found with ManagerId={projectDto.ManagerId}");
+            }
+
+            var coordinator = await dbContext.Employees.FirstOrDefaultAsync(e => e.EmployeeId == projectDto.CoordinatorId);
+            if (coordinator == null)
+            {
+                throw new ItemNotFoundException($"Coordinator not found with CoordinatorId={projectDto.CoordinatorId}");
+            }
+
             var project = new Project
             {
                 Name = projectDto.Name,
@@ -132,8 +161,14 @@ namespace ERP.Services.ProjectService
                 CoordinatorId = projectDto.CoordinatorId,
                 Status = Status.New
             };
+
             await dbContext.Projects.AddAsync(project);
             await dbContext.SaveChangesAsync();
+
+            project.Site = site;
+            project.Manager = manager;
+            project.Coordinator = coordinator;
+
             return project;
 
         }

@@ -29,6 +29,7 @@ using ERP.Services.SettingService;
 using ERP.Services.BackgroundServices;
 using ERP.Services.PerformanceSheetService;
 using ERP.Services.WeeklyPlanService;
+using ERP.Helpers;
 
 namespace ERP
 {
@@ -70,7 +71,7 @@ namespace ERP
 
             services.AddHostedService<NotificationBackgroundService>();
 
-
+            services.AddScoped<SampleDataHelper, SampleDataHelper>();
             #endregion
         }
     }

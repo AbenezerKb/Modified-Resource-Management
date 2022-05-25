@@ -8,6 +8,7 @@ using ERP.Exceptions;
 using ERP.Models;
 using ERP.Helpers;
 using ERP.Services.ProjectTaskService;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ERP.Controllers
 {
@@ -31,24 +32,37 @@ namespace ERP.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "OfficeEngineer")]
         async public Task<ActionResult<CustomApiResponse>> AddProject([FromBody] ProjectDto projectDto)
         {
-
-            if (!Utils.isValidDateRange(projectDto.StartDate, projectDto.EndDate))
+            try
             {
-                return BadRequest(new CustomApiResponse
-                {
-                    Message = "Invalid Date Range, StartDate must be less than EndDate and EndDate must be greater than StartDate",
 
+                if (!Utils.isValidDateRange(projectDto.StartDate, projectDto.EndDate))
+                {
+                    return BadRequest(new CustomApiResponse
+                    {
+                        Message = "Invalid Date Range, StartDate must be less than EndDate and EndDate must be greater than StartDate",
+
+                    });
+                }
+                return Ok(new CustomApiResponse
+                {
+                    Data = await projectService.Add(projectDto),
+                    Message = "Success"
                 });
             }
-            return Ok(new CustomApiResponse
+            catch (ItemNotFoundException infe)
             {
-                Data = await projectService.Add(projectDto),
-                Message = "Success"
-            });
+                return NotFound(new CustomApiResponse
+                {
+                    Message = infe.Message
+                });
+
+            }
 
         }
+        [Authorize(Roles = "Admin,OfficeEngineer,Coordinator,ProjectManager")]
         [HttpGet]
         public async Task<ActionResult<CustomApiResponse>> GetProjects([FromQuery] int? siteId, [FromQuery] string? name)
         {
@@ -74,6 +88,7 @@ namespace ERP.Controllers
         }
 
         [HttpGet("{id:int}")]
+        [Authorize(Roles = "OfficeEngineer,Coordinator,ProjectManager,Admin")]
         public async Task<ActionResult<CustomApiResponse>> GetProjectById(int id)
         {
             try
@@ -91,7 +106,7 @@ namespace ERP.Controllers
         }
 
         [HttpGet("{id:int}/subContractorWorks")]
-
+        [Authorize(Roles = "ProjectManager,OfficeEngineer,Admin")]
         public async Task<ActionResult<ProjectTask>> GetSubContractingWorks(int id)
         {
             try
@@ -110,7 +125,7 @@ namespace ERP.Controllers
         }
 
         [HttpGet("{id:int}/report")]
-
+        [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<CustomApiResponse>> GetReport(int id, [FromQuery] DateTime StartDate, [FromQuery] DateTime EndDate)
         {
             try
@@ -133,6 +148,7 @@ namespace ERP.Controllers
             }
         }
         [HttpGet("{id:int}/analytics")]
+        [Authorize(Roles = "Admin,Manager")]
 
         public async Task<ActionResult<CustomApiResponse>> GetAnalytics(int id)
         {
@@ -177,6 +193,7 @@ namespace ERP.Controllers
             }
         }
         [HttpGet("{id:int}/crashSchedule")]
+        [Authorize(Roles = "OfficeEngineer,Coordinator,ProjectManager,Admin")]
         public async Task<ActionResult<CustomApiResponse>> GetCrashSchedule(int id)
         {
             try
@@ -199,6 +216,7 @@ namespace ERP.Controllers
 
         }
         [HttpGet("{id:int}/actualSchedule")]
+        [Authorize(Roles = "ProjectManager,Admin")]
         public async Task<ActionResult<CustomApiResponse>> GetActualSchedule(int id)
         {
             try
@@ -221,6 +239,7 @@ namespace ERP.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "OfficeEngineer,Admin")]
         public async Task<ActionResult<CustomApiResponse>> DeleteProject(int id)
         {
 
@@ -240,6 +259,7 @@ namespace ERP.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize(Roles = "OfficeEngineer,Admin")]
         public async Task<ActionResult<CustomApiResponse>> UpdateProject(int id, [FromBody] ProjectDto projectDto)
         {
 

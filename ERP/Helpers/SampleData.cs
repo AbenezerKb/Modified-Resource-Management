@@ -84,6 +84,17 @@ namespace ERP.Helpers
                 UserRoleId = roles.First(r => r.Role.Equals("SiteEngineer")).RoleId,
                 Password = "alex1234"
             });
+            // Create Coordinator
+            await CreateEmployeeAsync(new RegisterUserDTO
+            {
+                FName = "AlexCoordinator",
+                LName = "Woreku",
+                MName = "C",
+                Position = "Coordinator",
+                EmployeeSiteId = site.SiteId,
+                UserRoleId = roles.First(r => r.Role.Equals("Coordinator")).RoleId,
+                Password = "alex1234"
+            });
 
             Console.WriteLine("-----------------------------------------------------------------");
             Console.WriteLine("Initialization Completed");
@@ -202,6 +213,11 @@ namespace ERP.Helpers
                {
 
                    Role = "SiteEngineer",
+               },
+               new UserRole
+               {
+
+                   Role = "Coordinator",
                }
                );
             await context.SaveChangesAsync();
