@@ -42,7 +42,7 @@ namespace ERP.Controllers
         public async Task<ActionResult<List<Employee>>> Get()
         {
             var employees = await context.Employees
-                .Include(employee => employee.UserRole) 
+                .Include(employee => employee.UserRole)
                 .ToListAsync();
 
             return Ok(employees);

@@ -2,11 +2,13 @@ using ERP.DTOs.Others;
 using ERP.DTOs.WeeklyResult;
 using ERP.Exceptions;
 using ERP.Services.WeeklyResultService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace ERP.Controllers
 {
     [ApiController]
     [Route("api/weeklyResults")]
+    [Authorize(Roles = "ProjectManager")]
     public class WeeklyResultController : ControllerBase
     {
         private readonly IWeeklyResultService weeklyResultService;
@@ -154,7 +156,6 @@ namespace ERP.Controllers
 
         }
 
-      
     }
 
 }

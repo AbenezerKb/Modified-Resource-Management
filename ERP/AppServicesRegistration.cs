@@ -29,7 +29,7 @@ using ERP.Services.SettingService;
 using ERP.Services.BackgroundServices;
 using ERP.Services.PerformanceSheetService;
 using ERP.Services.WeeklyPlanService;
-
+using ERP.Helpers;
 
 namespace ERP
 {
@@ -71,29 +71,8 @@ namespace ERP
 
             services.AddHostedService<NotificationBackgroundService>();
 
-
+            services.AddScoped<SampleDataHelper, SampleDataHelper>();
             #endregion
-
-
-
-
-            services.AddScoped<Services.IContractRepo, Services.ContractRepo>();
-            services.AddScoped<Services.IFileRepo, Services.FileRepo>();
-            services.AddScoped<Services.IBIDRepo, Services.BIDRepo>();
-            services.AddScoped<Services.ISubContractorRepo, Services.SubContractorRepo>();
-            services.AddScoped<Services.ISubContractWorkRepo, Services.SubContractWorkRepo>();
-            services.AddScoped<Services.IIncidentRepo, Services.IncidentRepo>();            
-            services.AddScoped<Services.IAllocatedBudgetRepo, Services.AllocatedBudgetRepo>();
-            services.AddScoped<Services.IAllocatedResourcesRepo, Services.AllocatedResourcesRepo>();
-            services.AddScoped<Services.IAssignedWorkForceRepo, Services.AssignedWorkForceRepo>();
-            services.AddScoped<Services.ITimeCardRepo, Services.TimeCardRepo>();
-            services.AddScoped<Services.IWeeklyRequirementRepo, Services.WeeklyRequirementRepo>();
-            services.AddScoped<Services.IGranderRepo, Services.GranderRepo>();
-            services.AddScoped<Services.IDailyLaborRepo, Services.DailyLaborRepo>();
-            services.AddScoped<Services.ILaborDetailRepo, Services.LaborDetailRepo>();
-            services.AddScoped<Services.IClientRepo, Services.ClientRepo>();
-            services.AddScoped<Services.IConsultantRepo, Services.ConsultantRepo>();
-
         }
     }
 }

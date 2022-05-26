@@ -7,6 +7,7 @@ using ERP.Models;
 using ERP.Exceptions;
 using ERP.DTOs.ProjectTask;
 using ERP.DTOs.SubTask;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ERP.Controllers
 {
@@ -21,9 +22,9 @@ namespace ERP.Controllers
             this.tasksService = tasksService;
             this.subTaskService = subTaskService;
         }
-        [HttpGet]
+
+        [Authorize(Roles = "ProjectManager,OfficeEngineer,Admin")]
         public async Task<ActionResult<CustomApiResponse>> GetTasks(string? name, int? projectId)
-        {
             try
             {
 
@@ -43,7 +44,7 @@ namespace ERP.Controllers
 
             }
         }
-
+        [Authorize(Roles = "ProjectManager,OfficeEngineer,Admin")]
         [HttpGet("{id:int}")]
         public async Task<ActionResult<CustomApiResponse>> GetTaskById(int id)
         {
@@ -67,6 +68,8 @@ namespace ERP.Controllers
 
             }
         }
+
+        [Authorize(Roles = "OfficeEngineer,Admin")]
         [HttpPost]
         async public Task<ActionResult<CustomApiResponse>> AddTask([FromBody] ProjectTaskDto projectTaskDto)
         {
@@ -97,6 +100,7 @@ namespace ERP.Controllers
             }
         }
 
+        [Authorize(Roles = "OfficeEngineer,Admin")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<CustomApiResponse>> DeleteTask(int id)
         {
@@ -114,6 +118,7 @@ namespace ERP.Controllers
                 return NotFound(new CustomApiResponse { Message = infe.Message });
             }
         }
+        [Authorize(Roles = "OfficeEngineer,Admin")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<CustomApiResponse>> UpdateTask(int id, [FromBody] ProjectTaskDto projectTaskDto)
         {
@@ -162,9 +167,10 @@ namespace ERP.Controllers
         #region SubTasks 
 
         [HttpGet("{taskId:int}/subTasks")]
-
+<<<<<<< HEAD
+=======
+        [Authorize(Roles = "OfficeEngineer,ProjectManager,Admin")]
         async public Task<ActionResult<CustomApiResponse>> GetAllSubTasks(int taskId)
-        {
             try
             {
                 return Ok(new CustomApiResponse
@@ -184,7 +190,13 @@ namespace ERP.Controllers
 
 
         }
+<<<<<<< HEAD
         [HttpPost("{taskId:int}/subTasks")]
+=======
+
+        [HttpPost("{taskId:int}/subTasks")]
+        [Authorize(Roles = "OfficeEngineer,Admin")]
+>>>>>>> 0d2da8505f334ab5f98a3a069e505ab4b7979fb6
         async public Task<ActionResult<CustomApiResponse>> AddSubTask(int taskId, [FromBody] SubTaskDto subTaskDto)
         {
             try
@@ -207,6 +219,10 @@ namespace ERP.Controllers
 
         }
         [HttpPut("{taskId:int}/subTasks/{subTaskId:int}")]
+<<<<<<< HEAD
+=======
+        [Authorize(Roles = "OfficeEngineer,Admin")]
+>>>>>>> 0d2da8505f334ab5f98a3a069e505ab4b7979fb6
         async public Task<ActionResult<CustomApiResponse>> UpdateSubTask(int taskId, int subTaskId, [FromBody] SubTaskDto subTaskDto)
         {
             try
@@ -235,6 +251,10 @@ namespace ERP.Controllers
 
         }
         [HttpDelete("{taskId:int}/subTasks/{subTaskId:int}")]
+<<<<<<< HEAD
+=======
+        [Authorize(Roles = "OfficeEngineer,Admin")]
+>>>>>>> 0d2da8505f334ab5f98a3a069e505ab4b7979fb6
         async public Task<ActionResult<CustomApiResponse>> DeleteSubTask(int taskId, int subTaskId)
         {
             try

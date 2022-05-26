@@ -2,6 +2,7 @@ using ERP.DTOs;
 using ERP.DTOs.Others;
 using ERP.Exceptions;
 using ERP.Services.PerformanceSheetService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace ERP.Controllers
 {
@@ -18,6 +19,7 @@ namespace ERP.Controllers
 
 
         [HttpGet("employees")]
+        [Authorize(Roles = "ProjectManager,Manager,Admin,SiteEngineer")]
         public async Task<ActionResult<CustomApiResponse>> GetAllEmployeePerformanceSheets([FromQuery] int projectId)
         {
             try
@@ -36,6 +38,7 @@ namespace ERP.Controllers
             }
         }
         [HttpGet("subContractors")]
+        [Authorize(Roles = "ProjectManager,Manager,Admin")]
         public async Task<ActionResult<CustomApiResponse>> GetAllSubcontractorPerformanceSheets([FromQuery] int projectId)
         {
             try
@@ -55,6 +58,7 @@ namespace ERP.Controllers
         }
 
         [HttpGet("employees/{employeeId:int}")]
+        [Authorize(Roles = "ProjectManager,Manager,Admin,SiteEngineer")]
         public async Task<ActionResult<CustomApiResponse>> GetEmployeePerformanceSheet(int employeeId, [FromQuery] int projectId)
         {
             try
@@ -76,6 +80,7 @@ namespace ERP.Controllers
 
         }
         [HttpGet("subContractors/{subContractorId:int}")]
+        [Authorize(Roles = "ProjectManager,Manager,Admin")]
         public async Task<ActionResult<CustomApiResponse>> GetSubContractorPerformanceSheet(int subContractorId, [FromQuery] int projectId)
         {
             try
@@ -100,7 +105,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "Manager,Admin")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<CustomApiResponse>> RemovePerformanceSheet(int id)
         {

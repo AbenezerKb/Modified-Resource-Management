@@ -53,7 +53,7 @@ namespace ERP.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserAccount>> Register(RegisterUserDTO registerDTO)
         {
-            
+
             Employee employee = new();
             employee.FName = registerDTO.FName;
             employee.MName = registerDTO.MName;
@@ -82,7 +82,7 @@ namespace ERP.Controllers
 
             return Ok(userAccount);
         }
-        
+
         [HttpPost("login")]
         public async Task<ActionResult<object>> Login(LoginUserDTO loginDTO)
         {
@@ -122,8 +122,8 @@ namespace ERP.Controllers
                 new Claim(ClaimTypes.Name, userAccount.Username.ToString()),
                 new Claim(ClaimTypes.Rsa, employee.UserRoleId.ToString()),
                 new Claim(ClaimTypes.Sid, employee.EmployeeId.ToString()),
-                new Claim(ClaimTypes.Role, AssignRole(employee.Status))
-                
+                new Claim(ClaimTypes.Role, AssignRole(employee))
+
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
@@ -160,10 +160,12 @@ namespace ERP.Controllers
 
         }
 
-        private string AssignRole(int status)
+        private string AssignRole(Employee employee)
         {
+            Console.WriteLine($"User Role: -------------{employee.UserRole.Role}");
 
-            return status == 1 ? "Employee" : "User";
+
+            return employee.Status == 1 ? employee.UserRole.Role : "User";
         }
     }
 }

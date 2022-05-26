@@ -1,5 +1,6 @@
 using ERP;
 using ERP.Context;
+using ERP.Helpers;
 using ERP.Services.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -51,13 +52,13 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSwaggerGen(options =>
 {
-    // options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-    // {
-    //     Description = "Standard Authorization header using the Bearer scheme (\"bearer {token}\")",
-    //     In = ParameterLocation.Header,
-    //     Name = "Authorization",
-    //     Type = SecuritySchemeType.ApiKey
-    // });
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        Description = "Standard Authorization header using the Bearer scheme (\"bearer {token}\")",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
 
     // options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
@@ -92,7 +93,9 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<DataContext>();
-    //context.Database.Migrate();
+    context.Database.Migrate();
+    await services.GetRequiredService<SampleDataHelper>().InitData();
+
 }
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

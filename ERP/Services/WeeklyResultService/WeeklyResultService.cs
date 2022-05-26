@@ -137,7 +137,7 @@ namespace ERP.Services.WeeklyResultService
 
         public async Task<WeeklyResult> GetByWeeklyPlanId(int weeklyPlanId)
         {
-            var weeklyResult = await dbContext.
+            var weeklyResult = await dbContext
             .WeeklyResults.Where(wr => wr.WeeklyPlanId == weeklyPlanId)
                           .Include(wr => wr.Results)
                           .FirstOrDefaultAsync();
