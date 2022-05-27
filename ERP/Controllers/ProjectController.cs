@@ -60,9 +60,17 @@ namespace ERP.Controllers
                 });
 
             }
+            catch (ItemAlreadyExistException infe)
+            {
+                return NotFound(new CustomApiResponse
+                {
+                    Message = infe.Message
+                });
+
+            }
 
         }
-        [Authorize(Roles = "Admin,OfficeEngineer,Coordinator,ProjectManager")]
+        [Authorize(Roles = "Admin,OfficeEngineer,Coordinator,ProjectManager,Manager")]
         [HttpGet]
         public async Task<ActionResult<CustomApiResponse>> GetProjects([FromQuery] int? siteId, [FromQuery] string? name)
         {
@@ -123,11 +131,35 @@ namespace ERP.Controllers
             }
 
         }
+        [HttpGet("report")]
+        [Authorize(Roles = "Admin,Manager")]
+        public async Task<ActionResult<CustomApiResponse>> GetProjectsReport([FromQuery] ProjectReportRequestDto requestDto, DateTime StartDate, DateTime EndDate)
+        {
+            try
+            {
+                return Ok(new CustomApiResponse
+                {
+                    Message = "Success",
+                    Data = await projectManagementReportService.GetGeneralReportWith(StartDate, EndDate, requestDto.ProjectIds)
+
+                });
+            }
+            catch (ItemNotFoundException infe)
+            {
+                return NotFound(new CustomApiResponse
+                {
+
+                    Message = infe.Message
+                });
+
+            }
+        }
 
         [HttpGet("{id:int}/report")]
         [Authorize(Roles = "Admin,Manager")]
         public async Task<ActionResult<CustomApiResponse>> GetReport(int id, [FromQuery] DateTime StartDate, [FromQuery] DateTime EndDate)
         {
+
             try
             {
                 return Ok(new CustomApiResponse

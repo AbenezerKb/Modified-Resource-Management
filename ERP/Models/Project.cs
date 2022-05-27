@@ -25,5 +25,19 @@ namespace ERP.Models
         public List<ProjectTask> Tasks { get; set; } = new();
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        public float GetProgress()
+        {
+            return (float)Tasks.Select(t =>
+                  {
+                      return t.Progress;
+
+                  }).DefaultIfEmpty().Average();
+        }
+        public double GetTotalBudget()
+        {
+            return Tasks.Sum(t => t.GetTotalBudget());
+
+        }
     }
 }

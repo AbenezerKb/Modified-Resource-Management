@@ -1,6 +1,9 @@
 using ERP.Context;
 using ERP.Models;
 using Microsoft.EntityFrameworkCore;
+using ERP.Helpers;
+using ERP.Exceptions;
+
 namespace ERP.Services.ProjectManagementReportService
 {
     public class ProjectManagementReportService : IProjectManagementReportService
@@ -19,8 +22,12 @@ namespace ERP.Services.ProjectManagementReportService
                 total += t.GetTotalBudget();
 
             });
+
+
             return total;
         }
+
+
         public async Task<Object> GetReportWith(DateTime StartDate, DateTime EndDate, int projectId)
         {
             if (!await dbContext.Projects.AnyAsync(p => p.Id == projectId))
@@ -67,6 +74,7 @@ namespace ERP.Services.ProjectManagementReportService
                                              }).ToList();
             return new
             {
+
                 Tasks = new
                 {
                     Completed = completedTasks,
@@ -107,6 +115,36 @@ namespace ERP.Services.ProjectManagementReportService
 
         }
 
+        public async Task<object> GetGeneralReportWith(DateTime StartDate, DateTime EndDate, List<int> projectsIds)
+        {
+            var unknownIds = await Utils.GetDifference(projectsIds, await dbContext.Projects.Select(p => p.Id).ToListAsync());
 
+            if (unknownIds.Count != 0) throw new ItemNotFoundException($"Employee(s) not found with id=[{string.Join(',', unknownIds)}]");
+
+            List<object> projectsSummery = new();
+            projectsIds.ForEach(async pId =>
+            {
+                var project = await dbContext.Projects.AsNoTracking().Where(p => p.Id == pId)
+                .Include(p => p.Tasks)
+                .ThenInclude(p => p.SubTasks)
+                .FirstOrDefaultAsync();
+
+                projectsSummery.Add(new
+                {
+                    Progress = project!.GetProgress(),
+                    Budget = project!.GetTotalBudget(),
+                    Resource = new
+                    {
+                        Material = 0,
+                        Equipment = 0
+                    }
+
+                });
+
+
+            });
+            return projectsSummery;
+
+        }
     }
 }

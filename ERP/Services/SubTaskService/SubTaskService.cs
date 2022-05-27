@@ -59,7 +59,9 @@ namespace ERP.Services.SubTaskService
 
         public async Task<List<SubTask>> GetUpComming(int deadlineNotificationDay)
         {
-            List<SubTask> subTasks = await dbContext.SubTasks.Where(t => EF.Functions.DateDiffDay(t.EndDate, DateTime.Now) <= deadlineNotificationDay && t.Progress != 100)
+            List<SubTask> subTasks = await dbContext.SubTasks.Where(st => EF.Functions.DateDiffDay(st.EndDate, DateTime.Now) <= deadlineNotificationDay && st.Progress != 100)
+                                                             .Include(st => st.ProjectTask)
+                                                             .ThenInclude(t => t.Project)
                                                              .ToListAsync();
             return subTasks;
         }
@@ -84,7 +86,24 @@ namespace ERP.Services.SubTaskService
             //if the subTask was not completed before and it is now completed
             if (!subTask.isCompleted() && subTaskDto.Progress == 100)
             {
-                //TODO: Add Notification here
+                //check if the main taskis completed
+                var mainTask = await dbContext.Tasks.Where(t => t.Id == subTask.TaskId)
+                    .Include(t => t.Project)
+                    .Include(t => t.SubTasks)
+                    .FirstOrDefaultAsync();
+
+                dbContext.Notifications.Add(new Notification
+                {
+                    Title = "Main Activity Completed",
+                    Content = $"{mainTask!.Name} is completed from project '{mainTask.Project!.Name}'",
+                    Type = NOTIFICATIONTYPE.MainTaskCompleted,
+                    SiteId = mainTask.Project.SiteId,
+                    ActionId = subTask.Id,
+                    Status = 0
+
+                });
+
+
             }
 
             subTask.Progress = subTaskDto.Progress;

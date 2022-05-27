@@ -1,4 +1,5 @@
 using ERP.Models;
+using ERP.Services.NotificationServices;
 using ERP.Services.SettingService;
 using ERP.Services.SubTaskService;
 
@@ -52,17 +53,36 @@ namespace ERP.Services.BackgroundServices
                 var settingsService = scope.ServiceProvider.GetRequiredService<ISettingsService>();
 
                 var setting = await settingsService.GetByName("DeadlineNotificationDay");
+                //Get subtasks which are closer to  the deadline
                 upComingTasks = await subTaskService.GetUpComming(int.Parse(setting.Value));
             }
 
-            //Check for tasks closer to deadline
 
-            var now = DateTime.Now;
-            upComingTasks.ForEach(st =>
+            using (var scope = scopeFactory.CreateScope())
             {
-                //TODO add the following message to notifications table
-                Console.WriteLine($"Deadline Alert: Only {st.EndDate.Subtract(now).Days} Day(s) left for the task '{st.Name}' to be completed");
-            });
+                var notificationService = scope.ServiceProvider.GetRequiredService<INotificationService>();
+                var now = DateTime.Now;
+                upComingTasks.ForEach(st =>
+                {
+                    var mainTask = st.ProjectTask;
+                    if (mainTask.IsCompleted())
+                    {
+                        notificationService.AddNotification(new Notification
+                        {
+                            Title = "Deadline Alert",
+                            Content = $" Only {st.EndDate.Subtract(now).Days} Day(s) left for the task '{st.Name}' to be completed",
+                            Type = NOTIFICATIONTYPE.TaskDeadline,
+                            SiteId = mainTask.Project!.SiteId,
+                            Status = 0
+
+                        });
+
+                    }       
+                 });
+            }
         }
+
+
+
     }
 }
