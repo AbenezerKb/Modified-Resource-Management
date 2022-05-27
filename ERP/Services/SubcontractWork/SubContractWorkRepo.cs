@@ -6,9 +6,9 @@ namespace ERP.Services
 {
     public class SubContractWorkRepo : ISubContractWorkRepo
     {
-        private readonly AppDbContext _context;
+        private readonly DataContext _context;
 
-        public SubContractWorkRepo(AppDbContext context)
+        public SubContractWorkRepo(DataContext context)
         {
             _context = context;
 

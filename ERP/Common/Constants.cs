@@ -193,6 +193,7 @@
         public const string TaskDeadline = "taskDeadlineNotification";
         public const string WeeklyTaskPlanSent = "weeklyTaskPlanSentNotification";
         public const string MainTaskCompleted = "mainTaskCompletionNotification";
+        public const string LaborRegistered = "laborRegisteredNotification";
 
     }
 

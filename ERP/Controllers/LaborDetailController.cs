@@ -2,6 +2,7 @@
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -29,6 +30,8 @@ namespace ERP.Controllers
             _mapper = mapper;
 
         }
+
+        [Authorize(Roles = "ProjectManager,Admin,StoreKeeper")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LaborDetailReadDto>>> GetAllLaborDetails()
         {
@@ -38,7 +41,7 @@ namespace ERP.Controllers
         }
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin,StoreKeeper")]
         [HttpGet("{id:int}", Name = "GetLaborDetail")]
         public async Task<ActionResult<LaborDetailReadDto>> GetLaborDetail(int id)
         {
@@ -59,7 +62,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin,StoreKeeper")]
         [HttpPost]
         public async Task<ActionResult<LaborDetailReadDto>> AddLaborDetail(LaborDetailCreateDto laborDetail)
         {
@@ -72,7 +75,7 @@ namespace ERP.Controllers
             return CreatedAtRoute(nameof(GetLaborDetail), new { id = laborDetailReadDto.LaborerID }, laborDetailReadDto);
         }
 
-
+        [Authorize(Roles = "ProjectManager,Admin,StoreKeeper")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<LaborDetailReadDto>> DeleteLaborDetail(int id)
         {
@@ -91,11 +94,7 @@ namespace ERP.Controllers
 
 
 
-
-
-
-
-
+        [Authorize(Roles = "ProjectManager,Admin,StoreKeeper")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<LaborDetailReadDto>> UpdateLaborDetail(int id, [FromBody] LaborDetailCreateDto laborDetail)
         {

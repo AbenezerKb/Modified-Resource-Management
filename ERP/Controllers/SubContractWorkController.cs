@@ -2,6 +2,7 @@
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -23,6 +24,7 @@ namespace ERP.Controllers
 
         }
 
+        [Authorize(Roles = "ProjectManager,Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SubContractWorkReadDto>>> GetAllSubContractWorks()
         {
@@ -31,6 +33,8 @@ namespace ERP.Controllers
 
             return Ok(_mapper.Map<IEnumerable<SubContractWorkReadDto>>(_subcontractWorks));
         }
+
+        [Authorize(Roles = "ProjectManager,Admin")]
         [HttpGet("{id:int}", Name = "GetSubContractWork")]
         public async Task<ActionResult<SubContractWorkReadDto>> GetSubContractWork(int id)
         {
@@ -48,6 +52,7 @@ namespace ERP.Controllers
 
         }
 
+        [Authorize(Roles = "ProjectManager,Admin")]
         [HttpPost]
         public async Task<ActionResult<SubContractWorkReadDto>> AddSubContractWork(SubContractWorkCreateDto subcontractWork)
         {
@@ -63,7 +68,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<SubContractWorkReadDto>> DeleteSubContractWork(int id)
         {
@@ -84,7 +89,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<SubContractWorkReadDto>> UpdateSubContractWork(int id, [FromBody] SubContractWorkCreateDto subContractWork)
         {

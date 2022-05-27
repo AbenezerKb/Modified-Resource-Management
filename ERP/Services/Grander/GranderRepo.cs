@@ -8,8 +8,8 @@ namespace ERP.Services
     {
 
 
-        private readonly AppDbContext _context;
-        public GranderRepo(AppDbContext context)
+        private readonly DataContext _context;
+        public GranderRepo(DataContext context)
         {
             _context = context;
 

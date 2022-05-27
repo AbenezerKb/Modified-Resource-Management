@@ -2,6 +2,7 @@
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERP.Controllers
@@ -20,6 +21,7 @@ namespace ERP.Controllers
 
         }
 
+        [Authorize(Roles = "ProjectManager,Admin")]
         [HttpGet]
         public async Task <ActionResult<IEnumerable<ContractReadDto>>> GetAllContracts()
         {
@@ -28,6 +30,7 @@ namespace ERP.Controllers
             
             return Ok( _mapper.Map<IEnumerable<ContractReadDto>>(_contracts));
         }
+        [Authorize(Roles = "ProjectManager,Admin")]
         [HttpGet("{id:int}", Name ="GetContract")]
         public async Task <ActionResult<ContractReadDto>> GetContract(int id)
         {            
@@ -43,7 +46,7 @@ namespace ERP.Controllers
 
             
         }
-
+[Authorize(Roles = "ProjectManager,Admin")]
         [HttpPost]
         public async Task <ActionResult<ContractReadDto>> AddContract(ContractCreateDto contract)
          {
@@ -57,8 +60,7 @@ namespace ERP.Controllers
         }
 
 
-
-
+        [Authorize(Roles = "ProjectManager,Admin")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<ContractReadDto>> DeleteContract(int id)
         {
@@ -77,7 +79,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ContractReadDto>> UpdateContract(int id, [FromBody] ContractCreateDto contract)
         {

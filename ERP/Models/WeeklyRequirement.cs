@@ -24,7 +24,7 @@ namespace ERP.Models
 
         public string weekNo  { get; set; } = string.Empty;
         public string specialRequest { get; set; } = string.Empty;
-
+        public string status { get; set; } = string.Empty;
         public string remark { get; set; } = string.Empty;
     }
 }

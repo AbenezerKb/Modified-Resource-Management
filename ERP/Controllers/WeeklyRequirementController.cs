@@ -2,6 +2,7 @@
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -27,7 +28,7 @@ namespace ERP.Controllers
 
         }
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer,ProjectCoordinator,SiteEngineer")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WeeklyRequirementReadDto>>> GetAllWeeklyRequirements()
         {
@@ -37,7 +38,7 @@ namespace ERP.Controllers
             return Ok(_mapper.Map<IEnumerable<WeeklyRequirementReadDto>>(_weeklyRequirements));
         }
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer,ProjectCoordinator,SiteEngineer")]
         [HttpGet("{id:int}", Name = "GetWeeklyRequirement")]
         public async Task<ActionResult<WeeklyRequirementReadDto>> GetWeeklyRequirement(int id)
         {
@@ -52,7 +53,7 @@ namespace ERP.Controllers
                 return NotFound();
             }
         }
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpPost]
         public async Task<ActionResult<WeeklyRequirementReadDto>> AddWeeklyRequirement(WeeklyRequirementCreateDto weeklyRequirement)
         {
@@ -85,7 +86,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<WeeklyRequirementReadDto>> DeleteWeeklyRequirement(int id)
         {
@@ -106,7 +107,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult> UpdateWeeklyRequirement(int id, [FromBody] WeeklyRequirementCreateDto weeklyRequirement)
         {

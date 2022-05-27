@@ -2,6 +2,7 @@
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -21,7 +22,7 @@ namespace ERP.Controllers
 
         }
 
-
+        [Authorize(Roles = "ProjectManager,Admin,StoreManager")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TimeCardReadDto>>> GetAllTimeCards()
         {
@@ -32,7 +33,7 @@ namespace ERP.Controllers
             return Ok(_mapper.Map<IEnumerable<TimeCardReadDto>>(_timeCards));
         }
 
-
+        [Authorize(Roles = "ProjectManager,Admin,StoreManager")]
         [HttpGet("{id:int}", Name = "GetTimeCard")]
         public async Task<ActionResult<TimeCardReadDto>> GetTimeCard(int id)
         {
@@ -47,7 +48,7 @@ namespace ERP.Controllers
                 return NotFound();
             }
         }
-
+            [Authorize(Roles = "ProjectManager,Admin,StoreManager")]
             [HttpPost]
             public async Task<ActionResult<TimeCardReadDto>> AddTimeCard(TimeCardCreateDto timeCard)
             {
@@ -60,6 +61,7 @@ namespace ERP.Controllers
                 return CreatedAtRoute(nameof(GetTimeCard), new { id = timeCardReadDto.id }, timeCardReadDto);
             }
 
+        [Authorize(Roles = "ProjectManager,Admin,StoreManager")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<TimeCardReadDto>> DeleteTimeCard(int id)
         {
@@ -79,7 +81,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin,StoreManager")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<TimeCardReadDto>> UpdateTimeCard(int id, [FromBody] TimeCardCreateDto timeCard)
         {

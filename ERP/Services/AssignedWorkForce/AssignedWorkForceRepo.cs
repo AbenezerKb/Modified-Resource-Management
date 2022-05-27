@@ -6,9 +6,9 @@ namespace ERP.Services
 {
     public class AssignedWorkForceRepo: IAssignedWorkForceRepo
     {
-        private readonly AppDbContext _context;
+        private readonly DataContext _context;
       
-        public AssignedWorkForceRepo(AppDbContext context)
+        public AssignedWorkForceRepo(DataContext context)
         {
             _context = context;
 

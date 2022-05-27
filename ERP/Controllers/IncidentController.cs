@@ -6,7 +6,8 @@ using AutoMapper;
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services;
-using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
 
     [Route("api/[controller]")]
     [ApiController]
@@ -22,6 +23,7 @@ using Microsoft.AspNetCore.Mvc;
 
         }
 
+        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<IncidentReadDto>>> GetAllIncidents()
         {
@@ -31,10 +33,11 @@ using Microsoft.AspNetCore.Mvc;
 
             return Ok(_mapper.Map<IEnumerable<IncidentReadDto>>(_incidents));
         }
+
+        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer")]
         [HttpGet("{id:int}", Name = "GetIncident")]
         public async Task<ActionResult<IncidentReadDto>> GetIncident(int id)
-        {
-            Console.WriteLine("....started");
+        {            
             var _incidents = _incidentRepo.GetIncident(id);
             
             if (_incidents != null)
@@ -49,6 +52,7 @@ using Microsoft.AspNetCore.Mvc;
 
         }
 
+        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer")]
         [HttpPost]
         public async Task<ActionResult<IncidentReadDto>> AddIncident(IncidentCreateDto incident)
         {
@@ -61,10 +65,8 @@ using Microsoft.AspNetCore.Mvc;
 
             return CreatedAtRoute(nameof(GetIncident), new { id = incidentReadDto.incidentNo }, incidentReadDto);
         }
-
-
-
         
+        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer")]        
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<IncidentReadDto>> DeleteIncident(int id)
         {
@@ -81,13 +83,7 @@ using Microsoft.AspNetCore.Mvc;
             }
         }
 
-
-
-
-
-
-
-
+        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<IncidentReadDto>> UpdateIncident(int id, [FromBody] IncidentCreateDto incident)
         {
@@ -104,11 +100,6 @@ using Microsoft.AspNetCore.Mvc;
                 return NotFound();
             }
         }
-
-
-
-
-
 
 
     }

@@ -11,9 +11,9 @@ namespace ERP.Services.ProjectTaskService
     public class ProjectTaskService : IProjectTaskService
     {
         private readonly DataContext DbContext;
-        public ProjectTaskService(DataContext appDbContext)
+        public ProjectTaskService(DataContext DataContext)
         {
-            DbContext = appDbContext;
+            DbContext = DataContext;
 
         }
         public async Task<ProjectTask> Add(ProjectTaskDto taskDto)

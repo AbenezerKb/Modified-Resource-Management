@@ -11,6 +11,7 @@ namespace ERP.Models
         public string fullName { get; set; }
         public string name { get; set; }
         public string jobTitle { get; set; }
+        public int projectId { get; set; }
         public double wagePerhour { get; set; }
         public DateTime date { get; set; }
         public string remarks { get; set; }
@@ -28,11 +29,11 @@ namespace ERP.Models
         public DateTime dateOfWork { get; set; }
         public int weekNo { get; set; }
         public string dateType { get; set; } = string.Empty;
-        public string morningSession { get; set; } = string.Empty;
-        public string afternoonSession { get; set; } = String.Empty;
-        public string eveningSession { get; set; } = string.Empty;
+        public bool morningSession { get; set; } 
+        public bool afternoonSession { get; set; } 
+        public bool eveningSession { get; set; } 
         public int NoOfHrsPerSession { get; set; } 
-        public int PaymentDayIn { get; set; } = 14;
+        public int PaymentDayIn { get; set; } = 14;       
 
     }
 }

@@ -6,9 +6,9 @@ namespace ERP.Services
 {
     public class ClientRepo: IClientRepo
     {
-        private readonly AppDbContext _context;
+        private readonly DataContext _context;
 
-        public ClientRepo(AppDbContext context)
+        public ClientRepo(DataContext context)
         {
             _context = context;
 

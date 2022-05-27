@@ -11,9 +11,9 @@ namespace ERP.Services.SettingService
     {
         private readonly DataContext dbContext;
 
-        public SettingsService(DataContext appDbContext)
+        public SettingsService(DataContext DataContext)
         {
-            dbContext = appDbContext;
+            dbContext = DataContext;
 
         }
 

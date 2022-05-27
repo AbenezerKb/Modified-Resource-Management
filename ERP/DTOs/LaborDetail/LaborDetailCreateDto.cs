@@ -11,11 +11,11 @@ namespace ERP.DTOs
         [Required]
         public string dateType { get; set; }
         [Required]
-        public string morningSession { get; set; }
+        public bool morningSession { get; set; }
         [Required]
-        public string afternoonSession { get; set; }
+        public bool afternoonSession { get; set; }
         [Required]
-        public string eveningSession { get; set; }
+        public bool eveningSession { get; set; }
         [Required]
         public int NoOfHrsPerSession { get; set; }
         public int PaymentDayIn { get; set; } = 14;

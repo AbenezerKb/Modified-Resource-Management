@@ -95,6 +95,40 @@ namespace ERP.Context
         public DbSet<WeeklyPlanValue> WeeklyPlanValues { get; set; }
         public DbSet<Setting> Settings { get; set; }
 
+
+        public DbSet<Contract> Contracts { get; set; }
+        public DbSet<SubContractor> SubContractors { get; set; }
+        public DbSet<BID> BIDs { get; set; }
+
+        public DbSet<Incident> Incidents { get; set; }    
+        public DbSet<AssignedWorkForce> AssignedWorkForces { get; set; }
+        public DbSet<WorkForce> WorkForces { get; set; }
+        public DbSet<AllocatedResources> AllocatedResources { get; set; }
+        public DbSet<AllocatedBudget> AllocatedBudgets { get; set; }
+        public DbSet<TimeCard> TimeCards { get; set; }
+        public DbSet<SubContractWork> SubContractWorks { get; set; }
+        public DbSet<WeeklyRequirement> WeeklyRequirements { get; set; }
+        public DbSet<ApprovedWorkList> ApprovedWorkLists { get; set; }
+
+        public DbSet<DefectsCorrectionlist> DefectsCorrectionlists { get; set; }
+
+        public DbSet<WeeklyEquipment> WeeklyEquipments { get; set; }
+
+        public DbSet<WeeklyMaterial> WeeklyMaterials { get; set; }
+        public DbSet<WeeklyLabor> Labors { get; set; }
+
+        public DbSet<Grander> Granders { get; set; }
+        public DbSet<LaborDetail> LaborDetails { get; set; }
+        public DbSet<DailyLabor> DailyLabors { get; set; }
+        public DbSet<Consultant> Consultants { get; set; }
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<DeclinedWorkList> DeclinedWorkLists { get; set; }
+        public DbSet<SubContractingWork> SubcontractingWorks { get; set; }
+        public DbSet<WorkForcePlan> WorkForcePlans { get; set; }
+        public DbSet<ResourcePlan> ResourcePlans { get; set; }
+        public DbSet<SubcontractingPlan> SubcontractingPlans { get; set; }
+
+
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -15,4 +15,15 @@ namespace ERP.Profiles
         }
 
     }
+
+
+    public class DailyLaborApproveProfile : Profile
+    {
+        public DailyLaborApproveProfile()
+        {
+            CreateMap<DailyLabor, DailyLaborReadDto>();
+            CreateMap<DailyLaborApproveCreateDto, DailyLabor>();
+        }
+
+    }
 }

@@ -2,6 +2,7 @@
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERP.Controllers
@@ -22,6 +23,7 @@ namespace ERP.Controllers
 
         }
 
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ClientReadDto>>> GetAllClients()
         {
@@ -29,6 +31,8 @@ namespace ERP.Controllers
 
             return Ok(_mapper.Map<IEnumerable<ClientReadDto>>(_clients));
         }
+
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpGet("{id:int}", Name = "GetClient")]
         public async Task<ActionResult<ClientReadDto>> GetClient(int id)
         {
@@ -45,6 +49,8 @@ namespace ERP.Controllers
 
         }
 
+
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpPost]
         public async Task<ActionResult<ClientReadDto>> AddClient(ClientCreateDto client)
         {
@@ -59,7 +65,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<ClientReadDto>> DeleteClient(int id)
         {
@@ -77,11 +83,7 @@ namespace ERP.Controllers
         }
 
 
-
-
-
-
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ClientReadDto>> UpdateClient(int id, [FromBody] ClientCreateDto client)
         {
@@ -98,11 +100,6 @@ namespace ERP.Controllers
                 return NotFound();
             }
         }
-
-
-
-
-
 
 
 

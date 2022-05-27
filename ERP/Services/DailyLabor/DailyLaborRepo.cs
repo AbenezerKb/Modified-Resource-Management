@@ -7,10 +7,11 @@ namespace ERP.Services
     public class DailyLaborRepo: IDailyLaborRepo
     {
 
-        private readonly AppDbContext _context;
-        public DailyLaborRepo(AppDbContext context)
+        private readonly DataContext _context;
+        
+        public DailyLaborRepo(DataContext context)
         {
-            _context = context;
+            _context = context;            
         }
 
         public void CreateDailyLabor(DailyLabor dailyLabor)
@@ -21,6 +22,16 @@ namespace ERP.Services
             }
          
             _context.DailyLabors.Add(dailyLabor);
+            _context.Notifications.Add(new Notification
+            {
+                Title = "New Labor is registered.",
+                Content = $"New {dailyLabor.jobTitle} is registered. ",
+                Type = NOTIFICATIONTYPE.LaborRegistered,
+                SiteId = dailyLabor.projectId,
+                EmployeeId = dailyLabor.LaborerID,                
+                Status = 0
+
+            });
 
         }
 

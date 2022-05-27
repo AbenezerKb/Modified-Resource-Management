@@ -8,9 +8,9 @@ namespace ERP.Services
     {
 
 
-        private readonly AppDbContext _context;
+        private readonly DataContext _context;
 
-        public LaborDetailRepo(AppDbContext context)
+        public LaborDetailRepo(DataContext context)
         {
             _context = context;
         }

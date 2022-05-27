@@ -6,9 +6,9 @@ namespace ERP.Services
 {
     public class BIDRepo: IBIDRepo
     {
-        private readonly AppDbContext _context;
+        private readonly DataContext _context;
 
-        public BIDRepo(AppDbContext context)
+        public BIDRepo(DataContext context)
         {
             _context = context;
 

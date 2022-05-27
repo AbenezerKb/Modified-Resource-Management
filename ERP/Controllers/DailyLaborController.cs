@@ -2,6 +2,7 @@
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -26,6 +27,8 @@ namespace ERP.Controllers
             _mapper = mapper;
 
         }
+
+        [Authorize(Roles = "ProjectManager,StoreKeeper")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DailyLaborReadDto>>> GetAllDailyLabors()
         {
@@ -35,7 +38,7 @@ namespace ERP.Controllers
         }
 
 
-
+        [Authorize(Roles = "ProjectManager,StoreKeeper")]
         [HttpGet("{id:int}", Name = "GetDailyLabor")]
         public async Task<ActionResult<DailyLaborReadDto>> GetDailyLabor(int id)
         {
@@ -56,7 +59,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,StoreKeeper")]
         [HttpPost]
         public async Task<ActionResult<DailyLaborReadDto>> AddDailyLabor(DailyLaborCreateDto dailyLabor)
         {
@@ -69,7 +72,7 @@ namespace ERP.Controllers
             return CreatedAtRoute(nameof(GetDailyLabor), new { id = dailyLaborReadDto.LaborerID }, dailyLaborReadDto);
         }
 
-
+        [Authorize(Roles = "ProjectManager,StoreKeeper")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<DailyLaborReadDto>> DeleteDailyLabor(int id)
         {
@@ -91,7 +94,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,StoreKeeper")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<DailyLaborReadDto>> UpdateDailyLabor(int id, [FromBody] DailyLaborCreateDto dailyLabor)
         {
@@ -110,9 +113,23 @@ namespace ERP.Controllers
         }
 
 
+        [Authorize(Roles = "ProjectManager,StoreKeeper")]
+        [HttpPut("{id:int}/status")]
+        public async Task<ActionResult<DailyLaborReadDto>> UpdateDailyLaborStatus(int id, [FromBody] DailyLaborApproveCreateDto dailyLabor)
+        {
+            try
+            {
 
-
-
+                var newDailyLabor = _mapper.Map<DailyLabor>(dailyLabor);
+                _dailyLaborRepo.UpdateDailyLabor(id, newDailyLabor);
+                _dailyLaborRepo.SaveChanges();
+                return Ok("Success");
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
 
 
 

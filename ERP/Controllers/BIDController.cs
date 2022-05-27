@@ -2,6 +2,7 @@
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -23,6 +24,9 @@ namespace ERP.Controllers
             _mapper = mapper;
 
         }
+
+
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BIDReadDto>>> GetAllBIDs()
         {            
@@ -32,7 +36,7 @@ namespace ERP.Controllers
         }
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpGet("{id:int}", Name = "GetBID")]
         public async Task<ActionResult<BIDReadDto>> GetBID(int id)
         {
@@ -53,7 +57,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpPost]
         public async Task<ActionResult<BIDReadDto>> AddBID(BIDCreateDto bid)
         {
@@ -66,7 +70,7 @@ namespace ERP.Controllers
             return CreatedAtRoute(nameof(GetBID), new { id = bidReadDto.BIDID }, bidReadDto);
         }
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<BIDReadDto>> DeleteBID(int id)
         {
@@ -87,7 +91,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<BIDReadDto>> UpdateBID(int id, [FromBody] BIDCreateDto bid)
         {

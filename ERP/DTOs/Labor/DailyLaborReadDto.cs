@@ -8,7 +8,8 @@
         public string jobTitle { get; set; } = string.Empty;
         public double wagePerhour { get; set; }
         public DateTime date { get; set; }
-        public string remarks { get; set; } = string.Empty;
+        public string remarks { get; set; } = string.Empty;        
+        public int projectId { get; set; }
         public string status { get; set; } = string.Empty;
     }
 }

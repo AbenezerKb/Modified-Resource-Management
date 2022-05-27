@@ -6,10 +6,10 @@ namespace ERP.Services
 {
     public class AllocatedResourcesRepo: IAllocatedResourcesRepo
     {
-        private readonly AppDbContext _context;
+        private readonly DataContext _context;
 
 
-        public AllocatedResourcesRepo(AppDbContext context)
+        public AllocatedResourcesRepo(DataContext context)
         {
             _context = context;
 

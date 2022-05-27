@@ -6,9 +6,9 @@ namespace ERP.Services
 {
     public class TimeCardRepo: ITimeCardRepo
     {
-        private readonly AppDbContext _context;
+        private readonly DataContext _context;
 
-        public TimeCardRepo(AppDbContext context)
+        public TimeCardRepo(DataContext context)
         {
             _context = context;
         }

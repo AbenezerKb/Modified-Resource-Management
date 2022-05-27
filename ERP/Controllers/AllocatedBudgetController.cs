@@ -2,6 +2,7 @@
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -21,7 +22,7 @@ namespace ERP.Controllers
 
         }
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AllocatedBudgetReadDto>>> GetAllAllocatedBudgets()
         {
@@ -31,7 +32,7 @@ namespace ERP.Controllers
         }
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpGet("{id:int}", Name = "GetAllocatedBudget")]
         public async Task<ActionResult<AllocatedBudgetReadDto>> GetAllocatedBudget(int id)
         {
@@ -50,7 +51,7 @@ namespace ERP.Controllers
         }
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpPost]
         public async Task<ActionResult<AllocatedBudgetReadDto>> AddAllocatedBudget(AllocatedBudgetCreateDto allocatedBudget)
         {
@@ -64,7 +65,7 @@ namespace ERP.Controllers
         }
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<AllocatedResourcesReadDto>> DeleteAllocatedResource(int id)
         {
@@ -81,7 +82,7 @@ namespace ERP.Controllers
             }
         }
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpPut("{id:int}")]       
         public async Task<ActionResult> UpdateAllocatedBudget(int id, [FromBody] AllocatedBudgetCreateDto allocatedBudget)
         {
@@ -94,8 +95,7 @@ namespace ERP.Controllers
             }
 
             catch (Exception)
-            {
-                Console.WriteLine("hgvjhvjhghg");
+            {              
                 return NotFound();
             }
         }

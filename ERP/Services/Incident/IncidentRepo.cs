@@ -6,8 +6,8 @@ namespace ERP.Services
 {
     public class IncidentRepo:IIncidentRepo
     {
-        private readonly AppDbContext _context;
-        public IncidentRepo(AppDbContext context)
+        private readonly DataContext _context;
+        public IncidentRepo(DataContext context)
         {
             _context = context;
 

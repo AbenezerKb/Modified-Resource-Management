@@ -4,29 +4,29 @@ using System.ComponentModel.DataAnnotations;
 namespace ERP.DTOs
 {
     public class WeeklyRequirementCreateDto
-    { 
+    {
         [Required]
         public int projId { get; set; }
-    [Required]
-    public int projManager { get; set; }
+        [Required]
+        public int projManager { get; set; }
 
         public int projCoordinator { get; set; }
 
         public DateTime date { get; set; }
         [Required]
-    public IList<WeeklyMaterialCreateDto> material { get; set; }
+        public IList<WeeklyMaterialCreateDto> material { get; set; }
 
-   // 
-    //public string[] materialNo { get; set; }
+        // 
+        //public string[] materialNo { get; set; }
 
-    [Required]
-    public IList<WeeklyEquipmentCreateDto> equipment { get; set; }
+        [Required]
+        public IList<WeeklyEquipmentCreateDto> equipment { get; set; }
 
-    
 
-    //public string[] equipmentNo { get; set; }
-    [Required]
-    public IList<WeeklyLaborCreateDto> labor { get; set; }
+
+        //public string[] equipmentNo { get; set; }
+        [Required]
+        public IList<WeeklyLaborCreateDto> labor { get; set; }
 
         //public string[] laborNo { get; set; }
         [Required]
@@ -34,6 +34,7 @@ namespace ERP.DTOs
 
         [Required]
         public string remark { get; set; }
+
 
         [Required]
         public string weekNo { get; set; }
@@ -45,7 +46,7 @@ namespace ERP.DTOs
 
 
     public class WeeklyEquipmentCreateDto
-    {        
+    {
         public int WeeklyRequirementFK { get; set; }
         public string unit { get; set; }
         public int amount { get; set; }
@@ -69,7 +70,7 @@ namespace ERP.DTOs
 
 
     public class WeeklyMaterialCreateDto
-    {        
+    {
         public int WeeklyRequirementFK { get; set; }
         public string unit { get; set; }
         public int amount { get; set; }
@@ -81,7 +82,9 @@ namespace ERP.DTOs
 
 
 
-
+    public class WeeklyRequirementApproveCreateDto:WeeklyEquipmentCreateDto{
+        public string status { get; set; } = string.Empty;
+    }
 
 
 

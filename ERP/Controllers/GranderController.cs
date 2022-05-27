@@ -2,6 +2,7 @@
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERP.Controllers
@@ -21,6 +22,7 @@ namespace ERP.Controllers
 
         }
 
+        [Authorize(Roles = "ProjectManager,OfficeEngineer")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GranderReadDto>>> GetAllGranders()
         {
@@ -30,6 +32,8 @@ namespace ERP.Controllers
 
             return Ok(_mapper.Map<IEnumerable<GranderReadDto>>(_granders));
         }
+
+        [Authorize(Roles = "ProjectManager,OfficeEngineer")]
         [HttpGet("{id:int}", Name = "GetGrander")]
         public async Task<ActionResult<GranderReadDto>> GetGrander(int id)
         {            
@@ -46,6 +50,7 @@ namespace ERP.Controllers
 
         }
 
+        [Authorize(Roles = "ProjectManager,OfficeEngineer")]
         [HttpPost]
         public async Task<ActionResult<GranderReadDto>> AddGrander(GranderCreateDto grander)
         {
@@ -59,6 +64,8 @@ namespace ERP.Controllers
             return CreatedAtRoute(nameof(GetGrander), new { id = granderReadDto.GranderId }, granderReadDto);
         }
 
+
+        [Authorize(Roles = "ProjectManager,OfficeEngineer")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<GranderReadDto>> DeleteGrander(int id)
         {
@@ -78,7 +85,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,OfficeEngineer")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<GranderReadDto>> UpdateGrander(int id, [FromBody] GranderCreateDto laborDetail)
         {

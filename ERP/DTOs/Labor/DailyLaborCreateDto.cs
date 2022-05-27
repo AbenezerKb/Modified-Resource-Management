@@ -15,6 +15,9 @@ namespace ERP.DTOs
         [Required]
         public DateTime date { get; set; }
         [Required]
+        public int projectId { get; set; }
+
+        [Required]
         public string remarks { get; set; } = string.Empty;
        
     }

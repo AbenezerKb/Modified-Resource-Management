@@ -6,10 +6,10 @@ namespace ERP.Services
 {
     public class AllocatedBudgetRepo : IAllocatedBudgetRepo
     {
-        private readonly AppDbContext _context;
+        private readonly DataContext _context;
 
 
-        public AllocatedBudgetRepo(AppDbContext context)
+        public AllocatedBudgetRepo(DataContext context)
         {
             _context = context;
 

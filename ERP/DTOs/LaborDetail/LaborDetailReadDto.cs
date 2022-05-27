@@ -6,9 +6,9 @@
         public DateTime dateOfWork { get; set; }
         public int weekNo { get; set; }
         public string dateType { get; set; }
-        public string morningSession { get; set; }
-        public string afternoonSession { get; set; }
-        public string eveningSession { get; set; }
+        public bool morningSession { get; set; }
+        public bool afternoonSession { get; set; }
+        public bool eveningSession { get; set; }
         public int NoOfHrsPerSession { get; set; }
         public int PaymentDayIn { get; set; } = 14;
         //FK

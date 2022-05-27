@@ -13,9 +13,9 @@ namespace ERP.Services.ProjectService
     public class ProjectService : IProjectService
     {
         private readonly DataContext dbContext;
-        public ProjectService(DataContext appDbContext)
+        public ProjectService(DataContext DataContext)
         {
-            dbContext = appDbContext;
+            dbContext = DataContext;
 
         }
 

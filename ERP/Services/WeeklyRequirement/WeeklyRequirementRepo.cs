@@ -8,9 +8,9 @@ namespace ERP.Services
     {
 
 
-        private readonly AppDbContext _context;
+        private readonly DataContext _context;
 
-        public WeeklyRequirementRepo(AppDbContext context)
+        public WeeklyRequirementRepo(DataContext context)
         {
             _context = context;
         }

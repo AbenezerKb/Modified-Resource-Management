@@ -2,6 +2,7 @@
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace ERP.Controllers
 {
@@ -22,6 +23,7 @@ namespace ERP.Controllers
 
         }
 
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SubContractorReadDto>>> GetAllSubContractors()
         {
@@ -30,6 +32,8 @@ namespace ERP.Controllers
 
             return Ok(_mapper.Map<IEnumerable<SubContractorReadDto>>(_subcontracts));
         }
+
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpGet("{id:int}", Name = "GetSubContractor")]
         public async Task<ActionResult<SubContractorReadDto>> GetSubContractor(int id)
         {
@@ -47,6 +51,7 @@ namespace ERP.Controllers
 
         }
 
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpPost]
         public async Task<ActionResult<SubContractorReadDto>> AddSubContractor(SubContractorCreateDto contract)
         {
@@ -60,7 +65,8 @@ namespace ERP.Controllers
             return CreatedAtRoute(nameof(GetSubContractor), new { id = subcontractReadDto.SubId }, subcontractReadDto);
         }
 
-        
+
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<SubContractorReadDto>> DeleteSubContractor(int id)
         {
@@ -83,7 +89,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<SubContractorReadDto>> UpdateSubContractor(int id, [FromBody] SubContractorCreateDto subContractor)
         {

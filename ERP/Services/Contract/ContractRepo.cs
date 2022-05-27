@@ -6,9 +6,9 @@ namespace ERP.Services
 {
     public class ContractRepo : IContractRepo
     {
-        private readonly AppDbContext _context;
+        private readonly DataContext _context;
 
-        public ContractRepo(AppDbContext context)
+        public ContractRepo(DataContext context)
         {
             _context = context;
 

@@ -19,7 +19,7 @@ namespace ERP.DTOs
 
         public string remark { get; set; }
         public string weekNo { get; set; }
-
+        public string status { get; set; } = string.Empty;
     }
 
      public class WeeklyEquipmentReadDto

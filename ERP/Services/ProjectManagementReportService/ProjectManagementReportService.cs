@@ -9,9 +9,9 @@ namespace ERP.Services.ProjectManagementReportService
     public class ProjectManagementReportService : IProjectManagementReportService
     {
         private readonly DataContext dbContext;
-        public ProjectManagementReportService(DataContext appDbContext)
+        public ProjectManagementReportService(DataContext DataContext)
         {
-            dbContext = appDbContext;
+            dbContext = DataContext;
 
         }
         private double getTotalBudget(List<ProjectTask> tasks)

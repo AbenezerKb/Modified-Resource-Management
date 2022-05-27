@@ -2,6 +2,7 @@
 using ERP.DTOs;
 using ERP.Models;
 using ERP.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -22,6 +23,7 @@ namespace ERP.Controllers
 
         }
 
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ConsultantReadDto>>> GetAllConsultants()
         {            
@@ -29,6 +31,8 @@ namespace ERP.Controllers
 
             return Ok(_mapper.Map<IEnumerable<ConsultantReadDto>>(_consultants));
         }
+
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpGet("{id:int}", Name = "GetConsultant")]
         public async Task<ActionResult<ConsultantReadDto>> GetConsultant(int id)
         {            
@@ -45,6 +49,7 @@ namespace ERP.Controllers
 
         }
 
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpPost]
         public async Task<ActionResult<ConsultantReadDto>> AddConsultant(ConsultantCreateDto consultant)
         {
@@ -58,7 +63,7 @@ namespace ERP.Controllers
         }
 
 
-        
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<ConsultantReadDto>> DeleteConsultant(int id)
         {
@@ -77,7 +82,7 @@ namespace ERP.Controllers
 
 
 
-
+        [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ContractReadDto>> UpdateContract(int id, [FromBody] ConsultantCreateDto consultant)
         {
