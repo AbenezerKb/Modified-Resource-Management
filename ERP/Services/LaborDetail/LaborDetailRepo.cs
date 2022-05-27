@@ -57,14 +57,14 @@ namespace ERP.Services
         public void UpdateLaborDetail(int id,LaborDetail updatedLaborDetail)
         {
 
-            if (updatedLaborDetail.Equals(null))
+            if (updatedLaborDetail == null)
             {
                 throw new ArgumentNullException();
             }
 
-            LaborDetail laborDetail = _context.LaborDetails.FirstOrDefault(c => c.id == updatedLaborDetail.id);
-            if (laborDetail.Equals(null))
-                throw new ItemNotFoundException($"LaborDetail not found with LaborDetail Id={updatedLaborDetail.id}");
+            LaborDetail laborDetail = _context.LaborDetails.FirstOrDefault(c => c.id == id);
+            if (laborDetail == null)
+                throw new ItemNotFoundException($"LaborDetail not found with LaborDetail Id={id}");
             laborDetail.afternoonSession = updatedLaborDetail.afternoonSession;
             laborDetail.dateOfWork = updatedLaborDetail.dateOfWork;
             laborDetail.dateType = updatedLaborDetail.dateType;

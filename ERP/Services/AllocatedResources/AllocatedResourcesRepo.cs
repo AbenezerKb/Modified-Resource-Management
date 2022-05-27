@@ -41,7 +41,7 @@ namespace ERP.Services
         public void DeleteAllocatedResource(int id)
         {
             var allocatedResources = _context.AllocatedResources.FirstOrDefault(c => c.allocatedResourcesNo == id);
-            if (allocatedResources.Equals(null)){
+            if (allocatedResources == null){
                 throw new ArgumentNullException();
 
             }
@@ -51,14 +51,14 @@ namespace ERP.Services
         public void UpdateAllocatedResource(int id,AllocatedResources updatedallocatedResources)
         {
 
-            if (updatedallocatedResources.Equals( null))
+            if (updatedallocatedResources ==  null)
             {
                 throw new ArgumentNullException();
             }
 
             AllocatedResources allocatedResources = _context.AllocatedResources.FirstOrDefault(c => c.allocatedResourcesNo == id);
-            if (allocatedResources.Equals(null))
-                throw new ItemNotFoundException($"Allocated budget not found with allocatedbudgetId={updatedallocatedResources.allocatedResourcesNo}");
+            if (allocatedResources == null)
+                throw new ItemNotFoundException($"Allocated budget not found with allocatedbudgetId={id}");
             allocatedResources.date = updatedallocatedResources.date;
             allocatedResources.itemId = updatedallocatedResources.itemId;
             allocatedResources.projId = updatedallocatedResources.projId;

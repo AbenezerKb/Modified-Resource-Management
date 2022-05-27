@@ -55,14 +55,14 @@ namespace ERP.Services
         public void UpdateIncident(int id,Incident updatedIncident)
         {
 
-            if (updatedIncident.Equals(null))
+            if (updatedIncident == null)
             {
                 throw new ArgumentNullException();
             }
 
-            Incident incident = _context.Incidents.FirstOrDefault(c => c.incidentNo == updatedIncident.incidentNo);
-            if (incident.Equals(null))
-                throw new ItemNotFoundException($"Incident not found with Incident Id={updatedIncident.incidentNo}");
+            Incident incident = _context.Incidents.FirstOrDefault(c => c.incidentNo == id);
+            if (incident==null)
+                throw new ItemNotFoundException($"Incident not found with Incident Id={id}");
 
             incident.date = updatedIncident.date;
             incident.Description = updatedIncident.Description;

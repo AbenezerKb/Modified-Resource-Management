@@ -45,7 +45,7 @@ namespace ERP.Services
        public void DeleteAllocatedBudget(int id)
         {
             var allocatedBudget =  _context.AllocatedBudgets.FirstOrDefault(c => c.Id == id);
-            if (allocatedBudget.Equals(null))
+            if (allocatedBudget == null)
                 throw new ItemNotFoundException($"Allocated budget not found with allocatedbudgetId={id}");
             _context.AllocatedBudgets.Remove(allocatedBudget);
         }
@@ -53,14 +53,14 @@ namespace ERP.Services
         
         public void UpdateAllocatedBudget(int id,AllocatedBudget updateAllocatedBudget)
         {
-            if (updateAllocatedBudget.Equals( null))
+            if (updateAllocatedBudget ==  null)
             {
                 throw new ArgumentNullException();
             }
 
             AllocatedBudget allocatedBudget = _context.AllocatedBudgets.FirstOrDefault(c => c.Id == id);
             Console.WriteLine("service 1");
-            if (allocatedBudget.Equals(null))
+            if (allocatedBudget == null)
                 throw new ItemNotFoundException($"Allocated budget not found with allocatedbudgetId={id}");
             
             allocatedBudget.date = updateAllocatedBudget.date;

@@ -88,10 +88,28 @@ using Microsoft.AspNetCore.Mvc;
 
 
 
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<IncidentReadDto>> UpdateIncident(int id, [FromBody] IncidentCreateDto incident)
+        {
+            try
+            {
+
+                var newIncident = _mapper.Map<Incident>(incident);
+                _incidentRepo.UpdateIncident(id, newIncident);
+                _incidentRepo.SaveChanges();
+                return Ok("Success");
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
 
 
 
 
 
- }
+
+
+    }
 }

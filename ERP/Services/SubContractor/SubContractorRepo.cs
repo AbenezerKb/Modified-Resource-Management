@@ -40,21 +40,24 @@ namespace ERP.Services
         public void DeleteSubContractor(int id)
         {
             var subContractor = _context.SubContractors.FirstOrDefault(c => c.SubId == id);
+            if (subContractor == null)
+                throw new ItemNotFoundException($"SubContractor not found with SubContractor Id={id}");
             _context.SubContractors.Remove(subContractor);
+            _context.SaveChanges();
         }
 
 
         public void UpdateSubContractor(int id,SubContractor updatedSubContractor)
         {
 
-            if (updatedSubContractor.Equals(null))
+            if (updatedSubContractor == null)
             {
                 throw new ArgumentNullException();
             }
 
             SubContractor subContractor = _context.SubContractors.FirstOrDefault(c => c.SubId == id);
-            if (subContractor.Equals(null))
-                throw new ItemNotFoundException($"SubContractor not found with SubContractor Id={updatedSubContractor.SubId}");
+            if (subContractor == null)
+                throw new ItemNotFoundException($"SubContractor not found with SubContractor Id={id}");
 
             subContractor.Status = updatedSubContractor.Status;
             subContractor.SubAddress = updatedSubContractor.SubAddress;

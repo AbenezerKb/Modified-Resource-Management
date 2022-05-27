@@ -95,19 +95,22 @@ namespace ERP.Services
        public void DeleteContract(int id)
         {
             var contract = _context.Contracts.FirstOrDefault(c => c.ConId == id);
+            if (contract == null)
+                throw new ItemNotFoundException($"Contract not found with ContractId={id}");
             _context.Contracts.Remove(contract);
+            _context.SaveChanges();
         }
 
       public  void UpdateContract(int id, Contract updatedContract)
         {
 
-            if (updatedContract.Equals(null))
+            if (updatedContract == null)
             {
                 throw new ArgumentNullException();
             }
 
             Contract contract = _context.Contracts.FirstOrDefault(c => c.ConId == id);
-            if (contract.Equals(null))
+            if (contract == null)
                 throw new ItemNotFoundException($"Contract not found with ContractId={id}");
             contract.ConGiver = updatedContract.ConGiver;
             contract.ConReciever = updatedContract.ConReciever;

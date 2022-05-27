@@ -47,7 +47,10 @@ namespace ERP.Services
         public void DeleteTimeCard(int id)
         {
             var timeCard = _context.TimeCards.FirstOrDefault(c => c.Id == id);
+            if (timeCard == null)
+                throw new ItemNotFoundException($"TimeCard not found with TimeCard Id={id}");
             _context.TimeCards.Remove(timeCard);
+            _context.SaveChanges();
         }
 
 
@@ -55,13 +58,13 @@ namespace ERP.Services
         public void UpdateTimeCard(int id,TimeCard updatedTimeCard)
         {
 
-            if (updatedTimeCard.Equals(null))
+            if (updatedTimeCard  == null)
             {
                 throw new ArgumentNullException();
             }
 
             TimeCard timeCard = _context.TimeCards.FirstOrDefault(c => c.Id == id);
-            if (timeCard.Equals(null))
+            if (timeCard == null)
                 throw new ItemNotFoundException($"TimeCard not found with TimeCard Id={id}");
 
             timeCard.approvedBy = updatedTimeCard.approvedBy;

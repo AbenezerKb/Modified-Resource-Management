@@ -82,7 +82,7 @@ namespace ERP.Services
         public void DeleteAssignedWorkForce(int id)
         {
             var assignedWorkForce = _context.AssignedWorkForces.FirstOrDefault(c => c.assigneWorkForceNo == id);
-            if (assignedWorkForce.Equals(null)){
+            if (assignedWorkForce == null) { 
                 throw new ArgumentNullException();
 
             }
@@ -92,14 +92,14 @@ namespace ERP.Services
 
         public void UpdateAssignedWorkForce(int id,AssignedWorkForce updatedAssignedWorkForce)
         {
-            if (updatedAssignedWorkForce.Equals(null))
+            if (updatedAssignedWorkForce == null)
             {
                 throw new ArgumentNullException();
             }
 
             AssignedWorkForce assignedWorkForce = _context.AssignedWorkForces.FirstOrDefault(c => c.assigneWorkForceNo == id);
-            if (updatedAssignedWorkForce.Equals(null))
-                throw new ItemNotFoundException($"Allocated budget not found with allocatedbudgetId={updatedAssignedWorkForce.assigneWorkForceNo}");
+            if (updatedAssignedWorkForce == null)
+                throw new ItemNotFoundException($"Allocated budget not found with allocatedbudgetId={id}");
 
             for (int i = 0; i < assignedWorkForce.ProfessionWithWork.Count; i++)
             {

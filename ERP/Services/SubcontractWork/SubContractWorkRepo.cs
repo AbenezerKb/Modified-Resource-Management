@@ -49,14 +49,14 @@ namespace ERP.Services
         public void UpdateSubContractWork(int id,SubContractWork updatedSubContractWork)
         {
 
-            if (updatedSubContractWork.Equals(null))
+            if (updatedSubContractWork == null)
             {
                 throw new ArgumentNullException();
             }
 
             SubContractWork subContractWork = _context.SubContractWorks.FirstOrDefault(c => c.subconractingid == id);
-            if (subContractWork.Equals(null))
-                throw new ItemNotFoundException($"SubContractWork not found with SubContractWork Id={updatedSubContractWork.subconractingid}");
+            if (subContractWork == null)
+                throw new ItemNotFoundException($"SubContractWork not found with SubContractWork Id={id}");
 
 
             subContractWork.remarks = updatedSubContractWork.remarks;
@@ -73,7 +73,10 @@ namespace ERP.Services
         public void DeleteSubContractWorks(int id)
         {
             var subContractWork = _context.SubContractWorks.FirstOrDefault(c => c.subconractingid == id);
+            if (subContractWork == null)
+                throw new ItemNotFoundException($"SubContractWork not found with SubContractWork Id={id}");
             _context.SubContractWorks.Remove(subContractWork);
+            _context.SaveChanges();
         }
 
 

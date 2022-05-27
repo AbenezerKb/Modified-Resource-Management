@@ -140,7 +140,10 @@ namespace ERP.Services
         public void DeleteConsultant(int id)
         {
             var consultant = _context.Consultants.FirstOrDefault(c => c.consultantId == id);
+            if (consultant == null)
+                throw new ItemNotFoundException($"Consultant not found with Consultant Id={id}");
             _context.Consultants.Remove(consultant);
+            _context.SaveChanges();
         }
 
 
@@ -148,14 +151,14 @@ namespace ERP.Services
 
         public void UpdateConsultant(int id,Consultant updatedConsultant)
         {
-            if (updatedConsultant.Equals(null))
+            if (updatedConsultant == null)
             {
                 throw new ArgumentNullException();
             }
 
             Consultant consultant = _context.Consultants.FirstOrDefault(c => c.consultantId == id);
-            if (consultant.Equals(null))
-                throw new ItemNotFoundException($"Consultant not found with Consultant Id={updatedConsultant.consultantId}");          
+            if (consultant == null)
+                throw new ItemNotFoundException($"Consultant not found with Consultant Id={id}");          
 
             consultant.approvedWorkList = updatedConsultant.approvedWorkList;
             consultant.changesTaken = updatedConsultant.changesTaken;

@@ -155,13 +155,13 @@ namespace ERP.Services
         public void UpdateGrander(int id,Grander updatedGrander)
         {
 
-            if (updatedGrander.Equals(null))
+            if (updatedGrander == null)
             {
                 throw new ArgumentNullException();
             }
 
             Grander grander = _context.Granders.FirstOrDefault(c => c.GranderId == id);
-            if (grander.Equals(null))
+            if (grander == null)
                 throw new ItemNotFoundException($"Grander not found with Grander Id={id}");
 
 

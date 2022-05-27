@@ -49,20 +49,23 @@ namespace ERP.Services
         public void DeleteClient(int id)
         {
             var client = _context.Clients.FirstOrDefault(c => c.clientId == id);
+            if (client == null)
+                throw new ItemNotFoundException($"Client not found with client Id={id}");
             _context.Clients.Remove(client);
+            _context.SaveChanges();
         }
 
 
 
         public void UpdateClient(int id,Client updatedClient)
         {
-            if (updatedClient.Equals(null))
+            if (updatedClient == null)
             {
                 throw new ArgumentNullException();
             }
 
             Client client = _context.Clients.FirstOrDefault(c => c.clientId == id);
-            if (client.Equals(null))
+            if (client == null)
                 throw new ItemNotFoundException($"Client not found with client Id={id}");
             client.address = updatedClient.address;
             client.clientName = updatedClient.clientName;

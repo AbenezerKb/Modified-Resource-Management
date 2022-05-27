@@ -53,8 +53,8 @@ namespace ERP.Services
             }
 
             BID bid = _context.BIDs.FirstOrDefault(c => c.BIDID ==id);
-            if (bid.Equals(null))
-                throw new ItemNotFoundException($"Allocated budget not found with bid Id={id}");
+            if (bid == null)
+                throw new ItemNotFoundException($"Bid not found with bid Id={id}");
             bid.ActualCost = updateBID.ActualCost;
             bid.ConBID = updateBID.ConBID;
             bid.EstimatedBID = updateBID.EstimatedBID;
@@ -76,7 +76,10 @@ namespace ERP.Services
         public void DeleteBID(int id)
         {
             var bid = _context.BIDs.FirstOrDefault(c => c.BIDID == id);
+           if (bid == null)
+                throw new ItemNotFoundException($"Bid not found with bid Id={id}");
             _context.BIDs.Remove(bid);
+            _context.SaveChanges();
         }
 
 

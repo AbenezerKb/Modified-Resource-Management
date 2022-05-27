@@ -47,7 +47,10 @@ namespace ERP.Services
         public void DeleteDailyLabor(int id)
         {
             var dailyLabor = _context.DailyLabors.FirstOrDefault(c => c.LaborerID == id);
+            if (dailyLabor == null)
+                throw new ItemNotFoundException($"DailyLabor not found with DailyLabor Id={id}");
             _context.DailyLabors.Remove(dailyLabor);
+            _context.SaveChanges();
         }
 
 
@@ -55,14 +58,14 @@ namespace ERP.Services
         public void UpdateDailyLabor(int id,DailyLabor updatedDailyLabor)
         {
 
-            if (updatedDailyLabor.Equals(null))
+            if (updatedDailyLabor == null)
             {
                 throw new ArgumentNullException();
             }
 
             DailyLabor dailyLabor = _context.DailyLabors.FirstOrDefault(c => c.LaborerID == id);
-            if (dailyLabor.Equals(null))
-                throw new ItemNotFoundException($"DailyLabor not found with DailyLabor Id={updatedDailyLabor.LaborerID}");
+            if (dailyLabor == null)
+                throw new ItemNotFoundException($"DailyLabor not found with DailyLabor Id={id}");
 
             dailyLabor.date = updatedDailyLabor.date;
             dailyLabor.fullName = updatedDailyLabor.fullName;

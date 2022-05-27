@@ -79,8 +79,8 @@ namespace ERP.Controllers
 
 
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<GranderReadDto>> UpdateLaborDetail(int id, [FromBody] GranderCreateDto laborDetail)
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<GranderReadDto>> UpdateGrander(int id, [FromBody] GranderCreateDto laborDetail)
         {
             try
             {

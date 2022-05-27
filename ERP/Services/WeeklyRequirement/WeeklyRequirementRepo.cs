@@ -142,20 +142,23 @@ namespace ERP.Services
         public void DeleteWeeklyRequirements(int id)
         {
             var weeklyRequirement = _context.WeeklyRequirements.FirstOrDefault(c => c.Id == id);
+            if (weeklyRequirement == null)
+                throw new ItemNotFoundException($"WeeklyRequirement not found with WeeklyRequirement Id={id}");
             _context.WeeklyRequirements.Remove(weeklyRequirement);
+            _context.SaveChanges();
         }
 
 
         public void UpdateWeeklyRequirement(int id,WeeklyRequirement updatedWeeklyRequirement)
         {
 
-            if (updatedWeeklyRequirement.Equals(null))
+            if (updatedWeeklyRequirement == null)
             {
                 throw new ArgumentNullException();
             }
 
             WeeklyRequirement weeklyRequirements = _context.WeeklyRequirements.FirstOrDefault(c => c.Id == id);
-            if (weeklyRequirements.Equals(null))
+            if (weeklyRequirements == null)
                 throw new ItemNotFoundException($"WeeklyRequirement not found with WeeklyRequirement Id={id}");
             
 
