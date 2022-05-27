@@ -14,7 +14,7 @@ namespace ERP.DTOs
         public string WorkDescription { get; set; }
 
         [Required]
-        public int ConBID { get; set; }
+        public string ConBID { get; set; }
 
         [Required]
         public double EstimatedBID { get; set; }
