@@ -44,6 +44,7 @@ namespace ERP.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int materialId { get; set; }        
+        public Material material { get; set; }
         public int WeeklyRequirementFK { get; set; }
         public string unit { get; set; } = string.Empty;
         public int amount { get; set; }

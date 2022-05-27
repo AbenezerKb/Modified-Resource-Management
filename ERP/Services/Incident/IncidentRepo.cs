@@ -65,7 +65,7 @@ namespace ERP.Services
 
             incident.date = updatedIncident.date;
             incident.Description = updatedIncident.Description;
-            incident.empName = updatedIncident.empName;
+            incident.EmployeeId = updatedIncident.EmployeeId;
             incident.incidentName = updatedIncident.incidentName;
             incident.proID = updatedIncident.proID;
             _context.Incidents.Update(incident);

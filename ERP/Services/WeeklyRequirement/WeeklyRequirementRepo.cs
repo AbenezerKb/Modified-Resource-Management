@@ -22,7 +22,7 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-
+            weeklyRequirement.date = DateTime.Now;
             //weeklyRequirement.Id = Guid.NewGuid().ToString();
 /*
             foreach (WeeklyMaterial s in weeklyRequirement.material)

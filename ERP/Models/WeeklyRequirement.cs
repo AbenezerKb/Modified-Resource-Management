@@ -10,10 +10,9 @@ namespace ERP.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string projId { get; set; } = string.Empty;
-        public string projManager { get; set; } = string.Empty;
-        public string projCoordinator { get; set; } = string.Empty;
-
+        public int projId { get; set; } 
+        public int projManager { get; set; }
+        public int projCoordinator { get; set; }
         public DateTime date { get; set; }
         
         public IList<WeeklyMaterial> material { get; set; }
