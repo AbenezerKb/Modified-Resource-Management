@@ -8,7 +8,9 @@ namespace ERP.Models
     {
         public int Id { get; set; }
         public string Remark { get; set; } = string.Empty;
-        public int? ApprovedBy { get; set; }
+        public int? ApprovedById { get; set; }
+        public Employee? ApprovedBy { get; set; }
+
         public int WeeklyPlanId { get; set; }
         [JsonIgnore]
         public WeeklyPlan? WeeklyPlan { get; set; }

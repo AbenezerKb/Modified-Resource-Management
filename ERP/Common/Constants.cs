@@ -192,7 +192,7 @@
         public const string MINMATERIAL = "materialMinNotification";
         public const string TaskDeadline = "taskDeadlineNotification";
         public const string WeeklyTaskPlanSent = "weeklyTaskPlanSentNotification";
-        public const string MainTaskCompletion = "mainTaskCompletionNotification";
+        public const string MainTaskCompleted = "mainTaskCompletionNotification";
 
     }
 

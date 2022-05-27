@@ -6,6 +6,9 @@ namespace ERP.Models
         public int Id { get; set; }
         public DateTime Date { get; set; }
         public int? EmployeeId { get; set; }
+        public Employee? Employee { get; set; }
+
+
         public int? SubContractorId { get; set; }
         public float PerformancePoint { get; set; }
         public string Remark { get; set; } = string.Empty;

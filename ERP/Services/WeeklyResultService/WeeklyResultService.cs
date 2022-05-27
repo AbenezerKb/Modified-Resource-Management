@@ -4,15 +4,18 @@ using ERP.Context;
 using ERP.Models;
 using ERP.DTOs.WeeklyResult;
 using ERP.Exceptions;
+using ERP.Services.User;
 
 namespace ERP.Services.WeeklyResultService
 {
     public class WeeklyResultService : IWeeklyResultService
     {
+        private readonly IUserService userService;
         public readonly DataContext dbContext;
-        public WeeklyResultService(DataContext context)
+        public WeeklyResultService(DataContext context, IUserService service)
         {
             dbContext = context;
+            this.userService = service;
 
         }
         public async Task<WeeklyResult> Add(WeeklyResultDto weeklyResultDto)
@@ -26,6 +29,7 @@ namespace ERP.Services.WeeklyResultService
             {
                 Remark = weeklyResultDto.Remark,
                 WeeklyPlanId = weeklyResultDto.WeeklyPlanId,
+                ApprovedById = userService.Employee.EmployeeId
             };
 
             var weeklyPlan = dbContext
@@ -35,33 +39,58 @@ namespace ERP.Services.WeeklyResultService
                         .FirstOrDefault();
 
             if (weeklyPlan == null) throw new ItemNotFoundException($"Weekly plan not found with WeeklyPlanId={weeklyResultDto.WeeklyPlanId}");
-            weeklyResultDto.Results.ForEach(wr =>
+            weeklyResultDto.Results.ForEach(async wr =>
             {
                 var subTask = weeklyPlan.PlanValues.Where(wpv => wpv.SubTaskId == wr.SubTaskId).Select(wpv => wpv.SubTask).FirstOrDefault();
                 if (subTask == null) throw new ItemNotFoundException($"SubTask not found with SubTaskId={wr.SubTaskId}");
 
                 subTask.Progress = wr.Value;
+                await AddNotificationIfMainTaskCompleted(subTask);
 
                 weeklyResult.Results.Add(new WeeklyResultValue
                 {
                     SubTaskId = wr.SubTaskId,
                     Value = wr.Value
+
                 });
 
             });
 
             await dbContext.WeeklyResults.AddAsync(weeklyResult);
-            await GenerateEmployeePerformanceSheet(weeklyPlan);
+            await GeneratePerformanceSheet(weeklyPlan);
 
             await dbContext.SaveChangesAsync();
             return weeklyResult;
         }
+        private async Task AddNotificationIfMainTaskCompleted(SubTask subTask)
+        {
 
+            var mainTask = await dbContext.Tasks.Where(t => t.Id == subTask.TaskId)
+                .Include(t => t.SubTasks)
+                .Include(t => t.Project)
+                .ThenInclude(t => t.Coordinator)
+                .FirstOrDefaultAsync();
+            if (mainTask!.IsCompleted())
+            {
 
-        private Task GenerateEmployeePerformanceSheet(WeeklyPlan weeklyPlan)
+                dbContext.Notifications.Add(new Notification
+                {
+                    Title = "Main Activity Completed",
+                    Content = $"{mainTask.Name} is completed from project '{mainTask.Project!.Name}'",
+                    Type = NOTIFICATIONTYPE.MainTaskCompleted,
+                    SiteId = mainTask.Project.SiteId,
+                    EmployeeId = mainTask.Project.CoordinatorId,
+                    ActionId = subTask.Id,
+                    Status = 0
+
+                });
+            }
+        }
+
+        private Task GeneratePerformanceSheet(WeeklyPlan weeklyPlan)
         {
             //Generate PerformanceSheet for each professional for their weekly planned work
-            var tasksPerformedByEmployees = weeklyPlan.PlanValues.Where(p => !p.IsAssignedForSubContractor()).GroupBy(pv => pv.PerformedBy)
+            var tasksPerformedByEmployees = weeklyPlan.PlanValues.Where(p => !p.IsAssignedForSubContractor()).GroupBy(pv => pv.EmployeeId)
             .Select(pvg => new
             {
                 PerformedBy = pvg.Key,
@@ -111,12 +140,17 @@ namespace ERP.Services.WeeklyResultService
         }
         public Task<List<WeeklyResult>> GetAll()
         {
-            return dbContext.WeeklyResults.Include(wr => wr.Results).ToListAsync();
+            return dbContext.WeeklyResults.Include(wr => wr.Results)
+                .ThenInclude(wrv => wrv.SubTask)
+                .ToListAsync();
         }
 
         public async Task<WeeklyResult> GetById(int weeklyResultId)
         {
-            var weeklyResult = await dbContext.WeeklyResults.Where(wr => wr.Id == weeklyResultId).Include(wr => wr.Results).FirstOrDefaultAsync();
+            var weeklyResult = await dbContext.WeeklyResults.Where(wr => wr.Id == weeklyResultId)
+                .Include(wr => wr.Results)
+                .ThenInclude(wrv => wrv.SubTask)
+                .FirstOrDefaultAsync();
 
             if (weeklyResult == null) throw new ItemNotFoundException($"Weekly Result not found with WeeklyResultId= {weeklyResultId}");
 
@@ -129,6 +163,7 @@ namespace ERP.Services.WeeklyResultService
                                     .WeeklyResults.Include(wr => wr.WeeklyPlan)
                                                 .Where(wr => wr.WeeklyPlan!.ProjectId == projectId)
                                                 .Include(wr => wr.Results)
+                                                .ThenInclude(wrv => wrv.SubTask)
                                                 .ToListAsync();
 
             if (weeklyResults == null) throw new ItemNotFoundException($"Weekly Results not found with ProjectId= {projectId}");
@@ -140,6 +175,7 @@ namespace ERP.Services.WeeklyResultService
             var weeklyResult = await dbContext
             .WeeklyResults.Where(wr => wr.WeeklyPlanId == weeklyPlanId)
                           .Include(wr => wr.Results)
+                          .ThenInclude(wrv => wrv.SubTask)
                           .FirstOrDefaultAsync();
 
             if (weeklyResult == null) throw new ItemNotFoundException($"Weekly Results not found with WeeklyPlanId= {weeklyPlanId}");
@@ -158,13 +194,21 @@ namespace ERP.Services.WeeklyResultService
 
         public async Task<WeeklyResultValue> UpdateResult(int weeklyResultValueId, int newValue)
         {
-            var weeklyResultValue = await dbContext.WeeklyResultValues.FindAsync(weeklyResultValueId);
+            var weeklyResultValue = await dbContext.WeeklyResultValues.Where(wrv => wrv.Id == weeklyResultValueId)
+            .Include(wrv => wrv.SubTask)
+            .FirstOrDefaultAsync();
             if (weeklyResultValue == null) throw new ItemNotFoundException($"Weekly result value not found with WeeklyResultValueId={weeklyResultValueId}");
 
             weeklyResultValue.Value = newValue;
+            weeklyResultValue.SubTask!.Progress = newValue;
+
             dbContext.WeeklyResultValues.Update(weeklyResultValue);
             await dbContext.SaveChangesAsync();
+            await AddNotificationIfMainTaskCompleted(weeklyResultValue.SubTask);
+            await dbContext.SaveChangesAsync();
+
             return weeklyResultValue;
+
         }
     }
 

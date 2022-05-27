@@ -6,7 +6,9 @@ namespace ERP.Models
     public class WeeklyPlanValue : IAuditableEntity
     {
         public int Id { get; set; }
-        public int? PerformedBy { get; set; }
+        public int? EmployeeId { get; set; }
+        public Employee? Employee { get; set; }
+
         public int? SubContractorId { get; set; }
         public int? SubTaskId { get; set; }
         public SubTask? SubTask { get; set; }

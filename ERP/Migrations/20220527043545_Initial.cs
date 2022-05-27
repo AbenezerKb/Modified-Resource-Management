@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ERP.Migrations
 {
-    public partial class Init : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -841,6 +841,11 @@ namespace ERP.Migrations
                 {
                     table.PrimaryKey("PK_PerformanceSheets", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_PerformanceSheets_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "EmployeeId");
+                    table.ForeignKey(
                         name: "FK_PerformanceSheets_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
@@ -1251,7 +1256,7 @@ namespace ERP.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Remark = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ApprovedBy = table.Column<int>(type: "int", nullable: true),
+                    ApprovedById = table.Column<int>(type: "int", nullable: true),
                     WeeklyPlanId = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -1259,6 +1264,11 @@ namespace ERP.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_WeeklyResults", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WeeklyResults_Employees_ApprovedById",
+                        column: x => x.ApprovedById,
+                        principalTable: "Employees",
+                        principalColumn: "EmployeeId");
                     table.ForeignKey(
                         name: "FK_WeeklyResults_WeeklyPlans_WeeklyPlanId",
                         column: x => x.WeeklyPlanId,
@@ -1359,7 +1369,7 @@ namespace ERP.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PerformedBy = table.Column<int>(type: "int", nullable: true),
+                    EmployeeId = table.Column<int>(type: "int", nullable: true),
                     SubContractorId = table.Column<int>(type: "int", nullable: true),
                     SubTaskId = table.Column<int>(type: "int", nullable: true),
                     WeeklyPlanId = table.Column<int>(type: "int", nullable: false),
@@ -1369,6 +1379,11 @@ namespace ERP.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_WeeklyPlanValues", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WeeklyPlanValues_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "EmployeeId");
                     table.ForeignKey(
                         name: "FK_WeeklyPlanValues_SubTasks_SubTaskId",
                         column: x => x.SubTaskId,
@@ -1631,6 +1646,11 @@ namespace ERP.Migrations
                 column: "SiteId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PerformanceSheets_EmployeeId",
+                table: "PerformanceSheets",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PerformanceSheets_ProjectId",
                 table: "PerformanceSheets",
                 column: "ProjectId");
@@ -1798,6 +1818,11 @@ namespace ERP.Migrations
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_WeeklyPlanValues_EmployeeId",
+                table: "WeeklyPlanValues",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_WeeklyPlanValues_SubTaskId",
                 table: "WeeklyPlanValues",
                 column: "SubTaskId");
@@ -1806,6 +1831,11 @@ namespace ERP.Migrations
                 name: "IX_WeeklyPlanValues_WeeklyPlanId",
                 table: "WeeklyPlanValues",
                 column: "WeeklyPlanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WeeklyResults_ApprovedById",
+                table: "WeeklyResults",
+                column: "ApprovedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WeeklyResults_WeeklyPlanId",

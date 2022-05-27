@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220525051432_Init")]
-    partial class Init
+    [Migration("20220527043545_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -849,6 +849,8 @@ namespace ERP.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EmployeeId");
+
                     b.HasIndex("ProjectId");
 
                     b.ToTable("PerformanceSheets");
@@ -1629,7 +1631,7 @@ namespace ERP.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("PerformedBy")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<int?>("SubContractorId")
@@ -1646,6 +1648,8 @@ namespace ERP.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EmployeeId");
+
                     b.HasIndex("SubTaskId");
 
                     b.HasIndex("WeeklyPlanId");
@@ -1661,7 +1665,7 @@ namespace ERP.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("ApprovedBy")
+                    b.Property<int?>("ApprovedById")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -1678,6 +1682,8 @@ namespace ERP.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApprovedById");
 
                     b.HasIndex("WeeklyPlanId")
                         .IsUnique();
@@ -2171,11 +2177,17 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.PerformanceSheet", b =>
                 {
+                    b.HasOne("ERP.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
+
                     b.HasOne("ERP.Models.Project", "Project")
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Employee");
 
                     b.Navigation("Project");
                 });
@@ -2511,6 +2523,10 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.WeeklyPlanValue", b =>
                 {
+                    b.HasOne("ERP.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId");
+
                     b.HasOne("ERP.Models.SubTask", "SubTask")
                         .WithMany()
                         .HasForeignKey("SubTaskId");
@@ -2521,6 +2537,8 @@ namespace ERP.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Employee");
+
                     b.Navigation("SubTask");
 
                     b.Navigation("WeeklyPlan");
@@ -2528,11 +2546,17 @@ namespace ERP.Migrations
 
             modelBuilder.Entity("ERP.Models.WeeklyResult", b =>
                 {
+                    b.HasOne("ERP.Models.Employee", "ApprovedBy")
+                        .WithMany()
+                        .HasForeignKey("ApprovedById");
+
                     b.HasOne("ERP.Models.WeeklyPlan", "WeeklyPlan")
                         .WithOne("WeeklyResult")
                         .HasForeignKey("ERP.Models.WeeklyResult", "WeeklyPlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("ApprovedBy");
 
                     b.Navigation("WeeklyPlan");
                 });

@@ -4,7 +4,7 @@ using ERP.Exceptions;
 using ERP.Context;
 using ERP.Models;
 using ERP.DTOs.WeeklyPlan;
-
+using ERP.Helpers;
 namespace ERP.Services.WeeklyPlanService
 {
 
@@ -17,10 +17,7 @@ namespace ERP.Services.WeeklyPlanService
             dbContext = context;
         }
 
-        private Task<List<int>> GetDifference(List<int> sample, List<int> all)
-        {
-            return Task.FromResult(sample.Where(s => !all.Contains(s)).ToList());
-        }
+
 
         private async Task<bool> PlanExists(WeeklyPlanDto weeklyPlanDto)
         {
@@ -32,23 +29,37 @@ namespace ERP.Services.WeeklyPlanService
             //            && p.WeekStartDate.AddDays(7) <= weekEndDate);
             return plans.Any(p => ISOWeek.GetWeekOfYear(p.WeekStartDate) == ISOWeek.GetWeekOfYear(weeklyPlanDto.WeekStartDate));
         }
-        public async Task<WeeklyPlan> Add(WeeklyPlanDto weeklyPlanDto)
-        {
 
-            var project = await dbContext.Projects.FindAsync(weeklyPlanDto.ProjectId);
-            if (project == null) throw new ItemNotFoundException($"Project not found with PrjectId={weeklyPlanDto.ProjectId}");
+        private async Task validateRequest(WeeklyPlanDto weeklyPlanDto)
+        {
             if (await PlanExists(weeklyPlanDto)) throw new ItemAlreadyExistException($"Weekly Plan already exist with WeekStartDate=${weeklyPlanDto.WeekStartDate} and ProjectId={weeklyPlanDto.ProjectId}");
 
 
             if (!await dbContext.Projects.AnyAsync(p => p.Id == weeklyPlanDto.ProjectId)) throw new ItemNotFoundException($"Project not found with projectId={weeklyPlanDto.ProjectId}");
 
-            var unknownIds = await GetDifference(
+            var unknownSubTaskIds = await Utils.GetDifference(
                   weeklyPlanDto.PlanValues.Select(pv => pv.SubTaskId).ToList(),
                           await dbContext.SubTasks.Select(s => s.Id).ToListAsync()
                     );
 
-            if (unknownIds.Count != 0) throw new ItemNotFoundException($"Task(s) not found with id=[{string.Join(',', unknownIds)}]");
-            //TODO: Check for invalid employee Id as well
+            if (unknownSubTaskIds.Count != 0) throw new ItemNotFoundException($"Task(s) not found with id=[{string.Join(',', unknownSubTaskIds)}]");
+            var unknownEmployeeIds = await Utils.GetDifference(weeklyPlanDto.PlanValues
+                .Where(pv => pv.PerformedBy != null)
+                .Select(pv => pv.PerformedBy!.Value)
+                .ToList(),
+
+            await dbContext.Employees.Select(e => e.EmployeeId).ToListAsync()
+            );
+            if (unknownEmployeeIds.Count != 0) throw new ItemNotFoundException($"Employee(s) not found with id=[{string.Join(',', unknownEmployeeIds)}]");
+            //TODO: Check for invalid subcontractor Id as well
+
+        }
+        public async Task<WeeklyPlan> Add(WeeklyPlanDto weeklyPlanDto)
+        {
+
+            var project = await dbContext.Projects.FindAsync(weeklyPlanDto.ProjectId);
+            if (project == null) throw new ItemNotFoundException($"Project not found with PrjectId={weeklyPlanDto.ProjectId}");
+            await validateRequest(weeklyPlanDto);
 
             List<WeeklyPlanValue> planValues = new();
 
@@ -60,7 +71,7 @@ namespace ERP.Services.WeeklyPlanService
                 };
                 if (wp.PerformedBy != null)
                 {
-                    value.PerformedBy = wp.PerformedBy;
+                    value.EmployeeId = wp.PerformedBy;
                 }
                 else
                 {
@@ -82,12 +93,17 @@ namespace ERP.Services.WeeklyPlanService
 
             await dbContext.WeeklyPlans.AddAsync(newPlan);
 
-            // await dbContext.Notifications.AddAsync(new Notification
-            // {
-            //     Title = "Plan added",
-            //     Type = "Weekly Plan",
-            // });
-            //TODO: Add 'Weekly Plan Sent' Notification Here
+            await dbContext.Notifications.AddAsync(new Notification
+            {
+                Title = $"Weekly Plan - {project.Name}",
+                Content = $"Weekly plan added for {newPlan.WeekStartDate} - {newPlan.WeekStartDate.AddDays(7)}",
+                Type = NOTIFICATIONTYPE.WeeklyTaskPlanSent,
+                Status = 0,
+                SiteId = project.SiteId
+                // addCoordinator Id here
+                //EmployeeId=
+
+            });
             await dbContext.SaveChangesAsync();
 
             return newPlan;
@@ -110,7 +126,7 @@ namespace ERP.Services.WeeklyPlanService
             };
             if (weeklyPlanValueDto.PerformedBy != null)
             {
-                planValue.PerformedBy = weeklyPlanValueDto.PerformedBy;
+                planValue.EmployeeId = weeklyPlanValueDto.PerformedBy;
             }
             else
             {
@@ -140,6 +156,8 @@ namespace ERP.Services.WeeklyPlanService
             var plans = await dbContext.WeeklyPlans.Where(wp => wp.ProjectId == projectId && wp.WeekStartDate.Month == month && wp.WeekStartDate.Year == year)
                                                          .Include(p => p.PlanValues)
                                                          .ThenInclude(wpv => wpv.SubTask)
+                                                         .Include(wp => wp.PlanValues)
+                                                         .ThenInclude(wpv => wpv.Employee)
                                                          .OrderBy(wp => wp.WeekStartDate)
                                                          .ToListAsync();
 
@@ -152,6 +170,8 @@ namespace ERP.Services.WeeklyPlanService
             List<WeeklyPlan> weeklyPlans = await dbContext.WeeklyPlans.Where(wp => wp.ProjectId == projectId)
                                                                       .Include(wp => wp.PlanValues)
                                                                       .ThenInclude(wpv => wpv.SubTask)
+                                                                      .Include(wp => wp.PlanValues)
+                                                                      .ThenInclude(wpv => wpv.Employee)
                                                                       .ToListAsync();
             if (weeklyPlans == null || !weeklyPlans.Any()) throw new ItemNotFoundException($"Weekly Plans not found with ProjectId={projectId}");
             return weeklyPlans;
@@ -162,6 +182,8 @@ namespace ERP.Services.WeeklyPlanService
             var weeklyPlan = (await dbContext.WeeklyPlans.Where(p => p.ProjectId == projectId && p.WeekNo == week && p.WeekStartDate.Year == year)
                                                         .Include(p => p.PlanValues)
                                                         .ThenInclude(wpv => wpv.SubTask)
+                                                         .Include(wp => wp.PlanValues)
+                                                         .ThenInclude(wpv => wpv.Employee)
                                                         .ToListAsync())
                                                         .FirstOrDefault();
 

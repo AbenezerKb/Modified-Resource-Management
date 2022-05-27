@@ -395,12 +395,20 @@ namespace ERP.Context
              .WithMany(wp => wp.PlanValues)
              .HasForeignKey(w => w.WeeklyPlanId);
 
+            modelBuilder.Entity<WeeklyPlanValue>()
+            .HasOne(wpv => wpv.Employee)
+            .WithMany()
+            .HasForeignKey(wpv => wpv.EmployeeId);
 
             modelBuilder.Entity<WeeklyPlan>()
             .HasOne(wp => wp.WeeklyResult)
             .WithOne(wr => wr.WeeklyPlan)
             .HasForeignKey<WeeklyResult>(wr => wr.WeeklyPlanId);
 
+            modelBuilder.Entity<WeeklyResult>()
+                .HasOne(wr => wr.ApprovedBy)
+                .WithMany()
+                .HasForeignKey(wr => wr.ApprovedById);
 
             modelBuilder
                 .Entity<WeeklyPlan>()
@@ -423,6 +431,10 @@ namespace ERP.Context
                         .HasOne(ps => ps.Project)
                         .WithMany()
                         .HasForeignKey(ps => ps.ProjectId);
+            modelBuilder.Entity<PerformanceSheet>()
+           .HasOne(ps => ps.Employee)
+           .WithMany()
+           .HasForeignKey(ps => ps.EmployeeId);
 
             #endregion
 

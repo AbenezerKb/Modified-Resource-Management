@@ -139,10 +139,18 @@ namespace ERP.Services.ProjectService
             {
                 throw new ItemNotFoundException($"Site not found with SiteId={projectDto.SiteId}");
             }
+            var isSiteAssigned = await dbContext.Projects.AnyAsync(p => p.SiteId == projectDto.SiteId);
+
+            if (isSiteAssigned) throw new ItemAlreadyExistException($"Site already assigned to a project");
             var manager = await dbContext.Employees.FirstOrDefaultAsync(e => e.EmployeeId == projectDto.ManagerId);
             if (manager == null)
             {
                 throw new ItemNotFoundException($"Manager not found with ManagerId={projectDto.ManagerId}");
+            }
+            var isManagerAssigned = await dbContext.Projects.AnyAsync(p => p.ManagerId == projectDto.ManagerId);
+            if (isManagerAssigned)
+            {
+                throw new ItemAlreadyExistException($"Manager already assigned to a project with ManagerId={projectDto.ManagerId}");
             }
 
             var coordinator = await dbContext.Employees.FirstOrDefaultAsync(e => e.EmployeeId == projectDto.CoordinatorId);
@@ -175,12 +183,19 @@ namespace ERP.Services.ProjectService
 
         async Task<List<Project>> IProjectService.GetAll()
         {
-            return await dbContext.Projects.ToListAsync();
+            return await dbContext.Projects
+                .Include(p => p.Manager)
+                .Include(p => p.Site)
+                .Include(p => p.Coordinator)
+                .ToListAsync();
         }
 
         async Task<Project> IProjectService.GetById(int id)
         {
-            var project = await dbContext.Projects.FindAsync(id);
+            var project = await dbContext.Projects.Where(p => p.Id == id).Include(p => p.Manager)
+                .Include(p => p.Site)
+                .Include(p => p.Coordinator)
+                .FirstOrDefaultAsync();
             if (project == null)
             {
                 throw new ItemNotFoundException($"Project not found with id={id}");

@@ -11,7 +11,7 @@ namespace ERP.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Employee")]
+    [Authorize(Roles = "Employee,Admin,Coordinator,OfficeEngineer")]
     public class NotificationController : Controller
     {
         private readonly INotificationService _notificationService;
@@ -23,30 +23,9 @@ namespace ERP.Controllers
             _userService = userService;
         }
 
-        [HttpGet("ProjectManagement")]
-        public async Task<ActionResult<CustomApiResponse>> GetNotificationsByType([FromQuery] int siteId)
-        {
-            if (!_userService.UserRole.IsAdmin)
-                return Forbid();
 
-            List<Notification> deadlineNotififcations = await _notificationService.Get(NOTIFICATIONTYPE.TaskDeadline, -1, siteId);
-            List<Notification> weeklyPlanNotifications = await _notificationService.Get(NOTIFICATIONTYPE.WeeklyTaskPlanSent, -1, siteId);
-            List<Notification> taskCompletionNotifications = await _notificationService.Get(NOTIFICATIONTYPE.MainTaskCompletion, -1, siteId);
-
-
-            List<Notification> allNotifications = new();
-            allNotifications.AddRange(deadlineNotififcations);
-            allNotifications.AddRange(weeklyPlanNotifications);
-            allNotifications.AddRange(taskCompletionNotifications);
-
-            return Ok(new CustomApiResponse
-            {
-                Message = "Success",
-                Data = allNotifications.OrderByDescending(n => n.Date).ToList()
-            });
-
-        }
         [HttpGet("all")]
+        [Authorize(Roles = "Employee,Admin")]
         public async Task<ActionResult<List<Notification>>> GetAll()
         {
             if (!_userService.UserRole.IsAdmin)

@@ -128,7 +128,7 @@ namespace ERP.Controllers
                 return Ok(new CustomApiResponse
                 {
                     Message = "Success",
-                    Data = await weeklyResultService.UpdateResult(weeklyResultId, newValue)
+                    Data = await weeklyResultService.UpdateResult(weeklyResultValueId, newValue)
                 });
             }
             catch (ItemNotFoundException infex)
