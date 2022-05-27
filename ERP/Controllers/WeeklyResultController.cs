@@ -8,7 +8,7 @@ namespace ERP.Controllers
 {
     [ApiController]
     [Route("api/weeklyResults")]
-    [Authorize(Roles = "ProjectManager")]
+    [Authorize(Roles = "ProjectManager,Admin")]
     public class WeeklyResultController : ControllerBase
     {
         private readonly IWeeklyResultService weeklyResultService;
