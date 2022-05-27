@@ -76,15 +76,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-//builder.Services.AddDbContext<DataContext>(options =>
-//   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<DataContext>(options =>
+   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//builder.Services.AddDbContext<AppDbContext>(options =>
-//   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<AppDbContext>(opt =>
-   opt.UseInMemoryDatabase("db"));
-builder.Services.AddDbContext<DataContext>(opt =>
-   opt.UseInMemoryDatabase("db"));
+builder.Services.AddDbContext<AppDbContext>(options =>
+   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddDbContext<AppDbContext>(opt =>
+//   opt.UseInMemoryDatabase("db"));
+//builder.Services.AddDbContext<DataContext>(opt =>
+//   opt.UseInMemoryDatabase("db"));
 //Dependecy Injection
 builder.Services.AddControllers();
 
