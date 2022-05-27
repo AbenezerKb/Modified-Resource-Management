@@ -31,7 +31,7 @@ namespace ERP.Controllers
             return Ok(_mapper.Map<IEnumerable<GranderReadDto>>(_granders));
         }
         [HttpGet("{id}", Name = "GetGrander")]
-        public async Task<ActionResult<GranderReadDto>> GetGrander(string id)
+        public async Task<ActionResult<GranderReadDto>> GetGrander(int id)
         {            
             var _granders = _granderRepo.GetGrander(id);
             if (_granders != null)
@@ -60,12 +60,33 @@ namespace ERP.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<GranderReadDto>> DeleteGrander(string id)
+        public async Task<ActionResult<GranderReadDto>> DeleteGrander(int id)
         {
 
             try
             {
                 _granderRepo.DeleteGrander(id);
+                _granderRepo.SaveChanges();
+                return Ok("Success");
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
+
+
+
+
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<GranderReadDto>> UpdateLaborDetail(int id, [FromBody] GranderCreateDto laborDetail)
+        {
+            try
+            {
+
+                var newLaborDetail = _mapper.Map<Grander>(laborDetail);
+                _granderRepo.UpdateGrander(id, newLaborDetail);
                 _granderRepo.SaveChanges();
                 return Ok("Success");
             }

@@ -30,7 +30,7 @@ namespace ERP.Controllers
             return Ok(_mapper.Map<IEnumerable<ConsultantReadDto>>(_consultants));
         }
         [HttpGet("{id}", Name = "GetConsultant")]
-        public async Task<ActionResult<ConsultantReadDto>> GetConsultant(string id)
+        public async Task<ActionResult<ConsultantReadDto>> GetConsultant(int id)
         {            
             var _consultants = _consultantRepo.GetConsultant(id);
             if (_consultants != null)
@@ -60,7 +60,7 @@ namespace ERP.Controllers
 
         
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ConsultantReadDto>> DeleteConsultant(string id)
+        public async Task<ActionResult<ConsultantReadDto>> DeleteConsultant(int id)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace ERP.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ContractReadDto>> UpdateContract(string id, [FromBody] ConsultantCreateDto consultant)
+        public async Task<ActionResult<ContractReadDto>> UpdateContract(int id, [FromBody] ConsultantCreateDto consultant)
         {
             try
             {

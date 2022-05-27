@@ -5,9 +5,9 @@ namespace ERP.Services
     {
         bool SaveChanges();
         IEnumerable<AssignedWorkForce> GetAllAssignedWorkForces();
-        AssignedWorkForce GetAssignedWorkForce(string id);
+        AssignedWorkForce GetAssignedWorkForce(int id);
         void CreateAssignedWorkForce(AssignedWorkForce assignedWork);
-        public void DeleteAssignedWorkForce(string id);
-        void UpdateAssignedWorkForce(string id,AssignedWorkForce updatedAssignedWorkForce);
+        public void DeleteAssignedWorkForce(int id);
+        void UpdateAssignedWorkForce(int id,AssignedWorkForce updatedAssignedWorkForce);
     }
 }

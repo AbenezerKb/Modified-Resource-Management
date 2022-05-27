@@ -39,7 +39,7 @@ namespace ERP.Controllers
 
 
         [HttpGet("{id}", Name = "GetWeeklyRequirement")]
-        public async Task<ActionResult<WeeklyRequirementReadDto>> GetWeeklyRequirement(string id)
+        public async Task<ActionResult<WeeklyRequirementReadDto>> GetWeeklyRequirement(int id)
         {
 
             var _weeklyRequirement = _weeklyRequirementRepo.GetWeeklyRequirements(id);
@@ -62,12 +62,12 @@ namespace ERP.Controllers
             _weeklyRequirementRepo.SaveChanges();
             var weeklyRequirementReadDto = _mapper.Map<WeeklyRequirementReadDto>(newWeeklyRequirement);
 
-            return CreatedAtRoute(nameof(GetWeeklyRequirement), new { id = weeklyRequirementReadDto.Id }, weeklyRequirementReadDto);
+            return CreatedAtRoute(nameof(GetWeeklyRequirement), new { id = weeklyRequirementReadDto.id }, weeklyRequirementReadDto);
         }
 
         /*
           [Http("{id}", Name = "GetWeeklyRequirement")]
-          public async Task<ActionResult<WeeklyRequirementReadDto>> GetWeeklyRequirement(string id)
+          public async Task<ActionResult<WeeklyRequirementReadDto>> GetWeeklyRequirement(int id)
           {
 
               var _weeklyRequirement = _weeklyRequirementRepo.GetWeeklyRequirements(id);
@@ -87,7 +87,7 @@ namespace ERP.Controllers
 
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<WeeklyRequirementReadDto>> DeleteWeeklyRequirement(string id)
+        public async Task<ActionResult<WeeklyRequirementReadDto>> DeleteWeeklyRequirement(int id)
         {
 
             try
@@ -108,7 +108,7 @@ namespace ERP.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateWeeklyRequirement(string id, [FromBody] WeeklyRequirementCreateDto weeklyRequirement)
+        public async Task<ActionResult> UpdateWeeklyRequirement(int id, [FromBody] WeeklyRequirementCreateDto weeklyRequirement)
         {
             try
             {

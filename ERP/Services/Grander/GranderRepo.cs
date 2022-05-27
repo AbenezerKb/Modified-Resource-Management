@@ -22,12 +22,12 @@ namespace ERP.Services
                 throw new ArgumentNullException();
             }
           
-            grander.GranderId = Guid.NewGuid().ToString();
+            //grander.GranderId = Guid.NewGuid().ToString();
 
 
             foreach (SubcontractingPlan scp in grander.SubcontractingPlans)
             {
-                scp.subcontractingPlanId = Guid.NewGuid().ToString();
+                scp.subcontractingPlanId =// Guid.NewGuid().ToString();
                 scp.GranderFK = grander.GranderId;
                 _context.SubcontractingPlans.Add(scp);
             }
@@ -35,7 +35,7 @@ namespace ERP.Services
 
             foreach (ResourcePlan rp in grander.ResourcePlans)
             {
-                rp.equipmentId = Guid.NewGuid().ToString();
+               // rp.equipmentId = Guid.NewGuid().ToString();
                 rp.GranderFK = grander.GranderId;
                 _context.ResourcePlans.Add(rp);
             }
@@ -43,7 +43,7 @@ namespace ERP.Services
 
             foreach (WorkForcePlan wfp in grander.WorkForcePlans)
             {
-                wfp.laborId = Guid.NewGuid().ToString();
+              //  wfp.laborId = Guid.NewGuid().ToString();
                 wfp.GranderFK = grander.GranderId;
                 _context.WorkForcePlans.Add(wfp);
             }         
@@ -52,7 +52,7 @@ namespace ERP.Services
 
         }
 
-        public Grander GetGrander(string granderId)
+        public Grander GetGrander(int granderId)
         {
             var grander =_context.Granders.FirstOrDefault(c => c.GranderId == granderId);
             var subcontractingPlans = _context.SubcontractingPlans.ToList();
@@ -144,7 +144,7 @@ namespace ERP.Services
             return (_context.SaveChanges() >= 0);
         }
 
-        public void DeleteGrander(string id)
+        public void DeleteGrander(int id)
         {
             var grander = _context.Granders.FirstOrDefault(c => c.GranderId == id);
             _context.Granders.Remove(grander);
@@ -152,7 +152,7 @@ namespace ERP.Services
 
 
 
-        public void UpdateGrander(string id,Grander updatedGrander)
+        public void UpdateGrander(int id,Grander updatedGrander)
         {
 
             if (updatedGrander.Equals(null))
@@ -160,9 +160,9 @@ namespace ERP.Services
                 throw new ArgumentNullException();
             }
 
-            Grander grander = _context.Granders.FirstOrDefault(c => c.GranderId == updatedGrander.GranderId);
+            Grander grander = _context.Granders.FirstOrDefault(c => c.GranderId == id);
             if (grander.Equals(null))
-                throw new ItemNotFoundException($"Grander not found with Grander Id={updatedGrander.GranderId}");
+                throw new ItemNotFoundException($"Grander not found with Grander Id={id}");
 
 
 
@@ -222,7 +222,8 @@ namespace ERP.Services
            
             grander.WorkForcePlans = updatedGrander.WorkForcePlans;            
          
-            _context.Granders.Add(grander);
+            _context.Granders.Update(grander);
+            _context.SaveChanges();
         }
 
 

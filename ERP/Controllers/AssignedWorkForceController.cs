@@ -31,7 +31,7 @@ namespace ERP.Controllers
 
 
         [HttpGet("{id}", Name = "GetAssignedWorkForce")]
-        public async Task<ActionResult<AssignedWorkForceReadDto>> GetAssignedWorkForce(string id)
+        public async Task<ActionResult<AssignedWorkForceReadDto>> GetAssignedWorkForce(int id)
         {
 
             var _assignedWorkForces = _assignedWorkForceRepo.GetAssignedWorkForce(id);
@@ -65,7 +65,7 @@ namespace ERP.Controllers
 
         
         [HttpDelete("{id}")]
-        public async Task<ActionResult<AssignedWorkForceReadDto>> DeleteBID(string id)
+        public async Task<ActionResult<AssignedWorkForceReadDto>> DeleteBID(int id)
         {
 
             try
@@ -82,7 +82,7 @@ namespace ERP.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateAssignedWorkForce(string id, [FromBody] AssignedWorkForceCreateDto assignedWorkForce)
+        public async Task<ActionResult> UpdateAssignedWorkForce(int id, [FromBody] AssignedWorkForceCreateDto assignedWorkForce)
         {
             try
             {

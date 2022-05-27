@@ -6,9 +6,9 @@ namespace ERP.DTOs
         [Required]
         public DateTime date { get; set; }
         [Required]
-        public string projId { get; set; }
+        public int projId { get; set; }
         [Required]
-        public string itemName { get; set; }
+        public int itemId { get; set; }
         [Required]
         public string unit { get; set; }
         [Required]

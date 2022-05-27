@@ -7,9 +7,9 @@ namespace ERP.Services
     {
         bool SaveChanges();
         IEnumerable<AllocatedBudget> GetAllAllocatedBudgets();
-        AllocatedBudget GetAllocatedBudget(string id);
+        AllocatedBudget GetAllocatedBudget(int id);
         void CreateAllocatedBudget(AllocatedBudget allocatedBudget);
-        void DeleteAllocatedBudget(string id);
-        void UpdateAllocatedBudget(string id,AllocatedBudget allocatedBudget);
+        void DeleteAllocatedBudget(int id);
+        void UpdateAllocatedBudget(int id,AllocatedBudget allocatedBudget);
     }
 }

@@ -20,14 +20,14 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-            timeCard.Id = Guid.NewGuid().ToString();
+          //  timeCard.Id =// Guid.NewGuid().ToString();
 
             _context.TimeCards.Add(timeCard);
         }
 
 
 
-        public TimeCard GetTimeCard(string id)
+        public TimeCard GetTimeCard(int id)
         {
             return _context.TimeCards.FirstOrDefault(c => c.Id == id);
         }
@@ -44,7 +44,7 @@ namespace ERP.Services
         }
 
 
-        public void DeleteTimeCard(string id)
+        public void DeleteTimeCard(int id)
         {
             var timeCard = _context.TimeCards.FirstOrDefault(c => c.Id == id);
             _context.TimeCards.Remove(timeCard);
@@ -52,7 +52,7 @@ namespace ERP.Services
 
 
 
-        public void UpdateTimeCard(string id,TimeCard updatedTimeCard)
+        public void UpdateTimeCard(int id,TimeCard updatedTimeCard)
         {
 
             if (updatedTimeCard.Equals(null))
@@ -79,7 +79,8 @@ namespace ERP.Services
             timeCard.wages = updatedTimeCard.wages;
             timeCard.weekNo = updatedTimeCard.weekNo;
 
-            _context.TimeCards.Add(timeCard);
+            _context.TimeCards.Update(timeCard);
+            _context.SaveChanges();
         }
 
 

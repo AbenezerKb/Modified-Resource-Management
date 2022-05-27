@@ -4,10 +4,10 @@ namespace ERP.DTOs
 {
     public class WeeklyRequirementReadDto
     {
-        public string Id { get; set; }
-        public string projName { get; set; }
-        public string projManager { get; set; }
-        public string projCoordinator { get; set; }
+        public int id { get; set; }
+        public int projId { get; set; }
+        public int projManager { get; set; }
+        public int projCoordinator { get; set; }
 
         public DateTime date { get; set; }
         public IList<WeeklyMaterialReadDto> material { get; set; }
@@ -25,8 +25,8 @@ namespace ERP.DTOs
      public class WeeklyEquipmentReadDto
     {
         
-        public string equipmentId { get; set; }
-        public string WeeklyRequirementFK { get; set; }
+        public int equipmentId { get; set; }
+        public int WeeklyRequirementFK { get; set; }
         public string unit { get; set; }
         public int amount { get; set; }
         public double budget { get; set; }
@@ -39,8 +39,8 @@ namespace ERP.DTOs
     public class WeeklyLaborReadDto
     {
         
-        public string laborId { get; set; }
-        public string WeeklyRequirementFK { get; set; }
+        public int laborId { get; set; }
+        public int WeeklyRequirementFK { get; set; }
         public string labor { get; set; }
         public int number { get; set; }
         public double budget { get; set; }
@@ -51,8 +51,8 @@ namespace ERP.DTOs
 
     public class WeeklyMaterialReadDto
     {
-        public string materialId { get; set; }
-        public string WeeklyRequirementFK { get; set; }
+        public int materialId { get; set; }
+        public int WeeklyRequirementFK { get; set; }
         public string unit { get; set; }
         public int amount { get; set; }
         public double budget { get; set; }

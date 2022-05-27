@@ -1,14 +1,15 @@
 ﻿
 using ERP.DTOs;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
 {
     public class AssignedWorkForce
-    {            
+    {
         [Key]
-        [Required]
-        public string assigneWorkForceNo  { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int assigneWorkForceNo  { get; set; }
         public DateTime date { get; set; }
         public string projId { get; set; }
        // public string professionalName { get; set; }
@@ -18,11 +19,10 @@ namespace ERP.Models
     }
 
     public class WorkForce
-    {
+    {      
+        public int WokrkForceID { get; set; }
         [Key]
-        [Required]
-        public string WokrkForceID { get; set; }
-        public string assigneWorkForceNo { get; set; }
-        public string EmployeeId { get; set; }
+        public int assigneWorkForceNo { get; set; }
+        public int EmployeeId { get; set; }
     }
 }

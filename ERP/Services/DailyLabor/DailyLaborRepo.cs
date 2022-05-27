@@ -21,14 +21,14 @@ namespace ERP.Services
             }
 
             //project = DateTime.Now.ToString("yyyy-MM-dd");
-            dailyLabor.Id = Guid.NewGuid().ToString();
+            //dailyLabor.Id = Guid.NewGuid().ToString();
             _context.DailyLabors.Add(dailyLabor);
 
         }
 
-        public DailyLabor GetDailyLabor(string dailyLaborId)
+        public DailyLabor GetDailyLabor(int dailyLaborId)
         {
-            return _context.DailyLabors.FirstOrDefault(c => c.Id == dailyLaborId);
+            return _context.DailyLabors.FirstOrDefault(c => c.LaborerID == dailyLaborId);
 
         }
 
@@ -44,15 +44,15 @@ namespace ERP.Services
         }
 
 
-        public void DeleteDailyLabor(string id)
+        public void DeleteDailyLabor(int id)
         {
-            var dailyLabor = _context.DailyLabors.FirstOrDefault(c => c.Id == id);
+            var dailyLabor = _context.DailyLabors.FirstOrDefault(c => c.LaborerID == id);
             _context.DailyLabors.Remove(dailyLabor);
         }
 
 
 
-        public void UpdateDailyLabor(string id,DailyLabor updatedDailyLabor)
+        public void UpdateDailyLabor(int id,DailyLabor updatedDailyLabor)
         {
 
             if (updatedDailyLabor.Equals(null))
@@ -60,9 +60,9 @@ namespace ERP.Services
                 throw new ArgumentNullException();
             }
 
-            DailyLabor dailyLabor = _context.DailyLabors.FirstOrDefault(c => c.Id == id);
+            DailyLabor dailyLabor = _context.DailyLabors.FirstOrDefault(c => c.LaborerID == id);
             if (dailyLabor.Equals(null))
-                throw new ItemNotFoundException($"DailyLabor not found with DailyLabor Id={updatedDailyLabor.Id}");
+                throw new ItemNotFoundException($"DailyLabor not found with DailyLabor Id={updatedDailyLabor.LaborerID}");
 
             dailyLabor.date = updatedDailyLabor.date;
             dailyLabor.fullName = updatedDailyLabor.fullName;
@@ -70,7 +70,8 @@ namespace ERP.Services
             dailyLabor.name = updatedDailyLabor.name;
             dailyLabor.remarks = updatedDailyLabor.remarks;
             dailyLabor.wagePerhour = updatedDailyLabor.wagePerhour;
-            _context.DailyLabors.Add(dailyLabor);
+            _context.DailyLabors.Update(dailyLabor);
+            _context.SaveChanges();
         }
 
 

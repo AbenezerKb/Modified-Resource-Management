@@ -1,8 +1,13 @@
-﻿namespace ERP.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ERP.Models
 {
     public class Consultant
     {
-        public string consultantId { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int consultantId { get; set; }
         public string projectId { get; set; }      
         public string contractorId { get; set; }
         public DateTime reviewDate { get; set; }

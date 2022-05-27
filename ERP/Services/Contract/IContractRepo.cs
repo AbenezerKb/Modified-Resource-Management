@@ -6,10 +6,10 @@ namespace ERP.Services
     {
         bool SaveChanges();
         IEnumerable<Contract> GetAllContract();
-        Contract GetContract(string id);
+        Contract GetContract(int id);
         void CreateContract(Contract contract);
-        void DeleteContract(string id);
-        void UpdateContract(string id,Contract updatedContract);
+        void DeleteContract(int id);
+        void UpdateContract(int id,Contract updatedContract);
     }
 
 }

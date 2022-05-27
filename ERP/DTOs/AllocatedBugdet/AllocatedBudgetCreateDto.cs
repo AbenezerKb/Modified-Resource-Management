@@ -9,7 +9,7 @@ namespace ERP.DTOs
         [Required]
         public DateTime date { get; set; }
         [Required]
-        public string projectId { get; set; }
+        public int projectId { get; set; }
         [Required]
         public string activity { get; set; }
         [Required]
@@ -17,9 +17,9 @@ namespace ERP.DTOs
         [Required]
         public string contingency { get; set; }
         [Required]
-        public string preparedBy { get; set; }
+        public int preparedBy { get; set; }
         [Required]
-        public string ApprovedBy { get; set; }
+        public int ApprovedBy { get; set; }
 
     }
 }

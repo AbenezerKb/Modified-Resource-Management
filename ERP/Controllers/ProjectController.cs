@@ -106,10 +106,10 @@ namespace ERP.Controllers
         }
 
         [HttpGet("{id:int}/subContractorWorks")]
-<<<<<<< HEAD
-
-=======
+        [Authorize(Roles = "ProjectManager,OfficeEngineer,Admin")]
+        public async Task<ActionResult<ProjectTask>> GetSubContractingWorks(int id)
         {
+            try
             {
                 return Ok(new CustomApiResponse
                 {
@@ -125,11 +125,7 @@ namespace ERP.Controllers
         }
 
         [HttpGet("{id:int}/report")]
-<<<<<<< HEAD
-
-=======
         [Authorize(Roles = "Admin,Manager")]
->>>>>>> 0d2da8505f334ab5f98a3a069e505ab4b7979fb6
         public async Task<ActionResult<CustomApiResponse>> GetReport(int id, [FromQuery] DateTime StartDate, [FromQuery] DateTime EndDate)
         {
             try
@@ -152,10 +148,7 @@ namespace ERP.Controllers
             }
         }
         [HttpGet("{id:int}/analytics")]
-<<<<<<< HEAD
-=======
         [Authorize(Roles = "Admin,Manager")]
->>>>>>> 0d2da8505f334ab5f98a3a069e505ab4b7979fb6
 
         public async Task<ActionResult<CustomApiResponse>> GetAnalytics(int id)
         {
@@ -200,10 +193,7 @@ namespace ERP.Controllers
             }
         }
         [HttpGet("{id:int}/crashSchedule")]
-<<<<<<< HEAD
-=======
         [Authorize(Roles = "OfficeEngineer,Coordinator,ProjectManager,Admin")]
->>>>>>> 0d2da8505f334ab5f98a3a069e505ab4b7979fb6
         public async Task<ActionResult<CustomApiResponse>> GetCrashSchedule(int id)
         {
             try
@@ -226,10 +216,7 @@ namespace ERP.Controllers
 
         }
         [HttpGet("{id:int}/actualSchedule")]
-<<<<<<< HEAD
-=======
         [Authorize(Roles = "ProjectManager,Admin")]
->>>>>>> 0d2da8505f334ab5f98a3a069e505ab4b7979fb6
         public async Task<ActionResult<CustomApiResponse>> GetActualSchedule(int id)
         {
             try
@@ -252,10 +239,7 @@ namespace ERP.Controllers
         }
 
         [HttpDelete("{id:int}")]
-<<<<<<< HEAD
-=======
         [Authorize(Roles = "OfficeEngineer,Admin")]
->>>>>>> 0d2da8505f334ab5f98a3a069e505ab4b7979fb6
         public async Task<ActionResult<CustomApiResponse>> DeleteProject(int id)
         {
 
@@ -275,10 +259,7 @@ namespace ERP.Controllers
         }
 
         [HttpPut("{id:int}")]
-<<<<<<< HEAD
-=======
         [Authorize(Roles = "OfficeEngineer,Admin")]
->>>>>>> 0d2da8505f334ab5f98a3a069e505ab4b7979fb6
         public async Task<ActionResult<CustomApiResponse>> UpdateProject(int id, [FromBody] ProjectDto projectDto)
         {
 

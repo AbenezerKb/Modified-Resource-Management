@@ -7,9 +7,9 @@ namespace ERP.Services
         bool SaveChanges();
 
         IEnumerable<SubContractor> GetAllSubContractors();
-        SubContractor GetSubContractor(string id);
+        SubContractor GetSubContractor(int id);
         void CreateSubContractor(SubContractor contract);
-        void DeleteSubContractor(string id);
-        void UpdateSubContractor(string id,SubContractor updatedSubContractor);
+        void DeleteSubContractor(int id);
+        void UpdateSubContractor(int id,SubContractor updatedSubContractor);
     }
 }

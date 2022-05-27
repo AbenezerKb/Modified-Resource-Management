@@ -19,13 +19,23 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-            assignedWorkForce.assigneWorkForceNo = Guid.NewGuid().ToString();
+         //   assignedWorkForce.assigneWorkForceNo =// Guid.NewGuid().ToString();
             foreach (WorkForce w in assignedWorkForce.ProfessionWithWork) { 
-                w.WokrkForceID = Guid.NewGuid().ToString();
-                w.assigneWorkForceNo = assignedWorkForce.assigneWorkForceNo;
+                //w.WokrkForceID =// Guid.NewGuid().ToString();
+
+               w.assigneWorkForceNo = 0 ;               
                 _context.WorkForces.Add(w);
             }
-            _context.AssignedWorkForces.Add(assignedWorkForce);            
+            //assignedWorkForce.assigneWorkForceNo
+            _context.AssignedWorkForces.Add(assignedWorkForce);
+            foreach (WorkForce w in assignedWorkForce.ProfessionWithWork)
+            {
+                //w.WokrkForceID =// Guid.NewGuid().ToString();
+
+                w.assigneWorkForceNo = assignedWorkForce.assigneWorkForceNo;
+                _context.WorkForces.Update(w);
+            }
+
         }
 
         public IEnumerable<AssignedWorkForce> GetAllAssignedWorkForces()
@@ -48,7 +58,7 @@ namespace ERP.Services
         }
 
 
-        public AssignedWorkForce GetAssignedWorkForce(string id)
+        public AssignedWorkForce GetAssignedWorkForce(int id)
         {
             //return 
             var assignedList = _context.AssignedWorkForces.FirstOrDefault(c => c.assigneWorkForceNo == id);
@@ -69,7 +79,7 @@ namespace ERP.Services
         }
 
 
-        public void DeleteAssignedWorkForce(string id)
+        public void DeleteAssignedWorkForce(int id)
         {
             var assignedWorkForce = _context.AssignedWorkForces.FirstOrDefault(c => c.assigneWorkForceNo == id);
             if (assignedWorkForce.Equals(null)){
@@ -80,7 +90,7 @@ namespace ERP.Services
         }
 
 
-        public void UpdateAssignedWorkForce(string id,AssignedWorkForce updatedAssignedWorkForce)
+        public void UpdateAssignedWorkForce(int id,AssignedWorkForce updatedAssignedWorkForce)
         {
             if (updatedAssignedWorkForce.Equals(null))
             {
@@ -108,7 +118,8 @@ namespace ERP.Services
             assignedWorkForce.projId = updatedAssignedWorkForce.projId;
             assignedWorkForce.remark = updatedAssignedWorkForce.remark;            
             
-            _context.AssignedWorkForces.Add(assignedWorkForce);
+            _context.AssignedWorkForces.Update(assignedWorkForce);
+            _context.SaveChanges();
         }
     }
 }

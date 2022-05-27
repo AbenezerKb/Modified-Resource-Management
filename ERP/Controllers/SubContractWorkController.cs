@@ -32,7 +32,7 @@ namespace ERP.Controllers
             return Ok(_mapper.Map<IEnumerable<SubContractWorkReadDto>>(_subcontractWorks));
         }
         [HttpGet("{id}", Name = "GetSubContractWork")]
-        public async Task<ActionResult<SubContractWorkReadDto>> GetSubContractWork(string id)
+        public async Task<ActionResult<SubContractWorkReadDto>> GetSubContractWork(int id)
         {
 
             var _subcontractWorks = _subcontractWorkRepo.GetSubContractWork(id);
@@ -65,7 +65,7 @@ namespace ERP.Controllers
 
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<SubContractWorkReadDto>> DeleteSubContractWork(string id)
+        public async Task<ActionResult<SubContractWorkReadDto>> DeleteSubContractWork(int id)
         {
 
             try
@@ -86,7 +86,7 @@ namespace ERP.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<SubContractWorkReadDto>> UpdateSubContractWork(string id, [FromBody] SubContractWorkCreateDto subContractWork)
+        public async Task<ActionResult<SubContractWorkReadDto>> UpdateSubContractWork(int id, [FromBody] SubContractWorkCreateDto subContractWork)
         {
             try
             {

@@ -9,9 +9,9 @@ namespace ERP.Services
         bool SaveChanges();
 
         IEnumerable<SubContractWork> GetAllSubContractWorks();
-        SubContractWork GetSubContractWork(string id);
+        SubContractWork GetSubContractWork(int id);
         void CreateSubContractWork(SubContractWork contract);
-        void DeleteSubContractWorks(string id);
-        void UpdateSubContractWork(string id, SubContractWork updatedSubContractWork);
+        void DeleteSubContractWorks(int id);
+        void UpdateSubContractWork(int id, SubContractWork updatedSubContractWork);
     }
 }

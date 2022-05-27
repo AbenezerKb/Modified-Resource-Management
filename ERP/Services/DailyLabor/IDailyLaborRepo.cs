@@ -7,9 +7,9 @@ namespace ERP.Services
     {
         bool SaveChanges();
         public void CreateDailyLabor(DailyLabor grander);
-        public DailyLabor GetDailyLabor(string granderNo);
+        public DailyLabor GetDailyLabor(int granderNo);
         public IEnumerable<DailyLabor> GetAllDailyLabors();
-        public void DeleteDailyLabor(string id);
-        public void UpdateDailyLabor(string id,DailyLabor updatedDailyLabor);
+        public void DeleteDailyLabor(int id);
+        public void UpdateDailyLabor(int id,DailyLabor updatedDailyLabor);
     }
 }

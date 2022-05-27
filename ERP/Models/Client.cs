@@ -1,10 +1,15 @@
-﻿namespace ERP.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ERP.Models
 {
 
 
     public class Client
     {
-        public string clientId { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int clientId { get; set; }
         public string clientName { get; set; }
         public string address { get; set; }
         public string contractorId { get; set; }

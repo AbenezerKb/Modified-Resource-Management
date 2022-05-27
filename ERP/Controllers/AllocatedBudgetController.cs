@@ -33,7 +33,7 @@ namespace ERP.Controllers
 
 
         [HttpGet("{id}", Name = "GetAllocatedBudget")]
-        public async Task<ActionResult<AllocatedBudgetReadDto>> GetAllocatedBudget(string id)
+        public async Task<ActionResult<AllocatedBudgetReadDto>> GetAllocatedBudget(int id)
         {
 
             var _allocatedBudget = _allocatedBudgetRepo.GetAllocatedBudget(id);
@@ -60,13 +60,13 @@ namespace ERP.Controllers
             _allocatedBudgetRepo.SaveChanges();
             var allocatedBudgetReadDto = _mapper.Map<AllocatedBudgetReadDto>(newAllocatedBudget);
 
-            return CreatedAtRoute(nameof(GetAllocatedBudget), new { id = allocatedBudgetReadDto.Id }, allocatedBudgetReadDto);
+            return CreatedAtRoute(nameof(GetAllocatedBudget), new { id = allocatedBudgetReadDto.id }, allocatedBudgetReadDto);
         }
 
 
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<AllocatedResourcesReadDto>> DeleteAllocatedResource(string id)
+        public async Task<ActionResult<AllocatedResourcesReadDto>> DeleteAllocatedResource(int id)
         {
 
             try
@@ -82,8 +82,8 @@ namespace ERP.Controllers
         }
 
 
-        [HttpPut("{id}")]       
-        public async Task<ActionResult> UpdateAllocatedBudget(string id, [FromBody] AllocatedBudgetCreateDto allocatedBudget)
+        [HttpPut("{id:int}")]       
+        public async Task<ActionResult> UpdateAllocatedBudget(int id, [FromBody] AllocatedBudgetCreateDto allocatedBudget)
         {
             try
             {
@@ -95,6 +95,7 @@ namespace ERP.Controllers
 
             catch (Exception)
             {
+                Console.WriteLine("hgvjhvjhghg");
                 return NotFound();
             }
         }

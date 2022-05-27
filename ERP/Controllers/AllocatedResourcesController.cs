@@ -32,7 +32,7 @@ namespace ERP.Controllers
 
 
         [HttpGet("{id}", Name = "GetAllocatedResources")]
-        public async Task<ActionResult<AllocatedResourcesReadDto>> GetAllocatedResources(string id)
+        public async Task<ActionResult<AllocatedResourcesReadDto>> GetAllocatedResources(int id)
         {
 
             var _allocatedResources = _allocatedResourcesRepo.GetAllocatedResources(id);
@@ -63,7 +63,7 @@ namespace ERP.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<AllocatedResourcesReadDto>> DeleteBID(string id)
+        public async Task<ActionResult<AllocatedResourcesReadDto>> DeleteBID(int id)
         {
 
             try
@@ -81,7 +81,7 @@ namespace ERP.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<AllocatedResourcesReadDto>> UpdateAllocatedResource(string id, [FromBody] AllocatedResourcesCreateDto allocatedResource)
+        public async Task<ActionResult<AllocatedResourcesReadDto>> UpdateAllocatedResource(int id, [FromBody] AllocatedResourcesCreateDto allocatedResource)
         {
             try
             {

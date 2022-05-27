@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
 {       
@@ -7,8 +8,8 @@ namespace ERP.Models
     {
 
         [Key]
-        [Required]
-        public string Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
         public string projId { get; set; }
         public string projManager { get; set; }
         public string projCoordinator { get; set; }

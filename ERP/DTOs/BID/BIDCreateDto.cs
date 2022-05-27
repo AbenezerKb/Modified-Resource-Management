@@ -14,7 +14,7 @@ namespace ERP.DTOs
         public string WorkDescription { get; set; }
 
         [Required]
-        public string ConBID { get; set; }
+        public int ConBID { get; set; }
 
         [Required]
         public double EstimatedBID { get; set; }
@@ -28,7 +28,7 @@ namespace ERP.DTOs
         [Required]
         public string Remark { get; set; }
         [Required]
-        public string ProjectId { get; set; }
+        public int ProjectId { get; set; }
 
         [Required]
         public string fileName { get; set; }

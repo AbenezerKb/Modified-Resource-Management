@@ -23,20 +23,20 @@ namespace ERP.Services
                 throw new ArgumentNullException();
             }
 
-            weeklyRequirement.Id = Guid.NewGuid().ToString();
+            //weeklyRequirement.Id = Guid.NewGuid().ToString();
 
             foreach (WeeklyMaterial s in weeklyRequirement.material)
             {
-                s.materialId = Guid.NewGuid().ToString();
+                //s.materialId =// Guid.NewGuid().ToString();
             }
             foreach (WeeklyLabor r in weeklyRequirement.labor)
             {
-                r.laborId = Guid.NewGuid().ToString();
+              //  r.laborId =// Guid.NewGuid().ToString();
             }
 
             foreach (WeeklyEquipment w in weeklyRequirement.equipment)
             {
-                w.equipmentId = Guid.NewGuid().ToString();
+              //  w.equipmentId =// Guid.NewGuid().ToString();
             }
 
             _context.WeeklyRequirements.Add(weeklyRequirement);
@@ -44,7 +44,7 @@ namespace ERP.Services
 
 
 
-        public WeeklyRequirement GetWeeklyRequirements(string id)
+        public WeeklyRequirement GetWeeklyRequirements(int id)
         {
             var weeklyRequirement = _context.WeeklyRequirements.FirstOrDefault(c => c.Id == id);
             var material = _context.WeeklyMaterials.ToList();
@@ -139,14 +139,14 @@ namespace ERP.Services
             //return _context.WeeklyRequirements.ToList();
         }
 
-        public void DeleteWeeklyRequirements(string id)
+        public void DeleteWeeklyRequirements(int id)
         {
             var weeklyRequirement = _context.WeeklyRequirements.FirstOrDefault(c => c.Id == id);
             _context.WeeklyRequirements.Remove(weeklyRequirement);
         }
 
 
-        public void UpdateWeeklyRequirement(string id,WeeklyRequirement updatedWeeklyRequirement)
+        public void UpdateWeeklyRequirement(int id,WeeklyRequirement updatedWeeklyRequirement)
         {
 
             if (updatedWeeklyRequirement.Equals(null))
@@ -192,7 +192,7 @@ namespace ERP.Services
                     if (updatedWeeklyRequirement.labor[j].laborId == weeklyRequirements.labor[j].laborId)
                     weeklyRequirements.labor[j].number = updatedWeeklyRequirement.labor[j].number;
                     weeklyRequirements.labor[j].budget = updatedWeeklyRequirement.labor[j].budget;
-                    weeklyRequirements.labor[j].labor = updatedWeeklyRequirement.labor[j].labor;                    
+                    weeklyRequirements.labor[j].laborId = updatedWeeklyRequirement.labor[j].laborId;                    
 
                 }
                 }
@@ -207,7 +207,8 @@ namespace ERP.Services
             weeklyRequirements.weekNo = updatedWeeklyRequirement.weekNo;
 
 
-            _context.WeeklyRequirements.Add(weeklyRequirements);
+            _context.WeeklyRequirements.Update(weeklyRequirements);
+            _context.SaveChanges();
         }
 
 

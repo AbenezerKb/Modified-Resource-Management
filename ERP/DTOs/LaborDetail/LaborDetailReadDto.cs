@@ -2,7 +2,7 @@
 {
     public class LaborDetailReadDto
     {
-        public string Id { get; set; }
+        public int id { get; set; }
         public DateTime dateOfWork { get; set; }
         public int weekNo { get; set; }
         public string dateType { get; set; }
@@ -12,6 +12,6 @@
         public int NoOfHrsPerSession { get; set; }
 
         //FK
-        public string LaborerID { get; set; }
+        public int LaborerID { get; set; }
     }
 }

@@ -9,9 +9,9 @@ namespace ERP.Services
         bool SaveChanges();
 
         IEnumerable<LaborDetail> GetAllLaborDetails();
-        LaborDetail GetLaborDetail(string id);
+        LaborDetail GetLaborDetail(int id);
         void CreateLaborDetail(LaborDetail laborDetail);
-        void DeleteLaborDetails(string id);
-        void UpdateLaborDetail(string id, LaborDetail updatedLaborDetail);
+        void DeleteLaborDetails(int id);
+        void UpdateLaborDetail(int id, LaborDetail updatedLaborDetail);
     }
 }

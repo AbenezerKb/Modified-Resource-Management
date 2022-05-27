@@ -8,7 +8,7 @@ namespace ERP.DTOs
         public string incidentName { get; set; }
 
         [Required]
-        public string proID { get; set; }
+        public int proID { get; set; }
         
         [Required]
         public DateTime date { get; set; }

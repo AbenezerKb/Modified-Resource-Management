@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
 {
@@ -6,8 +7,8 @@ namespace ERP.Models
     {
 
         [Key]
-        [Required]
-        public string SubId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int SubId { get; set; }
 
         [Required]
         public string SubName { get; set; }

@@ -8,9 +8,9 @@ namespace ERP.Services
 
         bool SaveChanges();
         IEnumerable<Client> GetAllClient();
-        Client GetClient(string id);
+        Client GetClient(int id);
         void CreateClient(Client client);
-        void DeleteClient(string id);
-        void UpdateClient(string id,Client client);
+        void DeleteClient(int id);
+        void UpdateClient(int id,Client client);
     }
 }

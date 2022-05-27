@@ -2,7 +2,7 @@
 {
     public class SubContractWorkReadDto
     {
-        public string subconractingid { get; set; }
+        public int subconractingid { get; set; }
 
         public string workName { get; set; }
 

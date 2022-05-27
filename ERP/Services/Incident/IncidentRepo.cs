@@ -19,14 +19,14 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-            incident.incidentNo = Guid.NewGuid().ToString();
+            //incident.incidentNo = Guid.NewGuid().ToString();
             //project = DateTime.Now.ToString("yyyy-MM-dd");
 
             _context.Incidents.Add(incident);
 
         }
 
-        public Incident GetIncident(string incidentNo)
+        public Incident GetIncident(int incidentNo)
         {
             return _context.Incidents.FirstOrDefault(c => c.incidentNo == incidentNo);
 
@@ -44,7 +44,7 @@ namespace ERP.Services
         }
 
 
-        public void DeleteIncident(string id)
+        public void DeleteIncident(int id)
         {
             var incident = _context.Incidents.FirstOrDefault(c => c.incidentNo == id);
             _context.Incidents.Remove(incident);
@@ -52,7 +52,7 @@ namespace ERP.Services
 
 
 
-        public void UpdateIncident(string id,Incident updatedIncident)
+        public void UpdateIncident(int id,Incident updatedIncident)
         {
 
             if (updatedIncident.Equals(null))
@@ -69,7 +69,8 @@ namespace ERP.Services
             incident.empName = updatedIncident.empName;
             incident.incidentName = updatedIncident.incidentName;
             incident.proID = updatedIncident.proID;
-            _context.Incidents.Add(incident);
+            _context.Incidents.Update(incident);
+            _context.SaveChanges();
         }
 
 

@@ -76,11 +76,15 @@ builder.Services.AddSwaggerGen(options =>
 //         };
 //     });
 
-builder.Services.AddDbContext<DataContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddDbContext<DataContext>(options =>
+//   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<AppDbContext>(opt =>
+   opt.UseInMemoryDatabase("db"));
+builder.Services.AddDbContext<DataContext>(opt =>
+   opt.UseInMemoryDatabase("db"));
 //Dependecy Injection
 builder.Services.AddControllers();
 
@@ -93,7 +97,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<DataContext>();
-    context.Database.Migrate();
+   // context.Database.Migrate();
     await services.GetRequiredService<SampleDataHelper>().InitData();
 
 }

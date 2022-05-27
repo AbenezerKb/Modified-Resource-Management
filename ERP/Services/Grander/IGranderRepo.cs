@@ -6,10 +6,10 @@ namespace ERP.Services
     {
         bool SaveChanges();
         public void CreateGrander(Grander grander);
-        public Grander GetGrander(string granderNo);
+        public Grander GetGrander(int granderNo);
         public IEnumerable<Grander> GetAllGranders();
 
-        void DeleteGrander(string id);
-        void UpdateGrander(string id,Grander updatedGrander);        
+        void DeleteGrander(int id);
+        void UpdateGrander(int id,Grander updatedGrander);        
     }
 }

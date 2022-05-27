@@ -39,7 +39,7 @@ namespace ERP.DTOs
         public double unitPrice { get; set; }
         [Required]
         public double priceWithVat { get; set; }
-        public string ContractID { get; set; }
+        public int ContractID { get; set; }
     }
 
 

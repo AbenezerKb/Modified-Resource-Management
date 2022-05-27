@@ -9,9 +9,9 @@ namespace ERP.Services
         bool SaveChanges();
 
         IEnumerable<TimeCard> GetAllTimeCards();
-        TimeCard GetTimeCard(string id);
+        TimeCard GetTimeCard(int id);
         void CreateTimeCard(TimeCard timeCard);
-        void DeleteTimeCard(string id);
-        void UpdateTimeCard(string id, TimeCard updatedTimeCard);
+        void DeleteTimeCard(int id);
+        void UpdateTimeCard(int id, TimeCard updatedTimeCard);
     }
 }

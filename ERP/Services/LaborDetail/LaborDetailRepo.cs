@@ -23,16 +23,16 @@ namespace ERP.Services
                 throw new ArgumentNullException();
             }
 
-            laborDetail.Id = Guid.NewGuid().ToString();           
+            //laborDetail.Id = Guid.NewGuid().ToString();           
 
             _context.LaborDetails.Add(laborDetail);
         }
 
 
 
-        public LaborDetail GetLaborDetail(string id)
+        public LaborDetail GetLaborDetail(int id)
         {
-            return _context.LaborDetails.FirstOrDefault(c => c.Id == id);
+            return _context.LaborDetails.FirstOrDefault(c => c.id == id);
         }
 
         public IEnumerable<LaborDetail> GetAllLaborDetails()
@@ -46,15 +46,15 @@ namespace ERP.Services
             return (_context.SaveChanges() >= 0);
         }
 
-        public void DeleteLaborDetails(string id)
+        public void DeleteLaborDetails(int id)
         {
-            var laborDetail = _context.LaborDetails.FirstOrDefault(c => c.Id == id);
+            var laborDetail = _context.LaborDetails.FirstOrDefault(c => c.id == id);
             _context.LaborDetails.Remove(laborDetail);
         }
 
 
 
-        public void UpdateLaborDetail(string id,LaborDetail updatedLaborDetail)
+        public void UpdateLaborDetail(int id,LaborDetail updatedLaborDetail)
         {
 
             if (updatedLaborDetail.Equals(null))
@@ -62,9 +62,9 @@ namespace ERP.Services
                 throw new ArgumentNullException();
             }
 
-            LaborDetail laborDetail = _context.LaborDetails.FirstOrDefault(c => c.Id == updatedLaborDetail.Id);
+            LaborDetail laborDetail = _context.LaborDetails.FirstOrDefault(c => c.id == updatedLaborDetail.id);
             if (laborDetail.Equals(null))
-                throw new ItemNotFoundException($"LaborDetail not found with LaborDetail Id={updatedLaborDetail.Id}");
+                throw new ItemNotFoundException($"LaborDetail not found with LaborDetail Id={updatedLaborDetail.id}");
             laborDetail.afternoonSession = updatedLaborDetail.afternoonSession;
             laborDetail.dateOfWork = updatedLaborDetail.dateOfWork;
             laborDetail.dateType = updatedLaborDetail.dateType;
@@ -73,7 +73,8 @@ namespace ERP.Services
             laborDetail.NoOfHrsPerSession = updatedLaborDetail.NoOfHrsPerSession;
             laborDetail.weekNo = updatedLaborDetail.weekNo;
 
-            _context.LaborDetails.Add(laborDetail);
+            _context.LaborDetails.Update(laborDetail);
+            _context.SaveChanges();
         }
 
 

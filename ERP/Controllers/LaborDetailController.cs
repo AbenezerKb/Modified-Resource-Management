@@ -40,7 +40,7 @@ namespace ERP.Controllers
 
 
         [HttpGet("{id}", Name = "GetLaborDetail")]
-        public async Task<ActionResult<LaborDetailReadDto>> GetLaborDetail(string id)
+        public async Task<ActionResult<LaborDetailReadDto>> GetLaborDetail(int id)
         {
 
             var _laborDetail = _laborDetailRepo.GetLaborDetail(id);
@@ -74,7 +74,7 @@ namespace ERP.Controllers
 
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<LaborDetailReadDto>> DeleteLaborDetail(string id)
+        public async Task<ActionResult<LaborDetailReadDto>> DeleteLaborDetail(int id)
         {
 
             try
@@ -97,7 +97,7 @@ namespace ERP.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<LaborDetailReadDto>> UpdateLaborDetail(string id, [FromBody] LaborDetailCreateDto laborDetail)
+        public async Task<ActionResult<LaborDetailReadDto>> UpdateLaborDetail(int id, [FromBody] LaborDetailCreateDto laborDetail)
         {
             try
             {

@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
 {
     public class DailyLabor
     {
         [Key]
-        [Required]
-        public string Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int LaborerID { get; set; }
         public string fullName { get; set; }
         public string name { get; set; }
         public string jobTitle { get; set; }
@@ -22,8 +23,8 @@ namespace ERP.Models
     public class LaborDetail
     {
         [Key]
-        [Required]
-        public string Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
         public DateTime dateOfWork { get; set; }
         public int weekNo { get; set; }
         public string dateType { get; set; }

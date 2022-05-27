@@ -21,7 +21,7 @@ namespace ERP.Services
                 throw new ArgumentNullException();
             }
 
-            subContractWork.subconractingid = Guid.NewGuid().ToString();
+            //subContractWork.subconractingid = Guid.NewGuid().ToString();
             _context.SubContractWorks.Add(subContractWork);
         }
 
@@ -32,7 +32,7 @@ namespace ERP.Services
         }
 
 
-        public SubContractWork GetSubContractWork(string id)
+        public SubContractWork GetSubContractWork(int id)
         {
             return _context.SubContractWorks.FirstOrDefault(c => c.subconractingid == id);
         }
@@ -46,7 +46,7 @@ namespace ERP.Services
 
 
 
-        public void UpdateSubContractWork(string id,SubContractWork updatedSubContractWork)
+        public void UpdateSubContractWork(int id,SubContractWork updatedSubContractWork)
         {
 
             if (updatedSubContractWork.Equals(null))
@@ -62,14 +62,15 @@ namespace ERP.Services
             subContractWork.remarks = updatedSubContractWork.remarks;
             subContractWork.workName = updatedSubContractWork.workName;            
 
-            _context.SubContractWorks.Add(subContractWork);
+            _context.SubContractWorks.Update(subContractWork);
+            _context.SaveChanges();
         }
 
 
 
 
 
-        public void DeleteSubContractWorks(string id)
+        public void DeleteSubContractWorks(int id)
         {
             var subContractWork = _context.SubContractWorks.FirstOrDefault(c => c.subconractingid == id);
             _context.SubContractWorks.Remove(subContractWork);

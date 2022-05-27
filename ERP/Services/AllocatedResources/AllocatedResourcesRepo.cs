@@ -21,7 +21,7 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }         
-            allocatedResources.allocatedResourcesNo = Guid.NewGuid().ToString();
+           // allocatedResources.allocatedResourcesNo =// Guid.NewGuid().ToString();
 
             _context.AllocatedResources.Add(allocatedResources);
         }
@@ -32,13 +32,13 @@ namespace ERP.Services
         }
 
 
-        public AllocatedResources GetAllocatedResources(string id)
+        public AllocatedResources GetAllocatedResources(int id)
         {
             return _context.AllocatedResources.FirstOrDefault(c => c.allocatedResourcesNo == id);
         }
 
 
-        public void DeleteAllocatedResource(string id)
+        public void DeleteAllocatedResource(int id)
         {
             var allocatedResources = _context.AllocatedResources.FirstOrDefault(c => c.allocatedResourcesNo == id);
             if (allocatedResources.Equals(null)){
@@ -48,7 +48,7 @@ namespace ERP.Services
             _context.AllocatedResources.Remove(allocatedResources);
         }
 
-        public void UpdateAllocatedResource(string id,AllocatedResources updatedallocatedResources)
+        public void UpdateAllocatedResource(int id,AllocatedResources updatedallocatedResources)
         {
 
             if (updatedallocatedResources.Equals( null))
@@ -60,10 +60,12 @@ namespace ERP.Services
             if (allocatedResources.Equals(null))
                 throw new ItemNotFoundException($"Allocated budget not found with allocatedbudgetId={updatedallocatedResources.allocatedResourcesNo}");
             allocatedResources.date = updatedallocatedResources.date;
-            allocatedResources.itemName = updatedallocatedResources.itemName;
+            allocatedResources.itemId = updatedallocatedResources.itemId;
             allocatedResources.projId = updatedallocatedResources.projId;
             allocatedResources.remark = updatedallocatedResources.remark;
-            allocatedResources.unit = allocatedResources.unit;
+            allocatedResources.unit = updatedallocatedResources.unit;
+            _context.AllocatedResources.Update(allocatedResources);
+            _context.SaveChanges();
         }
 
         public bool SaveChanges()

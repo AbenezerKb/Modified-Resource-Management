@@ -2,7 +2,7 @@
 {
     public class TimeCardReadDto
     {
-        public string Id { get; set; }
+        public int id { get; set; }
         public DateTime dateOfWork { get; set; }
         public string employeeName { get; set; }
         public string jobType { get; set; }
@@ -15,13 +15,13 @@
         public double totalPayment { get; set; }
 
         //FK
-        public string preparedByFK { get; set; }
+        public int preparedByFK { get; set; }
 
         //FK
-        public string approvedBy { get; set; }
+        public int approvedBy { get; set; }
 
         //FK
-        public string LaborerID { get; set; }
+        public int LaborerID { get; set; }
 
         public string remark { get; set; }
     }

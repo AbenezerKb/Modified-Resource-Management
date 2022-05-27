@@ -34,7 +34,7 @@ namespace ERP.Controllers
 
 
         [HttpGet("{id}", Name = "GetTimeCard")]
-        public async Task<ActionResult<TimeCardReadDto>> GetTimeCard(string id)
+        public async Task<ActionResult<TimeCardReadDto>> GetTimeCard(int id)
         {
             Console.WriteLine("....started");
             var _timeCard = _timeCardRepo.GetTimeCard(id);
@@ -57,11 +57,11 @@ namespace ERP.Controllers
                 _timeCardRepo.SaveChanges();                
                 var timeCardReadDto = _mapper.Map<TimeCardReadDto>(newTimeCard);
 
-                return CreatedAtRoute(nameof(GetTimeCard), new { id = timeCardReadDto.Id }, timeCardReadDto);
+                return CreatedAtRoute(nameof(GetTimeCard), new { id = timeCardReadDto.id }, timeCardReadDto);
             }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<TimeCardReadDto>> DeleteTimeCard(string id)
+        public async Task<ActionResult<TimeCardReadDto>> DeleteTimeCard(int id)
         {
 
             try
@@ -81,7 +81,7 @@ namespace ERP.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<TimeCardReadDto>> UpdateTimeCard(string id, [FromBody] TimeCardCreateDto timeCard)
+        public async Task<ActionResult<TimeCardReadDto>> UpdateTimeCard(int id, [FromBody] TimeCardCreateDto timeCard)
         {
             try
             {

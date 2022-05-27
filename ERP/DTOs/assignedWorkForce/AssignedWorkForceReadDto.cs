@@ -3,9 +3,9 @@ namespace ERP.DTOs
 {
     public class AssignedWorkForceReadDto
     {
-        public string assigneWorkForceNo { get; set; }
+        public int assigneWorkForceNo { get; set; }
         public DateTime date { get; set; }
-        public string projId { get; set; }
+        public int projId { get; set; }
         // public string professionalName { get; set; }
         public IList<WorkForceReadDto> ProfessionWithWork { get; set; }
         //   public string profession { get; set; }
@@ -15,9 +15,9 @@ namespace ERP.DTOs
 
     public class WorkForceReadDto
     {        
-        public string WokrkForceID { get; set; }
-        public string assigneWorkForceNo { get; set; }
-        public string EmployeeId { get; set; }
+        public int WokrkForceID { get; set; }
+        public int assigneWorkForceNo { get; set; }
+        public int EmployeeId { get; set; }
     }
 
 

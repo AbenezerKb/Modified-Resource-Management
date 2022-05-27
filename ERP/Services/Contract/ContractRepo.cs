@@ -20,7 +20,7 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-            contract.ConId = Guid.NewGuid().ToString();
+            //contract.ConId =// Guid.NewGuid().ToString();
 
             contract.Date = DateTime.Now.Date;//DateTime.Now.ToString("yyyy-MM-dd");
            
@@ -70,7 +70,7 @@ namespace ERP.Services
         }
 
 
-        public Contract GetContract(string id)
+        public Contract GetContract(int id)
         {
 
             var contract = _context.Contracts.FirstOrDefault(c => c.ConId == id);
@@ -92,13 +92,13 @@ namespace ERP.Services
             return (_context.SaveChanges() >= 0);
         }
 
-       public void DeleteContract(string id)
+       public void DeleteContract(int id)
         {
             var contract = _context.Contracts.FirstOrDefault(c => c.ConId == id);
             _context.Contracts.Remove(contract);
         }
 
-      public  void UpdateContract(string id, Contract updatedContract)
+      public  void UpdateContract(int id, Contract updatedContract)
         {
 
             if (updatedContract.Equals(null))
@@ -116,7 +116,8 @@ namespace ERP.Services
             contract.Date = updatedContract.Date;
             contract.SubConstructWorkDetail = updatedContract.SubConstructWorkDetail;
             contract.Unit = updatedContract.Unit;
-            _context.Contracts.Add(contract);
+            _context.Contracts.Update(contract);
+            _context.SaveChanges();
         }
     }
 }

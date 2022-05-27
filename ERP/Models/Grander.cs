@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
 {
     public class Grander
     {
         [Key]
-        [Required]
-        public string GranderId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int GranderId { get; set; }
             public string ProjectName { get; set; }
             public string ProjectManager { get; set; }
             public string Duration { get; set; }

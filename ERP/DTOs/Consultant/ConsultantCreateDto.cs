@@ -4,13 +4,13 @@ namespace ERP.DTOs
     public class ConsultantCreateDto
     {
         [Required]
-        public string projectId { get; set; }
+        public int projectId { get; set; }
         [Required]
         public string projectName { get; set; }
         [Required]
-        public string consultantName { get; set; }
+        public int consultantId { get; set; }
         [Required]
-        public string contractorId { get; set; }
+        public int contractorId { get; set; }
         [Required]
         public DateTime reviewDate { get; set; }
         [Required]

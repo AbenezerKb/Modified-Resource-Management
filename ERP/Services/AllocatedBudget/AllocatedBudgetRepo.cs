@@ -21,7 +21,7 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-            allocatedBudget.Id = Guid.NewGuid().ToString();
+            //allocatedBudget.Id =// Guid.NewGuid().ToString();
 
              _context.AllocatedBudgets.Add(allocatedBudget);
         }
@@ -34,7 +34,7 @@ namespace ERP.Services
         }
 
 
-        public AllocatedBudget GetAllocatedBudget(string id)
+        public AllocatedBudget GetAllocatedBudget(int id)
         {
            var allocatedBudget = _context.AllocatedBudgets.FirstOrDefault(c => c.Id == id);
             if (allocatedBudget.Equals(null))
@@ -42,7 +42,7 @@ namespace ERP.Services
             return allocatedBudget;
         }
 
-       public void DeleteAllocatedBudget(string id)
+       public void DeleteAllocatedBudget(int id)
         {
             var allocatedBudget =  _context.AllocatedBudgets.FirstOrDefault(c => c.Id == id);
             if (allocatedBudget.Equals(null))
@@ -51,7 +51,7 @@ namespace ERP.Services
         }
 
         
-        public void UpdateAllocatedBudget(string id,AllocatedBudget updateAllocatedBudget)
+        public void UpdateAllocatedBudget(int id,AllocatedBudget updateAllocatedBudget)
         {
             if (updateAllocatedBudget.Equals( null))
             {
@@ -59,18 +59,31 @@ namespace ERP.Services
             }
 
             AllocatedBudget allocatedBudget = _context.AllocatedBudgets.FirstOrDefault(c => c.Id == id);
+            Console.WriteLine("service 1");
             if (allocatedBudget.Equals(null))
                 throw new ItemNotFoundException($"Allocated budget not found with allocatedbudgetId={id}");
+            
             allocatedBudget.date = updateAllocatedBudget.date;
+            
             allocatedBudget.projectId = updateAllocatedBudget.projectId;
+            
             allocatedBudget.activity = updateAllocatedBudget.activity;
-            allocatedBudget.amount = updateAllocatedBudget.amount;            
+            
+            allocatedBudget.amount = updateAllocatedBudget.amount;
+            
             allocatedBudget.contingency = updateAllocatedBudget.contingency;
+            
             allocatedBudget.preparedBy = updateAllocatedBudget.preparedBy;
+            
             allocatedBudget.ApprovedBy = updateAllocatedBudget.ApprovedBy;
-            _context.AllocatedBudgets.Add(allocatedBudget);
+            
+            _context.AllocatedBudgets.Update(allocatedBudget);
+            
+            _context.SaveChanges();
+            
+
         }
-                            
+
 
 
         public bool SaveChanges()

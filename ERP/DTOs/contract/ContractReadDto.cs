@@ -3,7 +3,7 @@ namespace ERP.DTOs
 {
     public class ContractReadDto
     {
-        public string ConId { get; set; }
+        public int ConId { get; set; }
         
         public string ConType { get; set; }
         
@@ -18,17 +18,17 @@ namespace ERP.DTOs
         public string Unit { get; set; }
         
         public double Cost { get; set; }
-                
 
+        public string Attachement { get; set; }
 
     }
 
     public class SubContractingWorkReadDto
     {
-        public string SubcontractingWorkID { get; set; }
+        public int SubcontractingWorkID { get; set; }
         public string unit { get; set; }
         public double unitPrice { get; set; }
         public double priceWithVat { get; set; }
-        public string ContractID { get; set; }
+        public int ContractID { get; set; }
     }
 }

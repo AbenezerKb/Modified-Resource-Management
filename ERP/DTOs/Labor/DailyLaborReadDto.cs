@@ -2,7 +2,7 @@
 {
     public class DailyLaborReadDto
     {
-        public string LaborerID { get; set; }
+        public int LaborerID { get; set; }
         public string fullName { get; set; }
         public string name { get; set; }
         public string jobTitle { get; set; }

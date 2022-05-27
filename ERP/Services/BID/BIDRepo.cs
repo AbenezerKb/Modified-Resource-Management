@@ -19,7 +19,7 @@ namespace ERP.Services
             if (bid == null){
                 throw new ArgumentNullException();
             }
-            bid.BIDID = Guid.NewGuid().ToString();                        
+           // bid.BIDID =// Guid.NewGuid().ToString();                        
 
             _context.BIDs.Add(bid);
         }
@@ -32,7 +32,7 @@ namespace ERP.Services
         }
 
 
-        public BID GetBID(string id)
+        public BID GetBID(int id)
         {
             return _context.BIDs.FirstOrDefault(c => c.BIDID == id);
         }
@@ -45,7 +45,7 @@ namespace ERP.Services
 
 
 
-        public void UpdateBID(string id,BID updateBID)
+        public void UpdateBID(int id,BID updateBID)
         {
             if (updateBID.Equals(null))
             {
@@ -65,14 +65,15 @@ namespace ERP.Services
             bid.Remark = updateBID.Remark;
             bid.WorkDescription = updateBID.WorkDescription;
 
-            _context.BIDs.Add(bid);
+            _context.BIDs.Update(bid);
+            _context.SaveChanges();
         }
 
 
 
 
 
-        public void DeleteBID(string id)
+        public void DeleteBID(int id)
         {
             var bid = _context.BIDs.FirstOrDefault(c => c.BIDID == id);
             _context.BIDs.Remove(bid);

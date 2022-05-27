@@ -6,11 +6,11 @@ namespace ERP.DTOs
     public class WeeklyRequirementCreateDto
     { 
         [Required]
-        public string projName { get; set; }
+        public int projId { get; set; }
     [Required]
-    public string projManager { get; set; }
+    public int projManager { get; set; }
 
-        public string projCoordinator { get; set; }
+        public int projCoordinator { get; set; }
 
         public DateTime date { get; set; }
         [Required]
@@ -46,7 +46,7 @@ namespace ERP.DTOs
 
     public class WeeklyEquipmentCreateDto
     {        
-        public string WeeklyRequirementFK { get; set; }
+        public int WeeklyRequirementFK { get; set; }
         public string unit { get; set; }
         public int amount { get; set; }
         public double budget { get; set; }
@@ -59,7 +59,7 @@ namespace ERP.DTOs
     public class WeeklyLaborCreateDto
     {
 
-        public string WeeklyRequirementFK { get; set; }
+        public int WeeklyRequirementFK { get; set; }
         public string labor { get; set; }
         public int number { get; set; }
         public double budget { get; set; }
@@ -70,7 +70,7 @@ namespace ERP.DTOs
 
     public class WeeklyMaterialCreateDto
     {        
-        public string WeeklyRequirementFK { get; set; }
+        public int WeeklyRequirementFK { get; set; }
         public string unit { get; set; }
         public int amount { get; set; }
         public double budget { get; set; }

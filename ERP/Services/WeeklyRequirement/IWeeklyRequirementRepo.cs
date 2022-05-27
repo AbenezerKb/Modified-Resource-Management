@@ -8,9 +8,9 @@ namespace ERP.Services
         bool SaveChanges();
 
         IEnumerable<WeeklyRequirement> GetAllWeeklyRequirement();
-        WeeklyRequirement GetWeeklyRequirements(string id);
+        WeeklyRequirement GetWeeklyRequirements(int id);
         void CreateWeeklyRequirement(WeeklyRequirement weeklyRequirement);
-        void DeleteWeeklyRequirements(string id);
-        void UpdateWeeklyRequirement(string id,WeeklyRequirement updatedWeeklyRequirement);
+        void DeleteWeeklyRequirements(int id);
+        void UpdateWeeklyRequirement(int id,WeeklyRequirement updatedWeeklyRequirement);
     }
 }

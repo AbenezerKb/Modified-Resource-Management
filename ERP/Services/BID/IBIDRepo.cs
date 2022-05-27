@@ -7,9 +7,9 @@ namespace ERP.Services
         bool SaveChanges();
 
         IEnumerable<BID> GetAllBIDs();
-        BID GetBID(string id);
+        BID GetBID(int id);
         void CreateBID(BID bid);
-        void DeleteBID(string id);
-        void UpdateBID(string id,BID updateBID);
+        void DeleteBID(int id);
+        void UpdateBID(int id,BID updateBID);
     }
 }

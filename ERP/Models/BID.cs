@@ -1,11 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
 {
     public class BID
     {
-
-        public string  BIDID { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int  BIDID { get; set; }
                         
         public DateTime initailDate { get; set; }        
         public DateTime finalDate { get; set; }

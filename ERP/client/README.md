@@ -1927,7 +1927,7 @@ Now, after you create a production build with `npm run build`, you can deploy it
     i  deploying database, hosting
     ✔  database: rules ready to deploy.
     i  hosting: preparing build directory for upload...
-    Uploading: [==============================          ] 75%✔  hosting: build folder uploaded successfully
+    Uploading: [        ==          ] 75%✔  hosting: build folder uploaded successfully
     ✔  hosting: 8 files uploaded successfully
     i  starting release process (may take several minutes)...
 

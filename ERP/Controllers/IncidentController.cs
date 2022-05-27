@@ -32,7 +32,7 @@ using Microsoft.AspNetCore.Mvc;
             return Ok(_mapper.Map<IEnumerable<IncidentReadDto>>(_incidents));
         }
         [HttpGet("{id}", Name = "GetIncident")]
-        public async Task<ActionResult<IncidentReadDto>> GetIncident(string id)
+        public async Task<ActionResult<IncidentReadDto>> GetIncident(int id)
         {
             Console.WriteLine("....started");
             var _incidents = _incidentRepo.GetIncident(id);
@@ -66,7 +66,7 @@ using Microsoft.AspNetCore.Mvc;
 
         
         [HttpDelete("{id}")]
-        public async Task<ActionResult<IncidentReadDto>> DeleteIncident(string id)
+        public async Task<ActionResult<IncidentReadDto>> DeleteIncident(int id)
         {
 
             try
@@ -80,5 +80,18 @@ using Microsoft.AspNetCore.Mvc;
                 return NotFound();
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
  }
 }

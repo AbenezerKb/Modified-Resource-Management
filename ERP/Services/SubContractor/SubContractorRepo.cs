@@ -20,7 +20,7 @@ namespace ERP.Services
                 throw new ArgumentNullException();
             }
 
-            subcontract.SubId = Guid.NewGuid().ToString();
+           // subcontract.SubId =// Guid.NewGuid().ToString();
             _context.SubContractors.Add(subcontract);
         }
 
@@ -32,19 +32,19 @@ namespace ERP.Services
         }
 
 
-        public SubContractor GetSubContractor(string id)
+        public SubContractor GetSubContractor(int id)
         {
             return _context.SubContractors.FirstOrDefault(c => c.SubId == id);
         }
         
-        public void DeleteSubContractor(string id)
+        public void DeleteSubContractor(int id)
         {
             var subContractor = _context.SubContractors.FirstOrDefault(c => c.SubId == id);
             _context.SubContractors.Remove(subContractor);
         }
 
 
-        public void UpdateSubContractor(string id,SubContractor updatedSubContractor)
+        public void UpdateSubContractor(int id,SubContractor updatedSubContractor)
         {
 
             if (updatedSubContractor.Equals(null))
@@ -62,7 +62,8 @@ namespace ERP.Services
             subContractor.SubWorkId = updatedSubContractor.SubWorkId;            
 
 
-            _context.SubContractors.Add(subContractor);
+            _context.SubContractors.Update(subContractor);
+            _context.SaveChanges();
         }
 
 

@@ -74,9 +74,9 @@ namespace ERP.DTOs
     public class SubcontractingPlanCreateDto
     {
         [Required]
-        public string SubcontractingWork { get; set; }
+        public int SubcontractingWork { get; set; }
         [Required]
-        public string Subcontractor { get; set; }
+        public int Subcontractor { get; set; }
         
      //   public string GranderFK { get; set; }
     }

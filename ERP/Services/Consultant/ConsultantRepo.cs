@@ -22,25 +22,25 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-            consultant.consultantId = Guid.NewGuid().ToString();
+            //consultant.consultantId =// Guid.NewGuid().ToString();
 
             foreach (ApprovedWorkList awl in consultant.approvedWorkList)
             {                
-                awl.ApprovedWorkId = Guid.NewGuid().ToString();
+               // awl.ApprovedWorkId =// Guid.NewGuid().ToString();
                 awl.ConsultantId = consultant.consultantId;
                 _context.ApprovedWorkLists.Add(awl);
             }
 
             foreach (DeclinedWorkList dwl in consultant.declinedWorkList)
             {
-                dwl.DeclinedWorkId = Guid.NewGuid().ToString();
+                dwl.DeclinedWorkId =// Guid.NewGuid().ToString();
                 dwl.ConsultantId = consultant.consultantId;
                 _context.DeclinedWorkLists.Add(dwl);
             }
 
             foreach (DefectsCorrectionlist dcl in consultant.defectsCorrectionlist)
             {
-                dcl.DefectsCorrectionId = Guid.NewGuid().ToString();
+                dcl.DefectsCorrectionId =// Guid.NewGuid().ToString();
                 dcl.ConsultantId = consultant.consultantId;
                 _context.DefectsCorrectionlists.Add(dcl);
             }
@@ -93,7 +93,7 @@ namespace ERP.Services
         }
 
 
-        public Consultant GetConsultant(string id)
+        public Consultant GetConsultant(int id)
         {
 
             var consultants = _context.Consultants.FirstOrDefault(c => c.consultantId == id);
@@ -137,7 +137,7 @@ namespace ERP.Services
             return (_context.SaveChanges() >= 0);
         }
 
-        public void DeleteConsultant(string id)
+        public void DeleteConsultant(int id)
         {
             var consultant = _context.Consultants.FirstOrDefault(c => c.consultantId == id);
             _context.Consultants.Remove(consultant);
@@ -146,7 +146,7 @@ namespace ERP.Services
 
 
 
-        public void UpdateConsultant(string id,Consultant updatedConsultant)
+        public void UpdateConsultant(int id,Consultant updatedConsultant)
         {
             if (updatedConsultant.Equals(null))
             {
@@ -169,7 +169,8 @@ namespace ERP.Services
             consultant.remarks = updatedConsultant.remarks;
             consultant.reviewDate = updatedConsultant.reviewDate;
 
-            _context.Consultants.Add(consultant);
+            _context.Consultants.Update(consultant);
+            _context.SaveChanges();
         }
 
 

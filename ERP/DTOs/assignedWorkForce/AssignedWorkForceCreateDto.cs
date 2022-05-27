@@ -8,7 +8,7 @@ namespace ERP.DTOs
         [Required]
         public DateTime date { get; set; }
         [Required]
-        public string projId { get; set; }
+        public int projId { get; set; }
         [Required]
         //public string professionalName { get; set; }
         public IList<WorkForceCreateDto> ProfessionWithWork { get; set; }
@@ -22,9 +22,9 @@ namespace ERP.DTOs
     {
 
         [Required]
-        public string assigneWorkNo { get; set; }
+        public int assigneWorkNo { get; set; }
         [Required]
-        public string EmployeeId { get; set; }
+        public int EmployeeId { get; set; }
     }
 
 

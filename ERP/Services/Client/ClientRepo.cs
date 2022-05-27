@@ -20,7 +20,7 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-            client.clientId = Guid.NewGuid().ToString();
+           // client.clientId = Guid.NewGuid().ToString();
 
             //consultant. = DateTime.Now.Date;//DateTime.Now.ToString("yyyy-MM-dd");
 
@@ -35,7 +35,7 @@ namespace ERP.Services
         }
 
 
-        public Client GetClient(string id)
+        public Client GetClient(int id)
         {
             return _context.Clients.FirstOrDefault(c => c.clientId == id);
         }
@@ -46,7 +46,7 @@ namespace ERP.Services
             return (_context.SaveChanges() >= 0);
         }
 
-        public void DeleteClient(string id)
+        public void DeleteClient(int id)
         {
             var client = _context.Clients.FirstOrDefault(c => c.clientId == id);
             _context.Clients.Remove(client);
@@ -54,7 +54,7 @@ namespace ERP.Services
 
 
 
-        public void UpdateClient(string id,Client updatedClient)
+        public void UpdateClient(int id,Client updatedClient)
         {
             if (updatedClient.Equals(null))
             {
@@ -73,7 +73,8 @@ namespace ERP.Services
             client.estimatedDuration = updatedClient.estimatedDuration;
             client.remarks = updatedClient.remarks;            
 
-            _context.Clients.Add(client);
+            _context.Clients.Update(client);
+            _context.SaveChanges();
         }
 
 

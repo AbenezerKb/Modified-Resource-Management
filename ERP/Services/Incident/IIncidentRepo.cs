@@ -5,9 +5,9 @@ namespace ERP.Services
     {
         bool SaveChanges();
         public void CreateIncident(Incident incident);
-        public Incident GetIncident(string incidentNo);
+        public Incident GetIncident(int incidentNo);
         public IEnumerable<Incident> GetAllIncidents();
-        void DeleteIncident(string id);
-        void UpdateIncident(string id,Incident updatedIncident);
+        void DeleteIncident(int id);
+        void UpdateIncident(int id,Incident updatedIncident);
     }
 }

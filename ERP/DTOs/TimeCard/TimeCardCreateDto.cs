@@ -6,7 +6,7 @@ namespace ERP.DTOs
     public class TimeCardCreateDto
     {
         [Required]
-        public string Id { get; set; }
+        public int id { get; set; }
         [Required]
         public DateTime dateOfWork { get; set; }
         [Required]
@@ -30,15 +30,15 @@ namespace ERP.DTOs
 
         //FK
         [Required]
-        public string preparedByFK { get; set; }
+        public int preparedByFK { get; set; }
 
         //FK
         [Required]
-        public string approvedBy { get; set; }
+        public int approvedBy { get; set; }
 
         //FK
         [Required]
-        public string LaborerID { get; set; }
+        public int LaborerID { get; set; }
         [Required]
         public string remark { get; set; }
     }

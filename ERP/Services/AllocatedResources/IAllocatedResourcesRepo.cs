@@ -6,10 +6,10 @@ namespace ERP.Services
     {
         bool SaveChanges();
         IEnumerable<AllocatedResources> GetAllAllocatedResources();
-        AllocatedResources GetAllocatedResources(string id);
+        AllocatedResources GetAllocatedResources(int id);
         void CreateAllocatedResources(AllocatedResources allocatedResources);
-        void DeleteAllocatedResource(string id);
-        void UpdateAllocatedResource(string id,AllocatedResources allocatedResources);
+        void DeleteAllocatedResource(int id);
+        void UpdateAllocatedResource(int id,AllocatedResources allocatedResources);
     }
 }
 

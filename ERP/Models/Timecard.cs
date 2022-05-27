@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ERP.Models
 {
@@ -6,8 +7,8 @@ namespace ERP.Models
     {
 
         [Key]
-        [Required]
-        public string Id { get; set; }        
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }        
         public DateTime dateOfWork { get; set; }      
         public string employeeName { get; set; }
         public string jobType { get; set; }

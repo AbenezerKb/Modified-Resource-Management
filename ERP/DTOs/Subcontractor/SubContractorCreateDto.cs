@@ -9,7 +9,7 @@ namespace ERP.DTOs
         [Required]
         public string SubAddress { get; set; }
         [Required]
-        public string SubWorkId { get; set; }
+        public int SubWorkId { get; set; }
         [Required]
         public string Status { get; set; }
     }
