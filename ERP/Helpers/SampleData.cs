@@ -48,7 +48,7 @@ namespace ERP.Helpers
                 MName = "A",
                 Position = "Adminstrator",
                 EmployeeSiteId = site.SiteId,
-                UserRoleId = roles.First(r => r.Role.Equals("Employee") && r.IsAdmin).RoleId,
+                UserRoleId = roles.First(r => r.Role.Equals("Admin") && r.IsAdmin).RoleId,
                 Password = "alex1234"
             });
             //Create OfficeEngineer
@@ -108,7 +108,7 @@ namespace ERP.Helpers
             await context.UserRoles.AddRangeAsync(
                 new UserRole
                 {
-                    Role = "Employee",
+                    Role = "Admin",
                     IsAdmin = true,
                     CanEditUser = true,
 

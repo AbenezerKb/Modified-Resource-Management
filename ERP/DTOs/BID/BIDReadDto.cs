@@ -10,7 +10,7 @@
 
         public string WorkDescription { get; set; }
 
-        public int ConBID { get; set; }
+        public string ConBID { get; set; }
 
         public double EstimatedBID { get; set; }
         public double ActualCost { get; set; }      
