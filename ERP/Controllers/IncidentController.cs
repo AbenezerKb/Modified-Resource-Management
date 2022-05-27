@@ -31,7 +31,7 @@ using Microsoft.AspNetCore.Mvc;
 
             return Ok(_mapper.Map<IEnumerable<IncidentReadDto>>(_incidents));
         }
-        [HttpGet("{id}", Name = "GetIncident")]
+        [HttpGet("{id:int}", Name = "GetIncident")]
         public async Task<ActionResult<IncidentReadDto>> GetIncident(int id)
         {
             Console.WriteLine("....started");
@@ -65,7 +65,7 @@ using Microsoft.AspNetCore.Mvc;
 
 
         
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult<IncidentReadDto>> DeleteIncident(int id)
         {
 

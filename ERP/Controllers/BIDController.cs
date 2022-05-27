@@ -33,7 +33,7 @@ namespace ERP.Controllers
 
 
 
-        [HttpGet("{id}", Name = "GetBID")]
+        [HttpGet("{id:int}", Name = "GetBID")]
         public async Task<ActionResult<BIDReadDto>> GetBID(int id)
         {
 
@@ -67,7 +67,7 @@ namespace ERP.Controllers
         }
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult<BIDReadDto>> DeleteBID(int id)
         {
 
@@ -88,7 +88,7 @@ namespace ERP.Controllers
 
 
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult<BIDReadDto>> UpdateBID(int id, [FromBody] BIDCreateDto bid)
         {
             try

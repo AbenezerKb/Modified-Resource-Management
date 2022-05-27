@@ -21,7 +21,7 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }         
-           // allocatedResources.allocatedResourcesNo =// Guid.NewGuid().ToString();
+         
 
             _context.AllocatedResources.Add(allocatedResources);
         }

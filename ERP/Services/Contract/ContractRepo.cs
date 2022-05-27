@@ -20,7 +20,7 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-            //contract.ConId =// Guid.NewGuid().ToString();
+          
 
             contract.Date = DateTime.Now.Date;//DateTime.Now.ToString("yyyy-MM-dd");
            

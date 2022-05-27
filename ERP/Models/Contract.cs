@@ -37,9 +37,10 @@ namespace ERP.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SubcontractingWorkID { get; set; }
-        public string unit { get; set; }
+        public string unit { get; set; } = string.Empty;
         public double unitPrice { get; set; }
         public double priceWithVat { get; set; }
         public int ContractID { get; set; }
+        public string attachment { get; set; }  = string.Empty;
     }
 }

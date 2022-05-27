@@ -30,7 +30,7 @@ namespace ERP.Controllers
 
             return Ok(_mapper.Map<IEnumerable<GranderReadDto>>(_granders));
         }
-        [HttpGet("{id}", Name = "GetGrander")]
+        [HttpGet("{id:int}", Name = "GetGrander")]
         public async Task<ActionResult<GranderReadDto>> GetGrander(int id)
         {            
             var _granders = _granderRepo.GetGrander(id);
@@ -59,7 +59,7 @@ namespace ERP.Controllers
             return CreatedAtRoute(nameof(GetGrander), new { id = granderReadDto.GranderId }, granderReadDto);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult<GranderReadDto>> DeleteGrander(int id)
         {
 

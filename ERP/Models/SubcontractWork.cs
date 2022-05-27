@@ -8,8 +8,8 @@ namespace ERP.Models
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int subconractingid { get; set; }
-        public string workName { get; set; }
-        public string remarks { get; set; }
+        public int subconractingid { get; set; } 
+        public string workName { get; set; } = string.Empty;
+        public string remarks { get; set; } = string.Empty;
     }
 }

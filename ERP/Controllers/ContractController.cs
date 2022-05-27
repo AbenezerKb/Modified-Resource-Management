@@ -28,7 +28,7 @@ namespace ERP.Controllers
             
             return Ok( _mapper.Map<IEnumerable<ContractReadDto>>(_contracts));
         }
-        [HttpGet("{id}", Name ="GetContract")]
+        [HttpGet("{id:int}", Name ="GetContract")]
         public async Task <ActionResult<ContractReadDto>> GetContract(int id)
         {            
             var _contracts = _contractRepo.GetContract(id);
@@ -59,7 +59,7 @@ namespace ERP.Controllers
 
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult<ContractReadDto>> DeleteContract(int id)
         {
 
@@ -78,7 +78,7 @@ namespace ERP.Controllers
 
 
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult<ContractReadDto>> UpdateContract(int id, [FromBody] ContractCreateDto contract)
         {
             try

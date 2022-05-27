@@ -19,8 +19,7 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-            //incident.incidentNo = Guid.NewGuid().ToString();
-            //project = DateTime.Now.ToString("yyyy-MM-dd");
+         
 
             _context.Incidents.Add(incident);
 

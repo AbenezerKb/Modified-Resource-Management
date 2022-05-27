@@ -36,7 +36,7 @@ namespace ERP.Controllers
 
 
 
-        [HttpGet("{id}", Name = "GetDailyLabor")]
+        [HttpGet("{id:int}", Name = "GetDailyLabor")]
         public async Task<ActionResult<DailyLaborReadDto>> GetDailyLabor(int id)
         {
 
@@ -70,7 +70,7 @@ namespace ERP.Controllers
         }
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult<DailyLaborReadDto>> DeleteDailyLabor(int id)
         {
 
@@ -92,7 +92,7 @@ namespace ERP.Controllers
 
 
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult<DailyLaborReadDto>> UpdateDailyLabor(int id, [FromBody] DailyLaborCreateDto dailyLabor)
         {
             try

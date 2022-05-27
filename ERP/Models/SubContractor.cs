@@ -11,15 +11,15 @@ namespace ERP.Models
         public int SubId { get; set; }
 
         [Required]
-        public string SubName { get; set; }
+        public string SubName { get; set; } = string.Empty;
 
         [Required]
-        public string SubAddress { get; set; }
+        public string SubAddress { get; set; } = string.Empty;
 
         [Required]
-        public string SubWorkId { get; set; }
+        public string SubWorkId { get; set; } = string.Empty;
 
         [Required]
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
     }
 }

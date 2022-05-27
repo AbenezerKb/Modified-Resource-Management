@@ -20,7 +20,7 @@ namespace ERP.Services
                 throw new ArgumentNullException();
             }
 
-           // subcontract.SubId =// Guid.NewGuid().ToString();
+          
             _context.SubContractors.Add(subcontract);
         }
 

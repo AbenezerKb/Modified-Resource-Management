@@ -38,7 +38,7 @@ namespace ERP.Controllers
         }
 
 
-        [HttpGet("{id}", Name = "GetWeeklyRequirement")]
+        [HttpGet("{id:int}", Name = "GetWeeklyRequirement")]
         public async Task<ActionResult<WeeklyRequirementReadDto>> GetWeeklyRequirement(int id)
         {
 
@@ -66,7 +66,7 @@ namespace ERP.Controllers
         }
 
         /*
-          [Http("{id}", Name = "GetWeeklyRequirement")]
+          [Http("{id:int}", Name = "GetWeeklyRequirement")]
           public async Task<ActionResult<WeeklyRequirementReadDto>> GetWeeklyRequirement(int id)
           {
 
@@ -86,7 +86,7 @@ namespace ERP.Controllers
 
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult<WeeklyRequirementReadDto>> DeleteWeeklyRequirement(int id)
         {
 
@@ -107,7 +107,7 @@ namespace ERP.Controllers
 
 
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult> UpdateWeeklyRequirement(int id, [FromBody] WeeklyRequirementCreateDto weeklyRequirement)
         {
             try

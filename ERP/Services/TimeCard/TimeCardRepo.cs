@@ -20,7 +20,7 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-          //  timeCard.Id =// Guid.NewGuid().ToString();
+         
 
             _context.TimeCards.Add(timeCard);
         }

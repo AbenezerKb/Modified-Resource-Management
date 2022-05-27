@@ -33,7 +33,7 @@ namespace ERP.Controllers
         }
 
 
-        [HttpGet("{id}", Name = "GetTimeCard")]
+        [HttpGet("{id:int}", Name = "GetTimeCard")]
         public async Task<ActionResult<TimeCardReadDto>> GetTimeCard(int id)
         {
             Console.WriteLine("....started");
@@ -60,7 +60,7 @@ namespace ERP.Controllers
                 return CreatedAtRoute(nameof(GetTimeCard), new { id = timeCardReadDto.id }, timeCardReadDto);
             }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult<TimeCardReadDto>> DeleteTimeCard(int id)
         {
 
@@ -80,7 +80,7 @@ namespace ERP.Controllers
 
 
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult<TimeCardReadDto>> UpdateTimeCard(int id, [FromBody] TimeCardCreateDto timeCard)
         {
             try

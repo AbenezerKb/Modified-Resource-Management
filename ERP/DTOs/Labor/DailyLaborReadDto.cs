@@ -3,11 +3,12 @@
     public class DailyLaborReadDto
     {
         public int LaborerID { get; set; }
-        public string fullName { get; set; }
-        public string name { get; set; }
-        public string jobTitle { get; set; }
+        public string fullName { get; set; } = string.Empty;
+        public string name { get; set; } = string.Empty;
+        public string jobTitle { get; set; } = string.Empty;
         public double wagePerhour { get; set; }
         public DateTime date { get; set; }
-        public string remarks { get; set; }
+        public string remarks { get; set; } = string.Empty;
+        public string status { get; set; } = string.Empty;
     }
 }

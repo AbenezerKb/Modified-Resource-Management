@@ -10,15 +10,15 @@ namespace ERP.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int clientId { get; set; }
-        public string clientName { get; set; }
-        public string address { get; set; }
-        public string contractorId { get; set; }
-        public string estimatedDuration { get; set; }
-        public string estimatedCost { get; set; }
-        public string description { get; set; }
+        public string clientName { get; set; } = string.Empty;
+        public string address { get; set; } = string.Empty;
+        public string contractorId { get; set; } = string.Empty;
+        public string estimatedDuration { get; set; } = string.Empty;
+        public string estimatedCost { get; set; } = string.Empty;
+        public string description { get; set; } = string.Empty;
         public DateTime dateOfContract { get; set; }
-        public string attachmentOfContract { get; set; }
-        public string remarks { get; set; }
+        public string attachmentOfContract { get; set; } = string.Empty;
+        public string remarks { get; set; } = string.Empty;
 
 
     }

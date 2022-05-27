@@ -30,7 +30,7 @@ namespace ERP.Controllers
 
             return Ok(_mapper.Map<IEnumerable<SubContractorReadDto>>(_subcontracts));
         }
-        [HttpGet("{id}", Name = "GetSubContractor")]
+        [HttpGet("{id:int}", Name = "GetSubContractor")]
         public async Task<ActionResult<SubContractorReadDto>> GetSubContractor(int id)
         {
            
@@ -61,7 +61,7 @@ namespace ERP.Controllers
         }
 
         
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult<SubContractorReadDto>> DeleteSubContractor(int id)
         {
 
@@ -84,7 +84,7 @@ namespace ERP.Controllers
 
 
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult<SubContractorReadDto>> UpdateSubContractor(int id, [FromBody] SubContractorCreateDto subContractor)
         {
             try

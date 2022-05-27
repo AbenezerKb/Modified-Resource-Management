@@ -19,7 +19,7 @@ namespace ERP.Services
             if (bid == null){
                 throw new ArgumentNullException();
             }
-           // bid.BIDID =// Guid.NewGuid().ToString();                        
+          
 
             _context.BIDs.Add(bid);
         }

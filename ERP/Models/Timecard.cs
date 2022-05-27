@@ -10,8 +10,8 @@ namespace ERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }        
         public DateTime dateOfWork { get; set; }      
-        public string employeeName { get; set; }
-        public string jobType { get; set; }
+        public string employeeName { get; set; } = string.Empty;
+        public string jobType { get; set; } = string.Empty;
         public int weekNo { get; set; }
         public int NoOfPresents { get; set; }
         public int NoOfAbscents { get; set; }
@@ -21,15 +21,15 @@ namespace ERP.Models
         public double totalPayment { get; set; }
 
         //FK
-        public string preparedByFK { get; set; }
+        public string preparedByFK { get; set; } = string.Empty;
 
         //FK
-        public string approvedBy { get; set; }
+        public string approvedBy { get; set; } = string.Empty;
 
         //FK
-        public string LaborerID { get; set; }
+        public string LaborerID { get; set; } = string.Empty;
 
-        public string remark { get; set; }        
+        public string remark { get; set; } = string.Empty;
 
 
     }

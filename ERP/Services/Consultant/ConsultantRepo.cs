@@ -22,25 +22,25 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-            //consultant.consultantId =// Guid.NewGuid().ToString();
+            
 
             foreach (ApprovedWorkList awl in consultant.approvedWorkList)
             {                
-               // awl.ApprovedWorkId =// Guid.NewGuid().ToString();
+            
                 awl.ConsultantId = consultant.consultantId;
                 _context.ApprovedWorkLists.Add(awl);
             }
 
             foreach (DeclinedWorkList dwl in consultant.declinedWorkList)
             {
-                dwl.DeclinedWorkId =// Guid.NewGuid().ToString();
+             
                 dwl.ConsultantId = consultant.consultantId;
                 _context.DeclinedWorkLists.Add(dwl);
             }
 
             foreach (DefectsCorrectionlist dcl in consultant.defectsCorrectionlist)
             {
-                dcl.DefectsCorrectionId =// Guid.NewGuid().ToString();
+               
                 dcl.ConsultantId = consultant.consultantId;
                 _context.DefectsCorrectionlists.Add(dcl);
             }

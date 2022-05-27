@@ -24,7 +24,7 @@ namespace ERP.Services
             }
 
             //weeklyRequirement.Id = Guid.NewGuid().ToString();
-
+/*
             foreach (WeeklyMaterial s in weeklyRequirement.material)
             {
                 //s.materialId =// Guid.NewGuid().ToString();
@@ -38,7 +38,7 @@ namespace ERP.Services
             {
               //  w.equipmentId =// Guid.NewGuid().ToString();
             }
-
+*/
             _context.WeeklyRequirements.Add(weeklyRequirement);
         }
 

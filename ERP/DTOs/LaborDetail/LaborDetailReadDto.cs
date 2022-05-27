@@ -10,8 +10,9 @@
         public string afternoonSession { get; set; }
         public string eveningSession { get; set; }
         public int NoOfHrsPerSession { get; set; }
-
+        public int PaymentDayIn { get; set; } = 14;
         //FK
         public int LaborerID { get; set; }
+        
     }
 }

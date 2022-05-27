@@ -18,9 +18,10 @@ namespace ERP.DTOs
         public string eveningSession { get; set; }
         [Required]
         public int NoOfHrsPerSession { get; set; }
+        public int PaymentDayIn { get; set; } = 14;
 
         //FK
-   //     [Required]
-     //   public string LaborerID { get; set; }
+        //     [Required]
+        //   public string LaborerID { get; set; }
     }
 }

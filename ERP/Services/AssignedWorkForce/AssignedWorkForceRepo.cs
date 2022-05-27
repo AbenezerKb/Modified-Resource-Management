@@ -19,9 +19,9 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-         //   assignedWorkForce.assigneWorkForceNo =// Guid.NewGuid().ToString();
+         //  
             foreach (WorkForce w in assignedWorkForce.ProfessionWithWork) { 
-                //w.WokrkForceID =// Guid.NewGuid().ToString();
+               
 
                w.assigneWorkForceNo = 0 ;               
                 _context.WorkForces.Add(w);
@@ -30,7 +30,7 @@ namespace ERP.Services
             _context.AssignedWorkForces.Add(assignedWorkForce);
             foreach (WorkForce w in assignedWorkForce.ProfessionWithWork)
             {
-                //w.WokrkForceID =// Guid.NewGuid().ToString();
+               
 
                 w.assigneWorkForceNo = assignedWorkForce.assigneWorkForceNo;
                 _context.WorkForces.Update(w);

@@ -8,11 +8,11 @@ namespace ERP.Models
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int incidentNo { get; set; }        
-        public string incidentName { get; set; }
-        public string proID { get; set; }
-        public string empName { get; set; }
+        public int incidentNo { get; set; }
+        public string incidentName { get; set; } = string.Empty;
+        public string proID { get; set; } = string.Empty;
+        public string empName { get; set; } = string.Empty;
         public DateTime date { get; set; }
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
     }
 }

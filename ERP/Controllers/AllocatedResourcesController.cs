@@ -31,7 +31,7 @@ namespace ERP.Controllers
 
 
 
-        [HttpGet("{id}", Name = "GetAllocatedResources")]
+        [HttpGet("{id:int}", Name = "GetAllocatedResources")]
         public async Task<ActionResult<AllocatedResourcesReadDto>> GetAllocatedResources(int id)
         {
 
@@ -62,7 +62,7 @@ namespace ERP.Controllers
             return CreatedAtRoute(nameof(GetAllocatedResources), new { id = allocatedResourcesReadDto.allocatedResourcesNo  }, allocatedResourcesReadDto);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult<AllocatedResourcesReadDto>> DeleteBID(int id)
         {
 
@@ -80,7 +80,7 @@ namespace ERP.Controllers
 
 
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<ActionResult<AllocatedResourcesReadDto>> UpdateAllocatedResource(int id, [FromBody] AllocatedResourcesCreateDto allocatedResource)
         {
             try

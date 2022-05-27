@@ -19,9 +19,7 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-
-            //project = DateTime.Now.ToString("yyyy-MM-dd");
-            //dailyLabor.Id = Guid.NewGuid().ToString();
+         
             _context.DailyLabors.Add(dailyLabor);
 
         }
@@ -73,6 +71,7 @@ namespace ERP.Services
             dailyLabor.name = updatedDailyLabor.name;
             dailyLabor.remarks = updatedDailyLabor.remarks;
             dailyLabor.wagePerhour = updatedDailyLabor.wagePerhour;
+            
             _context.DailyLabors.Update(dailyLabor);
             _context.SaveChanges();
         }

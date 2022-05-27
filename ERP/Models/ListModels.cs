@@ -9,7 +9,7 @@ namespace ERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int equipmentId { get; set; }        
         public int WeeklyRequirementFK { get; set; }
-        public string unit { get; set; }
+        public string unit { get; set; } = string.Empty;
         public int amount { get; set; }
         public double budget { get; set; }
         //    public WeeklyRequirement WeeklyRequirement { get; set; }
@@ -32,7 +32,7 @@ namespace ERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int laborId { get; set; }
         public int GranderFK { get; set; }
-        public string labor { get; set; }
+        public string labor { get; set; } = string.Empty;
         public int number { get; set; }
         public double budget { get; set; }       
 
@@ -45,7 +45,7 @@ namespace ERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int materialId { get; set; }        
         public int WeeklyRequirementFK { get; set; }
-        public string unit { get; set; }
+        public string unit { get; set; } = string.Empty;
         public int amount { get; set; }
         public double budget { get; set; }
         //public WeeklyRequirement WeeklyRequirement { get; set; }
@@ -55,8 +55,9 @@ namespace ERP.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int subcontractingPlanId { get; set; }        
-        public string Subcontractor { get; set; }
+        public int subcontractingPlanId { get; set; }
+        public string Subcontractor { get; set; } = string.Empty;
+        public double estimatedAmount { get; set; }
         public int GranderFK { get; set; }        
     }
 
@@ -66,7 +67,7 @@ namespace ERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int equipmentId { get; set; }        
         public int GranderFK { get; set; }
-        public string unit { get; set; }
+        public string unit { get; set; } = string.Empty;
         public int amount { get; set; }
         public double budget { get; set; }        
     }
@@ -77,8 +78,8 @@ namespace ERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ApprovedWorkId { get; set; }
         public int ConsultantId { get; set; }
-        public string ApprovedWorks { get; set; }
-         
+        public string ApprovedWorks { get; set; } = string.Empty;
+
     }
     public class DeclinedWorkList
     {
@@ -86,7 +87,7 @@ namespace ERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DeclinedWorkId { get; set; }
         public int ConsultantId { get; set; }
-        public string DeclinedWorks { get; set; }
+        public string DeclinedWorks { get; set; } = string.Empty;
 
     }
     
@@ -97,7 +98,7 @@ public class DefectsCorrectionlist
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DefectsCorrectionId { get; set; }
         public int ConsultantId { get; set; }
-        public string DefectsCorrections { get; set; }
+        public string DefectsCorrections { get; set; } = string.Empty;
     }
 
 }

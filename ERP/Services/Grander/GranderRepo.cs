@@ -27,7 +27,7 @@ namespace ERP.Services
 
             foreach (SubcontractingPlan scp in grander.SubcontractingPlans)
             {
-                scp.subcontractingPlanId =// Guid.NewGuid().ToString();
+          
                 scp.GranderFK = grander.GranderId;
                 _context.SubcontractingPlans.Add(scp);
             }
@@ -35,7 +35,7 @@ namespace ERP.Services
 
             foreach (ResourcePlan rp in grander.ResourcePlans)
             {
-               // rp.equipmentId = Guid.NewGuid().ToString();
+          
                 rp.GranderFK = grander.GranderId;
                 _context.ResourcePlans.Add(rp);
             }
@@ -43,7 +43,7 @@ namespace ERP.Services
 
             foreach (WorkForcePlan wfp in grander.WorkForcePlans)
             {
-              //  wfp.laborId = Guid.NewGuid().ToString();
+          
                 wfp.GranderFK = grander.GranderId;
                 _context.WorkForcePlans.Add(wfp);
             }         

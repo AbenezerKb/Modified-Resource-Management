@@ -21,7 +21,7 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-            //allocatedBudget.Id =// Guid.NewGuid().ToString();
+            
 
              _context.AllocatedBudgets.Add(allocatedBudget);
         }
@@ -37,7 +37,7 @@ namespace ERP.Services
         public AllocatedBudget GetAllocatedBudget(int id)
         {
            var allocatedBudget = _context.AllocatedBudgets.FirstOrDefault(c => c.Id == id);
-            if (allocatedBudget.Equals(null))
+            if (allocatedBudget == null)
                 throw new ItemNotFoundException($"Allocated budget not found with allocatedbudgetId={id}");
             return allocatedBudget;
         }

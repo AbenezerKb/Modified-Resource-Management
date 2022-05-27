@@ -72,6 +72,7 @@ namespace ERP.Services
             laborDetail.morningSession = updatedLaborDetail.morningSession;
             laborDetail.NoOfHrsPerSession = updatedLaborDetail.NoOfHrsPerSession;
             laborDetail.weekNo = updatedLaborDetail.weekNo;
+            laborDetail.PaymentDayIn = laborDetail.PaymentDayIn;
 
             _context.LaborDetails.Update(laborDetail);
             _context.SaveChanges();

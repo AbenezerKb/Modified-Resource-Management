@@ -32,7 +32,7 @@ namespace ERP.Controllers
 
 
 
-        [HttpGet("{id}", Name = "GetAllocatedBudget")]
+        [HttpGet("{id:int}", Name = "GetAllocatedBudget")]
         public async Task<ActionResult<AllocatedBudgetReadDto>> GetAllocatedBudget(int id)
         {
 
@@ -65,7 +65,7 @@ namespace ERP.Controllers
 
 
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<ActionResult<AllocatedResourcesReadDto>> DeleteAllocatedResource(int id)
         {
 
