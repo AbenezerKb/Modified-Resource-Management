@@ -6,9 +6,13 @@ namespace ERP.DTOs
         [Required]
         public int projectId { get; set; }
         [Required]
-        public string projectName { get; set; }
+        public int projectName { get; set; }
         [Required]
         public int consultantId { get; set; }
+
+        [Required]
+        public string consultantName { get; set; }
+
         [Required]
         public int contractorId { get; set; }
         [Required]

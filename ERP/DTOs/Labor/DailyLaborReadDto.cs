@@ -10,6 +10,8 @@
         public DateTime date { get; set; }
         public string remarks { get; set; } = string.Empty;        
         public int projectId { get; set; }
+
+        public int apprvedBy { set; get; }
         public string status { get; set; } = string.Empty;
     }
 }

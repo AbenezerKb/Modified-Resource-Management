@@ -4,19 +4,21 @@ namespace ERP.DTOs
 {
     public class ConsultantReadDto
     {
-        public int projectId { get; set; }
-        public string projectName { get; set; }
         public int consultantId { get; set; }
-        public int contractorId { get; set; }
+        public string consultantName { get; set; }
+        public int projectId { get; set; }
+        public int contractorId { get; set; } 
         public DateTime reviewDate { get; set; }
-        public IList<ApprovedWorkListReadDto> approvedWorkList { get; set; }
-        public string changesTaken { get; set; }
-        public string reasonForChange { get; set; }
-        public IList<DeclinedWorkListReadDto> declinedWorkList { get; set; }
-        public string defectsSeen { get; set; }
-        public string nextWork { get; set; }
-        public IList<DefectsCorrectionlistReadDto> defectsCorrectionlist { get; set; }
-        public string remarks { get; set; }
+        public ICollection<ApprovedWorkList> approvedWorkList { get; set; }
+        public string changesTaken { get; set; } = string.Empty;
+        public string reasonForChange { get; set; } = string.Empty;
+
+        public ICollection<DeclinedWorkList> declinedWorkList { get; set; }
+        public string defectsSeen { get; set; } = string.Empty;
+        public string nextWork { get; set; } = string.Empty;
+        public ICollection<DefectsCorrectionlist> defectsCorrectionlist { get; set; }
+        public string remarks { get; set; } = string.Empty;
+        public string attachemnt { get; set; } = string.Empty;
     }
 
 
