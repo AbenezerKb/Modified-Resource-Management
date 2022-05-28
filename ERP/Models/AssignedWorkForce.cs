@@ -24,5 +24,6 @@ namespace ERP.Models
         [Key]
         public int assigneWorkForceNo { get; set; }
         public int EmployeeId { get; set; }
+        public string position { get; set; }
     }
 }

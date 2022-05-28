@@ -75,7 +75,7 @@ namespace ERP.Services.ProjectManagementReportService
 
             var incidents = await dbContext.Incidents.Where(i => i.proID == projectId).ToListAsync();
 
-            var consultants = await dbContext.Consultants.Where(c => c.projectId == projectId.ToString()).ToListAsync();
+            var consultants = await dbContext.Consultants.Where(c => c.projectId == projectId).ToListAsync();
             return new
             {
 

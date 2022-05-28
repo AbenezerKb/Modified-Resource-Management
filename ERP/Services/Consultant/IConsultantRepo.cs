@@ -1,5 +1,5 @@
 ﻿using ERP.Models;
-
+using ERP.DTOs;
 
 namespace ERP.Services
 {
@@ -7,10 +7,11 @@ namespace ERP.Services
     {       
             bool SaveChanges();
             IEnumerable<Consultant> GetAllConsultant();
-            Consultant GetConsultant(int id);
+        ConsultantWithProjectCreateDto GetConsultant(int id);
             void CreateConsultant(Consultant consultant);
             void DeleteConsultant(int id);
             void UpdateConsultant(int id,Consultant updatedConsultant);
         }
     }
+
 

@@ -1,6 +1,8 @@
-﻿using ERP.Models;
+﻿using AutoMapper;
+using ERP.Models;
 using ERP.Context;
 using ERP.Exceptions;
+using ERP.DTOs;
 
 namespace ERP.Services
 {
@@ -92,15 +94,16 @@ namespace ERP.Services
             return consultants;
         }
 
-
-        public Consultant GetConsultant(int id)
+        private readonly IMapper _mapper;
+        public ConsultantWithProjectCreateDto GetConsultant(int id)
         {
 
+            
             var consultants = _context.Consultants.FirstOrDefault(c => c.consultantId == id);
             var approvedWorkLists = _context.ApprovedWorkLists.ToList();
             var declinedWorkLists = _context.DeclinedWorkLists.ToList();
             var defectsCorrectionlists = _context.DefectsCorrectionlists.ToList();
-
+            var project = _context.Projects.FirstOrDefault(c => c.Id == consultants.projectId);
 
             foreach (ApprovedWorkList awl in approvedWorkLists)
             {
@@ -128,7 +131,29 @@ namespace ERP.Services
             }
 
 
-            return consultants;
+           
+            ConsultantWithProjectCreateDto consultantsWtihProject = new ConsultantWithProjectCreateDto();
+            ConsultantCreateDto consultant = _mapper.Map<ConsultantCreateDto>(consultants);
+            consultantsWtihProject.nextWork = consultant.nextWork;
+            
+            consultantsWtihProject.approvedWorkList = consultant.approvedWorkList;
+            
+              
+            
+
+
+            consultantsWtihProject.changesTaken = consultant.changesTaken;            
+            consultantsWtihProject.consultantName = consultant.consultantName;
+            consultantsWtihProject.contractorId = consultant.contractorId;
+            consultantsWtihProject.declinedWorkList = consultant.declinedWorkList;
+            consultantsWtihProject.defectsCorrectionlist = consultant.defectsCorrectionlist;
+            consultantsWtihProject.defectsSeen = consultant.defectsSeen;
+            consultantsWtihProject.reasonForChange = consultant.reasonForChange;
+            consultantsWtihProject.remarks = consultant.remarks;
+            consultantsWtihProject.reviewDate = consultant.reviewDate;
+            consultantsWtihProject.project = project;
+
+            return consultantsWtihProject;
         }
 
 

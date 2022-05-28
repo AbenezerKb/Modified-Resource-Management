@@ -18,6 +18,7 @@ namespace ERP.DTOs
         public int WokrkForceID { get; set; }
         public int assigneWorkForceNo { get; set; }
         public int EmployeeId { get; set; }
+        public string position { get; set; }
     }
 
 
