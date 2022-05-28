@@ -175,6 +175,7 @@ namespace ERP.Services.ProjectManagementReportService
             if (unknownIds.Count != 0) throw new ItemNotFoundException($"Projects(s) not found with id=[{string.Join(',', unknownIds)}]");
 
             List<object> projectsSummery = new();
+            Console.WriteLine("Projects Count: " + projectsIds.Count().ToString());
             projectsIds.ForEach(async pId =>
             {
                 var project = await dbContext.Projects.AsNoTracking().Where(p => p.Id == pId)

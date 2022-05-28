@@ -133,14 +133,15 @@ namespace ERP.Controllers
         }
         [HttpGet("report")]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<ActionResult<CustomApiResponse>> GetProjectsReport([FromHeader] ProjectReportRequestDto request, DateTime StartDate, DateTime EndDate)
+        public async Task<ActionResult<CustomApiResponse>> GetProjectsReport([FromHeader] List<int> Ids, DateTime StartDate, DateTime EndDate)
         {
             try
             {
+                Console.WriteLine("IDs from controller: " + Ids.Count());
                 return Ok(new CustomApiResponse
                 {
                     Message = "Success",
-                    Data = await projectManagementReportService.GetGeneralReportWith(StartDate, EndDate, request.ProjectIds)
+                    Data = await projectManagementReportService.GetGeneralReportWith(StartDate, EndDate, Ids)
 
                 });
             }

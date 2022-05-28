@@ -22,13 +22,13 @@ namespace ERP.Services.ProjectManagementAnalyticsService
                                                     .Include(t => t.SubTasks)
                                                     .ToListAsync();
             var tasksCompletedCount = projectTasks.Count(t => t.IsCompleted());
-            var grander = await dbContext.Granders.Where(g => g.ProjectId == projectId).FirstOrDefaultAsync();
-            if (grander == null)
-            {
-                throw new Exceptions.ItemNotFoundException($"Grander not found for projectId={projectId}");
+            // var grander = await dbContext.Granders.Where(g => g.ProjectId == projectId).FirstOrDefaultAsync();
+            // if (grander == null)
+            // {
+            //     throw new Exceptions.ItemNotFoundException($"Grander not found for projectId={projectId}");
 
-            }
-            grander = granderRepo.GetGrander(grander.GranderId);
+            // }
+            // grander = granderRepo.GetGrander(grander.GranderId);
 
             return new
             {
@@ -39,7 +39,7 @@ namespace ERP.Services.ProjectManagementAnalyticsService
                 },
                 professionals = new
                 {
-                    planned = grander.WorkForcePlans.Count,
+                    planned = 0,//grander.WorkForcePlans.Count,
                     used = dbContext.AssignedWorkForces.Where(awf => awf.projId == projectId).Count()
                 },
                 subContractors = new
@@ -50,14 +50,14 @@ namespace ERP.Services.ProjectManagementAnalyticsService
 
                 resources = new
                 {
-                    planned = grander.ResourcePlans.Count,
+                    planned = 0,//grander.ResourcePlans.Count,
                     used = dbContext.AssignedWorkForces.Count(awf => awf.projId == projectId),
                     damaged = 0
                 },
                 budget = new
                 {
                     used = projectTasks.Sum(t => t.GetTotalBudget()),
-                    planned = grander.TotalEstiamtedReqtBudget
+                    planned = 0//grander.TotalEstiamtedReqtBudget
                 }
             };
         }
