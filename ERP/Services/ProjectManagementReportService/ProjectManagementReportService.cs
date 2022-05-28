@@ -137,6 +137,7 @@ namespace ERP.Services.ProjectManagementReportService
                         assignedWorkForcesSummery.Add(new
                         {
                             Name = employee.FName,
+                            Position = employee.Position
                         }
                         );
 
