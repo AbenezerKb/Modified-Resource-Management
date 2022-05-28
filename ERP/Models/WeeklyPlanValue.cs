@@ -10,6 +10,8 @@ namespace ERP.Models
         public Employee? Employee { get; set; }
 
         public int? SubContractorId { get; set; }
+        public SubContractor SubContractor { get; set; }
+
         public int? SubTaskId { get; set; }
         public SubTask? SubTask { get; set; }
         public int WeeklyPlanId { get; set; }

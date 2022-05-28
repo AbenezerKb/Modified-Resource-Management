@@ -10,6 +10,9 @@ namespace ERP.Models
 
 
         public int? SubContractorId { get; set; }
+        public SubContractor SubContractor { get; set; }
+
+
         public float PerformancePoint { get; set; }
         public string Remark { get; set; } = string.Empty;
         public int ProjectId { get; set; }

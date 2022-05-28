@@ -72,6 +72,10 @@ namespace ERP.Services.ProjectManagementReportService
                                                  Progress = t.Progress,
                                                  Status = t.IsCompleted() ? "Completed" : "Pending"
                                              }).ToList();
+
+            var incidents = await dbContext.Incidents.Where(i => i.proID == projectId).ToListAsync();
+
+            var consultants = await dbContext.Consultants.Where(c => c.projectId == projectId.ToString()).ToListAsync();
             return new
             {
 
@@ -98,18 +102,20 @@ namespace ERP.Services.ProjectManagementReportService
                     //Works Completed By the subcontractor
                     CompletedTasks = new { }
                 },
-                Consultants = new
+                Consultants = consultants.Select(c => new
                 {
-                    //Which consultants participated on the project
-                },
+
+                }),
                 Workforces = new
                 {
                     // list those who worked on the project
                 },
-                Incidents = new
+                Incidents = incidents.Select(i => new
                 {
-                    // list all incidents occured on the project between the specified Dates
-                },
+                    Id = i.incidentNo,
+                    IncidentName = i.incidentName,
+                    Description = i.Description
+                }),
                 ReportDate = DateTime.Now
             };
 
