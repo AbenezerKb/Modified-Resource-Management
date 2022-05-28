@@ -75,7 +75,7 @@ namespace ERP.Services.ProjectManagementReportService
 
             var incidents = await dbContext.Incidents.Where(i => i.proID == projectId).ToListAsync();
 
-            var consultants = await dbContext.Consultants.Where(c => c.projectId == projectId.ToString()).ToListAsync();
+            var consultants = await dbContext.Consultants.Where(c => c.projectId == projectId).ToListAsync();
             return new
             {
 
@@ -106,12 +106,9 @@ namespace ERP.Services.ProjectManagementReportService
 
                 new
                 {
-                    //which consultants are involved in the projecct
+                    Name = c.consultantName,
                 }),
-                Workforces = new
-                {
-                    // list those who worked on the project
-                },
+                Workforces = await GetAssgnedWorkForces(projectId),
                 Incidents = incidents.Select(i => new
                 {
                     Id = i.incidentNo,
@@ -123,6 +120,35 @@ namespace ERP.Services.ProjectManagementReportService
 
         }
 
+        private async Task<List<object>> GetAssgnedWorkForces(int projectId)
+        {
+            List<object> assignedWorkForcesSummery = new();
+
+            var assignedWorkForces = await dbContext.AssignedWorkForces.Where(wf => wf.projId == projectId)
+            .ToListAsync();
+            assignedWorkForces.ForEach(async awf =>
+            {
+                var workForces = await dbContext.WorkForces.Where(wf => awf.assigneWorkForceNo == wf.assigneWorkForceNo).ToListAsync();
+                workForces.ForEach(async wf =>
+                {
+                    var employee = await dbContext.Employees.FirstOrDefaultAsync(e => e.EmployeeId == wf.EmployeeId);
+                    if (employee != null)
+                    {
+                        assignedWorkForcesSummery.Add(new
+                        {
+                            Name = employee.FName,
+                        }
+                        );
+
+                    }
+
+
+                });
+
+            });
+            return assignedWorkForcesSummery;
+
+        }
         private async Task<List<object>> GetSubContractorsTasks(int projectId)
         {
             var subcontractorTasks = await dbContext.WeeklyPlanValues.Where(pv => pv.SubContractorId != null)
@@ -139,6 +165,8 @@ namespace ERP.Services.ProjectManagementReportService
 
             return subcontractorTasks;
         }
+
+
         public async Task<object> GetGeneralReportWith(DateTime StartDate, DateTime EndDate, List<int> projectsIds)
         {
             var unknownIds = await Utils.GetDifference(projectsIds, await dbContext.Projects.Select(p => p.Id).ToListAsync());
