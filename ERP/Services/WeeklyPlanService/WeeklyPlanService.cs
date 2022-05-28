@@ -51,7 +51,14 @@ namespace ERP.Services.WeeklyPlanService
             await dbContext.Employees.Select(e => e.EmployeeId).ToListAsync()
             );
             if (unknownEmployeeIds.Count != 0) throw new ItemNotFoundException($"Employee(s) not found with id=[{string.Join(',', unknownEmployeeIds)}]");
-            //TODO: Check for invalid subcontractor Id as well
+            var unknownSubcontractorIds = await Utils.GetDifference(
+                weeklyPlanDto.PlanValues
+            .Where(pv => pv.SubContractorId != null)
+            .Select(pv => pv.SubContractorId!.Value).ToList(),
+           await dbContext.SubContractors.Select(s => s.SubId).ToListAsync()
+            );
+
+            if (unknownSubcontractorIds.Count != 0) throw new ItemNotFoundException($"Subcontractor(s) not found with id=[{string.Join(',', unknownSubcontractorIds)}]");
 
         }
         public async Task<WeeklyPlan> Add(WeeklyPlanDto weeklyPlanDto)

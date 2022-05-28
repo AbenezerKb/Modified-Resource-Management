@@ -18,6 +18,7 @@ namespace ERP.Services.PerformanceSheetService
         {
             List<PerformanceSheet> sheets = await dbContext.PerformanceSheets
                                                           .Where(ps => ps.ProjectId == projectId && ps.EmployeeId != null)
+                                                          .Include(ps => ps.Employee)
                                                           .ToListAsync();
             if (!sheets.Any()) throw new ItemNotFoundException($"Employee performance sheets not found with ProjectId={projectId}");
 
@@ -27,6 +28,7 @@ namespace ERP.Services.PerformanceSheetService
         {
             List<PerformanceSheet> sheets = await dbContext.PerformanceSheets
                                                           .Where(ps => ps.ProjectId == projectId && ps.EmployeeId == employeeId)
+                                                          .Include(ps => ps.Employee)
                                                           .ToListAsync();
             if (!sheets.Any()) throw new ItemNotFoundException($"Employee performance sheets not found with EmployeeId={employeeId} and ProjectId={projectId}");
 
@@ -37,6 +39,7 @@ namespace ERP.Services.PerformanceSheetService
         {
             List<PerformanceSheet> sheets = await dbContext.PerformanceSheets
                                                          .Where(ps => ps.ProjectId == projectId && ps.SubContractorId == subContractorId)
+                                                         .Include(ps => ps.SubContractor)
                                                          .ToListAsync();
             if (!sheets.Any()) throw new ItemNotFoundException($"Subcontractor performance sheets not found with SubContractorId={subContractorId} and ProjectId={projectId}");
 
@@ -56,6 +59,7 @@ namespace ERP.Services.PerformanceSheetService
         {
             List<PerformanceSheet> sheets = await dbContext.PerformanceSheets
                                                           .Where(ps => ps.ProjectId == projectId && ps.SubContractorId != null)
+                                                          .Include(ps => ps.SubContractor)
                                                           .ToListAsync();
             if (!sheets.Any()) throw new ItemNotFoundException($"Subcontractor performance sheets not found with ProjectId={projectId}");
 

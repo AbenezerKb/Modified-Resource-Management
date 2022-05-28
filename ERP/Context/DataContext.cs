@@ -100,7 +100,7 @@ namespace ERP.Context
         public DbSet<SubContractor> SubContractors { get; set; }
         public DbSet<BID> BIDs { get; set; }
 
-        public DbSet<Incident> Incidents { get; set; }    
+        public DbSet<Incident> Incidents { get; set; }
         public DbSet<AssignedWorkForce> AssignedWorkForces { get; set; }
         public DbSet<WorkForce> WorkForces { get; set; }
         public DbSet<AllocatedResources> AllocatedResources { get; set; }
@@ -434,6 +434,11 @@ namespace ERP.Context
             .WithMany()
             .HasForeignKey(wpv => wpv.EmployeeId);
 
+            modelBuilder.Entity<WeeklyPlanValue>()
+                        .HasOne(wpv => wpv.SubContractor)
+                        .WithMany()
+                        .HasForeignKey(wpv => wpv.SubContractorId);
+
             modelBuilder.Entity<WeeklyPlan>()
             .HasOne(wp => wp.WeeklyResult)
             .WithOne(wr => wr.WeeklyPlan)
@@ -469,6 +474,10 @@ namespace ERP.Context
            .HasOne(ps => ps.Employee)
            .WithMany()
            .HasForeignKey(ps => ps.EmployeeId);
+            modelBuilder.Entity<PerformanceSheet>()
+           .HasOne(ps => ps.SubContractor)
+           .WithMany()
+           .HasForeignKey(ps => ps.SubContractorId);
 
             #endregion
 
