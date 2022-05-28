@@ -6,9 +6,11 @@ namespace ERP.Services.ProjectManagementAnalyticsService
     public class ProjectManagementAnalyticsService : IProjectManagementAnalyticsService
     {
         DataContext dbContext;
-        public ProjectManagementAnalyticsService(DataContext dbContext)
+        IGranderRepo granderRepo;
+        public ProjectManagementAnalyticsService(DataContext dbContext, IGranderRepo repo)
         {
             this.dbContext = dbContext;
+            this.granderRepo = repo;
         }
         public async Task<object> GetAnalytics(int projectId)
         {
@@ -20,6 +22,14 @@ namespace ERP.Services.ProjectManagementAnalyticsService
                                                     .Include(t => t.SubTasks)
                                                     .ToListAsync();
             var tasksCompletedCount = projectTasks.Count(t => t.IsCompleted());
+            var grander = await dbContext.Granders.Where(g => g.ProjectId == projectId).FirstOrDefaultAsync();
+            if (grander == null)
+            {
+                throw new Exceptions.ItemNotFoundException($"Grander not found for projectId={projectId}");
+
+            }
+            grander = granderRepo.GetGrander(grander.GranderId);
+
             return new
             {
                 tasks = new
@@ -29,30 +39,25 @@ namespace ERP.Services.ProjectManagementAnalyticsService
                 },
                 professionals = new
                 {
-                    planned = 0,
-                    used = 0
+                    planned = grander.WorkForcePlans.Count,
+                    used = dbContext.AssignedWorkForces.Where(awf => awf.projId == projectId).Count()
                 },
                 subContractors = new
                 {
-                    completed = 0,
-                    pending = 0
+                    completed = projectTasks.Where(t => t.IsCompleted() && t.IsSubContractorWork).Count(),
+                    pending = projectTasks.Where(t => !t.IsCompleted() && t.IsSubContractorWork).Count()
                 },
-                equipments = new
+
+                resources = new
                 {
-                    planned = 0,
-                    used = 0,
-                    damaged = 0
-                },
-                materials = new
-                {
-                    planned = 0,
-                    used = 0,
+                    planned = grander.ResourcePlans.Count,
+                    used = dbContext.AssignedWorkForces.Count(awf => awf.projId == projectId),
                     damaged = 0
                 },
                 budget = new
                 {
-                    used = 0,
-                    planned = 0
+                    used = projectTasks.Sum(t => t.GetTotalBudget()),
+                    planned = grander.TotalEstiamtedReqtBudget
                 }
             };
         }

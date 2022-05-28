@@ -133,14 +133,14 @@ namespace ERP.Controllers
         }
         [HttpGet("report")]
         [Authorize(Roles = "Admin,Manager")]
-        public async Task<ActionResult<CustomApiResponse>> GetProjectsReport([FromQuery] ProjectReportRequestDto requestDto, DateTime StartDate, DateTime EndDate)
+        public async Task<ActionResult<CustomApiResponse>> GetProjectsReport([FromHeader] ProjectReportRequestDto request, DateTime StartDate, DateTime EndDate)
         {
             try
             {
                 return Ok(new CustomApiResponse
                 {
                     Message = "Success",
-                    Data = await projectManagementReportService.GetGeneralReportWith(StartDate, EndDate, requestDto.ProjectIds)
+                    Data = await projectManagementReportService.GetGeneralReportWith(StartDate, EndDate, request.ProjectIds)
 
                 });
             }

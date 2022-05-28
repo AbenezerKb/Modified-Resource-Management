@@ -172,7 +172,7 @@ namespace ERP.Services.ProjectManagementReportService
         {
             var unknownIds = await Utils.GetDifference(projectsIds, await dbContext.Projects.Select(p => p.Id).ToListAsync());
 
-            if (unknownIds.Count != 0) throw new ItemNotFoundException($"Employee(s) not found with id=[{string.Join(',', unknownIds)}]");
+            if (unknownIds.Count != 0) throw new ItemNotFoundException($"Projects(s) not found with id=[{string.Join(',', unknownIds)}]");
 
             List<object> projectsSummery = new();
             projectsIds.ForEach(async pId =>
