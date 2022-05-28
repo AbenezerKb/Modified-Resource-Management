@@ -6,13 +6,13 @@ namespace ERP.DTOs
     public class GranderCreateDto
     {
         [Required]
-        public string ProjectName { get; set; }
+        public int ProjectId { get; set; }
         [Required]
-        public string ProjectManager { get; set; }
+        public int ProjectManager { get; set; }
         [Required]
         public string Duration { get; set; }
         [Required]
-        public string RequestNo { get; set; }
+        public int RequestNo { get; set; }
         [Required]
         public DateTime Date { get; set; }
         [Required]
@@ -22,7 +22,7 @@ namespace ERP.DTOs
         [Required]
         public IList<SubcontractingPlanCreateDto> SubcontractingPlans { get; set; }
         [Required]
-        public string ApprovedBy { get; set; }
+        public int ApprovedBy { get; set; }
         [Required]
         public int TotalEstiamtedReqtBudget { get; set; }
 

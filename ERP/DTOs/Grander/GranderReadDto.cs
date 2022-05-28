@@ -6,15 +6,15 @@ namespace ERP.DTOs
     public class GranderReadDto
     {
         public int GranderId { get; set; }
-        public string ProjectName { get; set; }
-        public string ProjectManager { get; set; }
+        public int ProjectId { get; set; }
+        public int ProjectManager { get; set; }
         public string Duration { get; set; }
-        public string RequestNo { get; set; }
+        public int RequestNo { get; set; }
         public DateTime Date { get; set; }
         public IList<WorkForcePlanReadDto> WorkForcePlans { get; set; }
         public IList<ResourcePlanReadDto> ResourcePlans { get; set; }
         public IList<SubcontractingPlanReadDto> SubcontractingPlans { get; set; }
-        public string ApprovedBy { get; set; }
+        public int ApprovedBy { get; set; }
         public int TotalEstiamtedReqtBudget { get; set; }
 
     }

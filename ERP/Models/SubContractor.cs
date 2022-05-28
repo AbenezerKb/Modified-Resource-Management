@@ -17,7 +17,7 @@ namespace ERP.Models
         public string SubAddress { get; set; } = string.Empty;
 
         [Required]
-        public string SubWorkId { get; set; } = string.Empty;
+        public int SubWorkId { get; set; }
 
         [Required]
         public string Status { get; set; } = string.Empty;

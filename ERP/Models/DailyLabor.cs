@@ -14,6 +14,7 @@ namespace ERP.Models
         public int projectId { get; set; }
         public double wagePerhour { get; set; }
         public DateTime date { get; set; }
+        public int apprvedBy { set; get; }
         public string remarks { get; set; }
         public string status { get; set; }
 
@@ -31,7 +32,7 @@ namespace ERP.Models
         public string dateType { get; set; } = string.Empty;
         public bool morningSession { get; set; } 
         public bool afternoonSession { get; set; } 
-        public bool eveningSession { get; set; } 
+        public bool eveningSession { get; set; }               
         public int NoOfHrsPerSession { get; set; } 
         public int PaymentDayIn { get; set; } = 14;       
 

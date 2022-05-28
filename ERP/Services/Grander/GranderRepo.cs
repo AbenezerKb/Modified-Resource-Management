@@ -214,9 +214,8 @@ namespace ERP.Services
 
             grander.ApprovedBy = updatedGrander.ApprovedBy;
             grander.Date = updatedGrander.Date;
-            grander.Duration = updatedGrander.Duration;
-            grander.ProjectManager = updatedGrander.ProjectManager;
-            grander.ProjectName = updatedGrander.ProjectName;
+            grander.Duration = updatedGrander.Duration;            
+            grander.ProjectId = updatedGrander.ProjectId;
             grander.RequestNo = updatedGrander.RequestNo;                 
             grander.TotalEstiamtedReqtBudget = updatedGrander.TotalEstiamtedReqtBudget;
            

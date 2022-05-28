@@ -22,13 +22,18 @@ namespace ERP.Services
             }
          
             _context.DailyLabors.Add(dailyLabor);
+
+            var project = _context.Projects.FirstOrDefault(c => c.Id == dailyLabor.projectId);
+            var dailyProject = _context.LaborDetails.FirstOrDefault(c => c.id == dailyLabor.LaborerID);            
+
             _context.Notifications.Add(new Notification
             {
                 Title = "New Labor is registered.",
                 Content = $"New {dailyLabor.jobTitle} is registered. ",
                 Type = NOTIFICATIONTYPE.LaborRegistered,
-                SiteId = dailyLabor.projectId,
-                EmployeeId = dailyLabor.LaborerID,                
+                SiteId = project.Site.SiteId,
+                EmployeeId = dailyLabor.apprvedBy,    
+                ActionId = dailyProject.id,
                 Status = 0
 
             });
