@@ -25,6 +25,7 @@ namespace ERP.DTOs
         public int assigneWorkNo { get; set; }
         [Required]
         public int EmployeeId { get; set; }
+        public string position { get; set; }
     }
 
 

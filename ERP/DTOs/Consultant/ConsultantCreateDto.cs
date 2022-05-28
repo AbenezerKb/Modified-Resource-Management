@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ERP.Models;
+using System.ComponentModel.DataAnnotations;
 namespace ERP.DTOs
 {
     public class ConsultantCreateDto
@@ -55,6 +56,13 @@ namespace ERP.DTOs
         public string DefectsCorrections { get; set; } 
 
     }
+
+
+    public class ConsultantWithProjectCreateDto: ConsultantCreateDto
+    {
+        public ERP.Models.Project project { get; set; }
+    }
+
 
 
 }
