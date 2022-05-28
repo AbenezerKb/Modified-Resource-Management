@@ -40,6 +40,27 @@ namespace ERP.Services
             }
 */
             _context.WeeklyRequirements.Add(weeklyRequirement);
+
+
+
+
+            var project = _context.Projects.FirstOrDefault(c => c.Id == weeklyRequirement.Id);            
+
+            _context.Notifications.Add(new Notification
+            {
+                Title = "Weekly requirement requested.",
+                Content = $"Weekly requirement request has been sent from {project.Name} project.",
+                Type = NOTIFICATIONTYPE.WorkForceAssigned,
+                SiteId = project.Site.SiteId,
+                EmployeeId = project.CoordinatorId,
+                ActionId = weeklyRequirement.Id,
+                Status = 0
+
+            });
+
+
+
+
         }
 
 

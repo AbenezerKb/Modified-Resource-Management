@@ -29,25 +29,66 @@ namespace ERP.Services
             foreach (ApprovedWorkList awl in consultant.approvedWorkList)
             {                
             
-                awl.ConsultantId = consultant.consultantId;
+                awl.ConsultantId = 0;
                 _context.ApprovedWorkLists.Add(awl);
             }
 
             foreach (DeclinedWorkList dwl in consultant.declinedWorkList)
             {
              
-                dwl.ConsultantId = consultant.consultantId;
+                dwl.ConsultantId = 0;
                 _context.DeclinedWorkLists.Add(dwl);
             }
 
             foreach (DefectsCorrectionlist dcl in consultant.defectsCorrectionlist)
             {
                
-                dcl.ConsultantId = consultant.consultantId;
+                dcl.ConsultantId = 0;
                 _context.DefectsCorrectionlists.Add(dcl);
             }
 
             //consultant. = DateTime.Now.Date;//DateTime.Now.ToString("yyyy-MM-dd");
+
+
+            for (int i = 0; i < consultant.approvedWorkList.Count; i++)
+            {
+                if (consultant.approvedWorkList[i].ConsultantId == 0)
+                {                 
+                    _context.ApprovedWorkLists.First(q => q.ConsultantId == 0).ConsultantId = consultant.approvedWorkList[i].ConsultantId;
+                    _context.SaveChanges();
+                }
+
+
+            }
+
+
+
+
+
+            for (int i = 0; i < consultant.declinedWorkList.Count; i++)
+            {
+                if (consultant.declinedWorkList[i].ConsultantId == 0)
+                {
+                    _context.DeclinedWorkLists.First(q => q.ConsultantId == 0).ConsultantId = consultant.declinedWorkList[i].ConsultantId;
+                    _context.SaveChanges();
+                }
+
+
+            }
+
+
+
+            for (int i = 0; i < consultant.defectsCorrectionlist.Count; i++)
+            {
+                if (consultant.defectsCorrectionlist[i].ConsultantId == 0)
+                {
+                    _context.DefectsCorrectionlists.First(q => q.ConsultantId == 0).ConsultantId = consultant.defectsCorrectionlist[i].ConsultantId;
+                    _context.SaveChanges();
+                }
+
+
+            }
+
 
             _context.Consultants.Add(consultant);
         }

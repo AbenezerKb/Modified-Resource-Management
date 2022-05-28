@@ -19,9 +19,21 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-         
+            var project = _context.Projects.FirstOrDefault(c => c.Id == incident.proID);
+            //var site = _context.LaborDetails.FirstOrDefault(c => c.id == dailyLabor.LaborerID);
 
             _context.Incidents.Add(incident);
+            _context.Notifications.Add(new Notification
+            {
+                Title = "New incident has occurd.",
+                Content = $"New incident,{incident.incidentName}, has occurd. ",
+                Type = NOTIFICATIONTYPE.IncidentOccured,
+                SiteId = project.Site.SiteId,
+                EmployeeId = incident.EmployeeId,
+                ActionId = incident.incidentNo,
+                Status = 0
+
+            });
 
         }
 

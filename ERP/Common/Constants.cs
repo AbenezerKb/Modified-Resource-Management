@@ -194,6 +194,8 @@
         public const string WeeklyTaskPlanSent = "weeklyTaskPlanSentNotification";
         public const string MainTaskCompleted = "mainTaskCompletionNotification";
         public const string LaborRegistered = "laborRegisteredNotification";
+        public const string IncidentOccured = "incidentOccuredNotification";
+        public const string WorkForceAssigned = "workForceNotification";
 
     }
 

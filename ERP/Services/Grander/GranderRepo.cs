@@ -28,7 +28,7 @@ namespace ERP.Services
             foreach (SubcontractingPlan scp in grander.SubcontractingPlans)
             {
           
-                scp.GranderFK = grander.GranderId;
+                scp.GranderFK = 0;
                 _context.SubcontractingPlans.Add(scp);
             }
 
@@ -36,7 +36,7 @@ namespace ERP.Services
             foreach (ResourcePlan rp in grander.ResourcePlans)
             {
           
-                rp.GranderFK = grander.GranderId;
+                rp.GranderFK = 0;
                 _context.ResourcePlans.Add(rp);
             }
 
@@ -44,11 +44,53 @@ namespace ERP.Services
             foreach (WorkForcePlan wfp in grander.WorkForcePlans)
             {
           
-                wfp.GranderFK = grander.GranderId;
+                wfp.GranderFK = 0;
                 _context.WorkForcePlans.Add(wfp);
             }         
 
             _context.Granders.Add(grander);
+            _context.SaveChanges();
+            //  Grander granders = _context.Granders.ToList();
+
+
+            for (int i = 0; i < grander.ResourcePlans.Count; i++)
+            {
+                if (grander.ResourcePlans[i].GranderFK == 0)
+                {
+                    grander.ResourcePlans[i].GranderFK = grander.GranderId;
+                    _context.ResourcePlans.First(q => q.GranderFK == 0).GranderFK = grander.ResourcePlans[i].GranderFK;
+                    _context.SaveChanges();
+                }
+
+                    
+            }
+
+
+            for (int i = 0; i < grander.SubcontractingPlans.Count; i++)
+            {
+                if (grander.SubcontractingPlans[i].GranderFK == 0)
+                {
+                    grander.SubcontractingPlans[i].GranderFK = grander.GranderId;
+                    _context.SubcontractingPlans.First(q => q.GranderFK == 0).GranderFK = grander.SubcontractingPlans[i].GranderFK;
+                    _context.SaveChanges();
+                }
+
+
+            }
+
+            for (int i = 0; i < grander.WorkForcePlans.Count; i++)
+            {
+                if (grander.WorkForcePlans[i].GranderFK == 0)
+                {
+                    grander.WorkForcePlans[i].GranderFK = grander.GranderId;
+                    _context.WorkForcePlans.First(q => q.GranderFK==0).GranderFK=grander.WorkForcePlans[i].GranderFK;
+                    _context.SaveChanges();
+                }
+
+
+            }
+
+
 
         }
 
@@ -94,10 +136,6 @@ namespace ERP.Services
 
         public IEnumerable<Grander> GetAllGranders()
         {
-
-
-
-
 
             var granders = _context.Granders.ToList();
             var subcontractingPlans = _context.SubcontractingPlans.ToList();

@@ -28,14 +28,37 @@ namespace ERP.Services
             }
             //assignedWorkForce.assigneWorkForceNo
             _context.AssignedWorkForces.Add(assignedWorkForce);
-            foreach (WorkForce w in assignedWorkForce.ProfessionWithWork)
+            AssignedWorkForce assignedList = _context.AssignedWorkForces.Last();
+            for (int i = 0; i < assignedList.ProfessionWithWork.Count; i++)
             {
-               
+                if (assignedWorkForce.ProfessionWithWork[i].assigneWorkForceNo == 0)
+                {
+                    assignedWorkForce.ProfessionWithWork[i].assigneWorkForceNo = assignedWorkForce.assigneWorkForceNo;
+                    _context.WorkForces.First(q => q.assigneWorkForceNo == 0).assigneWorkForceNo = assignedWorkForce.ProfessionWithWork[i].assigneWorkForceNo;
+                    _context.SaveChanges();
+                }
 
-                w.assigneWorkForceNo = assignedWorkForce.assigneWorkForceNo;
-                _context.WorkForces.Update(w);
+                   
             }
 
+
+            var project = _context.Projects.FirstOrDefault(c => c.Id == assignedList.projId);
+            
+
+            _context.Notifications.Add(new Notification
+            {
+                Title = "Wokrforce assigned to project.",
+                Content = $"Wokrforce has been assigned to project.",
+                Type = NOTIFICATIONTYPE.WorkForceAssigned,
+                SiteId = project.Site.SiteId,
+                EmployeeId = project.CoordinatorId,
+                ActionId = assignedWorkForce.assigneWorkForceNo,
+                Status = 0
+
+            });
+
+
+    
         }
 
         public IEnumerable<AssignedWorkForce> GetAllAssignedWorkForces()
@@ -53,6 +76,8 @@ namespace ERP.Services
                 }
 
             }
+
+
 
             return assignedList;            
         }

@@ -20,7 +20,7 @@ namespace ERP.Controllers
 
         }
 
-        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer")]
+        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer,OfficeEngineer")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AssignedWorkForceReadDto>>> GetAllAssignedWorkForces()
         {
@@ -30,7 +30,7 @@ namespace ERP.Controllers
         }
 
 
-        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer")]
+        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer,OfficeEngineer")]
         [HttpGet("{id:int}", Name = "GetAssignedWorkForce")]
         public async Task<ActionResult<AssignedWorkForceReadDto>> GetAssignedWorkForce(int id)
         {
@@ -49,7 +49,7 @@ namespace ERP.Controllers
         }
 
 
-        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer")]
+        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer,OfficeEngineer")]
         [HttpPost]
         public async Task<ActionResult<AssignedWorkForceReadDto>> AddAssignedWorkForce(AssignedWorkForceCreateDto assignedWorkForce)
         {
@@ -64,7 +64,7 @@ namespace ERP.Controllers
 
 
 
-        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer")]
+        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer,OfficeEngineer")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult<AssignedWorkForceReadDto>> DeleteBID(int id)
         {
@@ -81,7 +81,7 @@ namespace ERP.Controllers
             }
         }
 
-        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer")]
+        [Authorize(Roles = "ProjectManager,Admin,SiteEngineer,OfficeEngineer")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult> UpdateAssignedWorkForce(int id, [FromBody] AssignedWorkForceCreateDto assignedWorkForce)
         {
