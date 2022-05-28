@@ -32,11 +32,6 @@ namespace ERP.Services.ProjectManagementAnalyticsService
                     planned = 0,
                     used = 0
                 },
-                labors = new
-                {
-                    planned = 0,
-                    used = 0
-                },
                 subContractors = new
                 {
                     completed = 0,
@@ -53,6 +48,11 @@ namespace ERP.Services.ProjectManagementAnalyticsService
                     planned = 0,
                     used = 0,
                     damaged = 0
+                },
+                budget = new
+                {
+                    used = 0,
+                    planned = 0
                 }
             };
         }

@@ -100,11 +100,13 @@ namespace ERP.Services.ProjectManagementReportService
                 SubContractors = new
                 {
                     //Works Completed By the subcontractor
-                    CompletedTasks = new { }
+                    Tasks = await GetSubContractorsTasks(projectId)
                 },
-                Consultants = consultants.Select(c => new
-                {
+                Consultants = consultants.Select(c =>
 
+                new
+                {
+                    //which consultants are involved in the projecct
                 }),
                 Workforces = new
                 {
@@ -121,6 +123,22 @@ namespace ERP.Services.ProjectManagementReportService
 
         }
 
+        private async Task<List<object>> GetSubContractorsTasks(int projectId)
+        {
+            var subcontractorTasks = await dbContext.WeeklyPlanValues.Where(pv => pv.SubContractorId != null)
+                  .Include(pv => pv.WeeklyPlan)
+                  .Where(pv => pv.WeeklyPlan!.ProjectId == projectId)
+                  .Include(pb => pb.SubContractor)
+                  .Include(pv => pv.SubTask)
+                  .Select(pv => new
+                  {
+                      SubContractorName = pv.SubContractor.SubName,
+                      TaskName = pv.SubTask!.Name,
+                      Progress = pv.SubTask.Progress,
+                  }).ToListAsync<object>();
+
+            return subcontractorTasks;
+        }
         public async Task<object> GetGeneralReportWith(DateTime StartDate, DateTime EndDate, List<int> projectsIds)
         {
             var unknownIds = await Utils.GetDifference(projectsIds, await dbContext.Projects.Select(p => p.Id).ToListAsync());
