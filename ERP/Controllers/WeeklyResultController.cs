@@ -21,6 +21,14 @@ namespace ERP.Controllers
         {
             try
             {
+
+                if (weeklyResultDto.Results.Any(r => r.Value < 0 || r.Value > 100))
+                {
+                    return BadRequest(new CustomApiResponse
+                    {
+                        Message = "Invalid result value, value should be between 0 and 100"
+                    });
+                }
                 return Ok(new CustomApiResponse
                 {
                     Message = "Success",

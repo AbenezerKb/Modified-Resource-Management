@@ -34,6 +34,13 @@ namespace ERP.Controllers
                         }
                     );
                 }
+                if (weeklyPlanDto.WeekStartDate < DateTime.Now)
+                {
+                    return BadRequest(new CustomApiResponse
+                    {
+                        Message = "Invalid Start Date, Weekly plan can only be be done ahead of time"
+                    });
+                }
 
                 return Ok(new CustomApiResponse
                 {
@@ -242,6 +249,16 @@ namespace ERP.Controllers
                 {
                     Message = infe.Message
                 });
+            }
+            catch (InvalidOperationException ioe)
+            {
+
+                return BadRequest(
+                    new CustomApiResponse
+                    {
+                        Message = ioe.Message
+                    }
+                );
             }
 
         }

@@ -9,6 +9,7 @@ namespace ERP.DTOs.WeeklyPlan
 
         public int? PerformedBy { get; set; }
         public int? SubContractorId { get; set; }
+
     }
 
 }

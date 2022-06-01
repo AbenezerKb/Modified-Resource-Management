@@ -94,7 +94,7 @@ namespace ERP.Context
         public DbSet<PerformanceSheet> PerformanceSheets { get; set; }
         public DbSet<WeeklyPlanValue> WeeklyPlanValues { get; set; }
         public DbSet<Setting> Settings { get; set; }
-
+        #endregion
 
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<SubContractor> SubContractors { get; set; }
@@ -129,7 +129,7 @@ namespace ERP.Context
         public DbSet<SubcontractingPlan> SubcontractingPlans { get; set; }
 
 
-        #endregion
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

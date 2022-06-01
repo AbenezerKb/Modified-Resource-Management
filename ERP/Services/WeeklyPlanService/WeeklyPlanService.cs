@@ -113,7 +113,12 @@ namespace ERP.Services.WeeklyPlanService
             });
             await dbContext.SaveChangesAsync();
 
-            return newPlan;
+            return await dbContext.WeeklyPlans.Where(wp => wp.Id == newPlan.Id)
+            .Include(wp => wp.PlanValues)
+            .ThenInclude(pv => pv.Employee)
+            .Include(wp => wp.PlanValues)
+            .ThenInclude(pv => pv.SubTask)
+            .FirstAsync();
 
         }
 
@@ -213,7 +218,8 @@ namespace ERP.Services.WeeklyPlanService
 
 
             if (planValue == null) throw new ItemNotFoundException($"WeeklyPlanValue not found by subTaskId={subTaskId}");
-
+            if (DateTime.Now.Subtract(weeklyPlan.WeekStartDate).Days > 2)
+                throw new InvalidOperationException(message: "You cannot delete a planned task after 2 days of the weekly plan start date");
             weeklyPlan.PlanValues.Remove(planValue);
             await dbContext.SaveChangesAsync();
             return planValue;

@@ -73,7 +73,7 @@ namespace ERP.Services.WeeklyResultService
             if (mainTask!.IsCompleted())
             {
 
-                dbContext.Notifications.Add(new Notification
+                await dbContext.Notifications.AddAsync(new Notification
                 {
                     Title = "Main Activity Completed",
                     Content = $"{mainTask.Name} is completed from project '{mainTask.Project!.Name}'",

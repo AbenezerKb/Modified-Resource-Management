@@ -198,6 +198,16 @@ namespace ERP.Controllers
         {
             try
             {
+                if (subTaskDto.Priority <= 0 || subTaskDto.Priority > 5)
+                {
+                    return BadRequest(
+                        new CustomApiResponse
+                        {
+                            Message = $"Invalid sub-task priority, it has to be between 1 and {TaskConstant.MAXPRIORITYVALUE}"
+                        }
+                    );
+                }
+
                 subTaskDto.TaskId = taskId;
                 return Ok(new CustomApiResponse
                 {
@@ -270,6 +280,7 @@ namespace ERP.Controllers
                 });
             }
         }
+
 
         #endregion
     }
