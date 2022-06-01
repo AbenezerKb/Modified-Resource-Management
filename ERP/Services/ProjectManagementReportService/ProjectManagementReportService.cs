@@ -108,7 +108,7 @@ namespace ERP.Services.ProjectManagementReportService
                 {
                     Name = c.consultantName,
                 }),
-                Workforces = await GetAssgnedWorkForces(projectId),
+                Workforces = new { },
                 Incidents = incidents.Select(i => new
                 {
                     Id = i.incidentNo,
@@ -124,29 +124,6 @@ namespace ERP.Services.ProjectManagementReportService
         {
             List<object> assignedWorkForcesSummery = new();
 
-            var assignedWorkForces = await dbContext.AssignedWorkForces.Where(wf => wf.projId == projectId)
-            .ToListAsync();
-            assignedWorkForces.ForEach(async awf =>
-            {
-                var workForces = await dbContext.WorkForces.Where(wf => awf.assigneWorkForceNo == wf.assigneWorkForceNo).ToListAsync();
-                workForces.ForEach(async wf =>
-                {
-                    var employee = await dbContext.Employees.FirstOrDefaultAsync(e => e.EmployeeId == wf.EmployeeId);
-                    if (employee != null)
-                    {
-                        assignedWorkForcesSummery.Add(new
-                        {
-                            Name = employee.FName,
-                            Position = employee.Position
-                        }
-                        );
-
-                    }
-
-
-                });
-
-            });
             return assignedWorkForcesSummery;
 
         }
@@ -189,8 +166,8 @@ namespace ERP.Services.ProjectManagementReportService
                     Budget = project!.GetTotalBudget(),
                     Resource = new
                     {
-                        Material = 0,
-                        Equipment = 0
+                        Material = 85,
+                        Equipment = 10
                     }
 
                 });
