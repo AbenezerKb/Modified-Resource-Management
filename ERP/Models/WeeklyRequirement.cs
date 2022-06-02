@@ -10,9 +10,12 @@ namespace ERP.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public int projId { get; set; } 
-        public int projManager { get; set; }
-        public int projCoordinator { get; set; }
+        public int projectId { get; set; }
+        public Project project { get; set; }
+        public int projectManagerId { get; set; }
+        public Employee projectManager { get; set; }
+        public int projectCoordinatorId{ get; set; }
+        public Employee projectCoordinator { get; set; }
         public DateTime date { get; set; }
         
         public IList<WeeklyMaterial> material { get; set; }
@@ -20,8 +23,7 @@ namespace ERP.Models
         public IList<WeeklyEquipment> equipment { get; set; }
         
         public IList<WeeklyLabor> labor { get; set; }
-
-        public string weekNo  { get; set; } = string.Empty;
+        
         public string specialRequest { get; set; } = string.Empty;
         public string status { get; set; } = string.Empty;
         public string remark { get; set; } = string.Empty;

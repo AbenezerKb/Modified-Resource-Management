@@ -8,14 +8,16 @@ namespace ERP.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int GranderId { get; set; }
-            public int ProjectId { get; set; }      
+        public int ProjectId { get; set; }
+        public Project project { get; set; }
         public string Duration { get; set; } = string.Empty;
         public int RequestNo { get; set; } 
         public DateTime Date { get; set; }
-            public IList<WorkForcePlan> WorkForcePlans { get; set; }
-            public IList<ResourcePlan> ResourcePlans { get; set; }
-            public IList<SubcontractingPlan> SubcontractingPlans { get; set;}
-            public int ApprovedBy { get; set; } 
+        public IList<WorkForcePlan> WorkForcePlans { get; set; }
+        public IList<ResourcePlan> ResourcePlans { get; set; }
+        public IList<SubcontractingPlan> SubcontractingPlans { get; set;}
+        public int approvedById { get; set; }
+        public Employee approvedBy { get; set; }
         public double TotalEstiamtedReqtBudget { get; set; }
     }
 

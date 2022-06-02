@@ -41,6 +41,7 @@ namespace ERP.Models
         public double unitPrice { get; set; }
         public double priceWithVat { get; set; }
         public int ContractID { get; set; }
+        public Contract contract { get; set; }
         public string attachment { get; set; }  = string.Empty;
     }
 }

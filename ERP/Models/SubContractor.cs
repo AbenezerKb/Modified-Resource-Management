@@ -10,16 +10,13 @@ namespace ERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int SubId { get; set; }
 
-        [Required]
         public string SubName { get; set; } = string.Empty;
 
-        [Required]
         public string SubAddress { get; set; } = string.Empty;
 
-        [Required]
-        public int SubWorkId { get; set; }
+        public int subContractingWorkId { get; set; }
+        public SubContractingWork subContractingWork { get; set; }
 
-        [Required]
         public string Status { get; set; } = string.Empty;
     }
 }

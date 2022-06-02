@@ -21,7 +21,8 @@ namespace ERP.Models
 
         public string PenalityDescription { get; set; } = string.Empty;
         public string Remark { get; set; } = string.Empty;
-        public string ProjectId { get; set; } = string.Empty;
+        public int ProjectId { get; set; } 
+        public Project project { get; set; }        
 
         public string fileName { get; set; } = string.Empty;
     }

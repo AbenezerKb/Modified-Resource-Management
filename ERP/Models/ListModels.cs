@@ -7,7 +7,8 @@ namespace ERP.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int equipmentId { get; set; }        
+        public int equipmentId { get; set; }   
+        
         public int WeeklyRequirementFK { get; set; }
         public string unit { get; set; } = string.Empty;
         public int amount { get; set; }

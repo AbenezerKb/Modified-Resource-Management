@@ -12,9 +12,11 @@ namespace ERP.Models
         public string name { get; set; }
         public string jobTitle { get; set; }
         public int projectId { get; set; }
+        public Project project { get; set; }
         public double wagePerhour { get; set; }
         public DateTime date { get; set; }
-        public int apprvedBy { set; get; }
+        public int approvedById { set; get;
+        public Employee approvedBy { get; set; }
         public string remarks { get; set; }
         public string status { get; set; }
 

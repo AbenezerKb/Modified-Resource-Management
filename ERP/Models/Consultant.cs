@@ -9,8 +9,10 @@ namespace ERP.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int consultantId { get; set; }
         public string consultantName { get; set; }        
-        public int projectId { get; set; } 
-        public int contractorId { get; set; } 
+        public int projectId { get; set; }
+        public Project project { get; set; }
+        public int contractorId { get; set; }
+        public Contractor contractor { get; set; }
         public DateTime reviewDate { get; set; }
         public IList<ApprovedWorkList> approvedWorkList { get; set; }        
         public string changesTaken { get; set; } = string.Empty;

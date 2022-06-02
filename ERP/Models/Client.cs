@@ -12,7 +12,8 @@ namespace ERP.Models
         public int clientId { get; set; }
         public string clientName { get; set; } = string.Empty;
         public string address { get; set; } = string.Empty;
-        public string contractorId { get; set; } = string.Empty;
+        public int contractorId { get; set; } = string.Empty;
+        public Contract contract { get; set; }
         public string estimatedDuration { get; set; } = string.Empty;
         public string estimatedCost { get; set; } = string.Empty;
         public string description { get; set; } = string.Empty;
