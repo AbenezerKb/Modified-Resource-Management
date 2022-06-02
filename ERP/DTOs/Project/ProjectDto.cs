@@ -9,11 +9,6 @@ namespace ERP.DTOs.Project
         public DateTime StartDate { get; set; }
         [Required]
         public DateTime EndDate { get; set; }
-        [Required]
-        public int ManagerId { get; set; }
-        [Required]
-        public int CoordinatorId { get; set; }
-        [Required]
         public int SiteId { get; set; }
 
 

@@ -12,15 +12,7 @@ namespace ERP.Models
 
         public int SiteId { get; set; }
         public Site Site { get; set; }
-
-
-        public int ManagerId { get; set; }
-        public Employee Manager { get; set; }
-
-        public int? CoordinatorId { get; set; }
-        public Employee Coordinator { get; set; }
-
-        public Status Status { get; set; }
+        public ProjectStatus Status { get; set; }
         [JsonIgnore]
         public List<ProjectTask> Tasks { get; set; } = new();
         public DateTime CreatedAt { get; set; }

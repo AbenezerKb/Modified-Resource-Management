@@ -4,10 +4,10 @@ using ERP.Models;
 
 namespace ERP.Services
 {
-    public class AssignedWorkForceRepo: IAssignedWorkForceRepo
+    public class AssignedWorkForceRepo : IAssignedWorkForceRepo
     {
         private readonly DataContext _context;
-      
+
         public AssignedWorkForceRepo(DataContext context)
         {
             _context = context;
@@ -19,11 +19,12 @@ namespace ERP.Services
             {
                 throw new ArgumentNullException();
             }
-         //  
-            foreach (WorkForce w in assignedWorkForce.ProfessionWithWork) { 
-               
+            //  
+            foreach (WorkForce w in assignedWorkForce.ProfessionWithWork)
+            {
 
-               w.assigneWorkForceNo = 0 ;               
+
+                w.assigneWorkForceNo = 0;
                 _context.WorkForces.Add(w);
             }
             //assignedWorkForce.assigneWorkForceNo
@@ -38,12 +39,13 @@ namespace ERP.Services
                     _context.SaveChanges();
                 }
 
-                   
+
             }
 
 
             var project = _context.Projects.FirstOrDefault(c => c.Id == assignedList.projId);
-            
+
+            //GetCoordinator here from assigned proffessionals
 
             _context.Notifications.Add(new Notification
             {
@@ -51,21 +53,21 @@ namespace ERP.Services
                 Content = $"Wokrforce has been assigned to project.",
                 Type = NOTIFICATIONTYPE.WorkForceAssigned,
                 SiteId = project.Site.SiteId,
-                EmployeeId = project.CoordinatorId,
+                // EmployeeId = project.CoordinatorId,
                 ActionId = assignedWorkForce.assigneWorkForceNo,
                 Status = 0
 
             });
 
 
-    
+
         }
 
         public IEnumerable<AssignedWorkForce> GetAllAssignedWorkForces()
         {
-           var assignedList = _context.AssignedWorkForces.ToList();
-           var  workwithForceList = _context.WorkForces.ToList();
-            for (int i=0; i < assignedList.Count; i++)
+            var assignedList = _context.AssignedWorkForces.ToList();
+            var workwithForceList = _context.WorkForces.ToList();
+            for (int i = 0; i < assignedList.Count; i++)
             {
                 foreach (WorkForce aw in workwithForceList)
                 {
@@ -79,7 +81,7 @@ namespace ERP.Services
 
 
 
-            return assignedList;            
+            return assignedList;
         }
 
 
@@ -107,7 +109,8 @@ namespace ERP.Services
         public void DeleteAssignedWorkForce(int id)
         {
             var assignedWorkForce = _context.AssignedWorkForces.FirstOrDefault(c => c.assigneWorkForceNo == id);
-            if (assignedWorkForce == null) { 
+            if (assignedWorkForce == null)
+            {
                 throw new ArgumentNullException();
 
             }
@@ -115,7 +118,7 @@ namespace ERP.Services
         }
 
 
-        public void UpdateAssignedWorkForce(int id,AssignedWorkForce updatedAssignedWorkForce)
+        public void UpdateAssignedWorkForce(int id, AssignedWorkForce updatedAssignedWorkForce)
         {
             if (updatedAssignedWorkForce == null)
             {
@@ -139,10 +142,10 @@ namespace ERP.Services
 
 
 
-            assignedWorkForce.date = updatedAssignedWorkForce.date;            
+            assignedWorkForce.date = updatedAssignedWorkForce.date;
             assignedWorkForce.projId = updatedAssignedWorkForce.projId;
-            assignedWorkForce.remark = updatedAssignedWorkForce.remark;            
-            
+            assignedWorkForce.remark = updatedAssignedWorkForce.remark;
+
             _context.AssignedWorkForces.Update(assignedWorkForce);
             _context.SaveChanges();
         }

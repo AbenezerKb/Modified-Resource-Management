@@ -118,6 +118,10 @@ namespace ERP.Controllers
             {
                 return NotFound(new CustomApiResponse { Message = infe.Message });
             }
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(new CustomApiResponse { Message = ioe.Message });
+            }
         }
         [Authorize(Roles = "OfficeEngineer,Admin")]
         [HttpPut("{id:int}")]
@@ -179,6 +183,30 @@ namespace ERP.Controllers
 
                     Message = "Success",
                     Data = await subTaskService.GetByTaskId(taskId)
+                });
+            }
+            catch (ItemNotFoundException infe)
+            {
+                return NotFound(new CustomApiResponse
+                {
+                    Message = infe.Message
+                });
+            }
+
+
+        }
+        [HttpGet("{taskId:int}/subTasks/{subtaskId:int}")]
+        [Authorize(Roles = "OfficeEngineer,ProjectManager,Admin")]
+
+        async public Task<ActionResult<CustomApiResponse>> GetSubTask(int subtaskId)
+        {
+            try
+            {
+                return Ok(new CustomApiResponse
+                {
+
+                    Message = "Success",
+                    Data = await subTaskService.GetById(subtaskId)
                 });
             }
             catch (ItemNotFoundException infe)
@@ -278,6 +306,10 @@ namespace ERP.Controllers
                 {
                     Message = infe.Message
                 });
+            }
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(new CustomApiResponse { Message = ioe.Message });
             }
         }
 

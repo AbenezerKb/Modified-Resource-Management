@@ -1,11 +1,9 @@
 namespace ERP.Models.Others
 {
-    public enum Status
+    public enum ProjectStatus
     {
-        New,
         Pending,
-        Completed,
         Approved,
-        Declined
+        Declined,
     }
 }

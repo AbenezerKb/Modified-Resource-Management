@@ -9,6 +9,7 @@ using ERP.Models;
 using ERP.Helpers;
 using ERP.Services.ProjectTaskService;
 using Microsoft.AspNetCore.Authorization;
+using ERP.Models.Others;
 
 namespace ERP.Controllers
 {
@@ -30,7 +31,27 @@ namespace ERP.Controllers
             this.projectTaskService = projectTaskService;
         }
 
+        [HttpPost("{id:int}/approval")]
+        async public Task<ActionResult<CustomApiResponse>> Approval(int projectId, [FromBody] ProjectStatus status)
+        {
+            try
+            {
 
+                return Ok(new CustomApiResponse
+                {
+                    Message = "Success",
+                    Data = await projectService.ApproveProject(projectId, status)
+                });
+            }
+            catch (ItemNotFoundException infe)
+            {
+                return NotFound(new CustomApiResponse
+                {
+                    Message = infe.Message
+                });
+
+            }
+        }
         [HttpPost]
         [Authorize(Roles = "OfficeEngineer,Coordinator,Admin")]
         async public Task<ActionResult<CustomApiResponse>> AddProject([FromBody] ProjectDto projectDto)
@@ -70,6 +91,7 @@ namespace ERP.Controllers
             }
 
         }
+
         [Authorize(Roles = "Admin,OfficeEngineer,Coordinator,ProjectManager,Manager")]
         [HttpGet]
         public async Task<ActionResult<CustomApiResponse>> GetProjects([FromQuery] int? siteId, [FromQuery] string? name)
@@ -289,6 +311,10 @@ namespace ERP.Controllers
             {
                 return NotFound(new CustomApiResponse { Message = infe.Message });
             }
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(new CustomApiResponse { Message = ioe.Message });
+            }
         }
 
         [HttpPut("{id:int}")]
@@ -311,6 +337,10 @@ namespace ERP.Controllers
             {
 
                 return NotFound(new CustomApiResponse { Message = infe.Message });
+            }
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(new CustomApiResponse { Message = ioe.Message });
             }
 
         }

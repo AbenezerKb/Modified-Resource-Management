@@ -4,6 +4,7 @@ using ERP.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERP.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220602035644_ProjectModifiedAndDeleteBehaviorAdded")]
+    partial class ProjectModifiedAndDeleteBehaviorAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3478,8 +3480,7 @@ namespace ERP.Migrations
 
                     b.HasOne("ERP.Models.SubTask", "SubTask")
                         .WithMany()
-                        .HasForeignKey("SubTaskId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("SubTaskId");
 
                     b.HasOne("ERP.Models.WeeklyPlan", "WeeklyPlan")
                         .WithMany("PlanValues")
@@ -3518,8 +3519,7 @@ namespace ERP.Migrations
                 {
                     b.HasOne("ERP.Models.SubTask", "SubTask")
                         .WithMany("WeeklyResultValues")
-                        .HasForeignKey("SubTaskId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("SubTaskId");
 
                     b.HasOne("ERP.Models.WeeklyResult", "WeeklyResult")
                         .WithMany("Results")

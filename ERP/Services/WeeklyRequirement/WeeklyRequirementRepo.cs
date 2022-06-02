@@ -4,7 +4,7 @@ using ERP.Exceptions;
 
 namespace ERP.Services
 {
-    public class WeeklyRequirementRepo: IWeeklyRequirementRepo
+    public class WeeklyRequirementRepo : IWeeklyRequirementRepo
     {
 
 
@@ -24,27 +24,27 @@ namespace ERP.Services
             }
             weeklyRequirement.date = DateTime.Now;
             //weeklyRequirement.Id = Guid.NewGuid().ToString();
-/*
-            foreach (WeeklyMaterial s in weeklyRequirement.material)
-            {
-                //s.materialId =// Guid.NewGuid().ToString();
-            }
-            foreach (WeeklyLabor r in weeklyRequirement.labor)
-            {
-              //  r.laborId =// Guid.NewGuid().ToString();
-            }
+            /*
+                        foreach (WeeklyMaterial s in weeklyRequirement.material)
+                        {
+                            //s.materialId =// Guid.NewGuid().ToString();
+                        }
+                        foreach (WeeklyLabor r in weeklyRequirement.labor)
+                        {
+                          //  r.laborId =// Guid.NewGuid().ToString();
+                        }
 
-            foreach (WeeklyEquipment w in weeklyRequirement.equipment)
-            {
-              //  w.equipmentId =// Guid.NewGuid().ToString();
-            }
-*/
+                        foreach (WeeklyEquipment w in weeklyRequirement.equipment)
+                        {
+                          //  w.equipmentId =// Guid.NewGuid().ToString();
+                        }
+            */
             _context.WeeklyRequirements.Add(weeklyRequirement);
 
 
 
 
-            var project = _context.Projects.FirstOrDefault(c => c.Id == weeklyRequirement.Id);            
+            var project = _context.Projects.FirstOrDefault(c => c.Id == weeklyRequirement.Id);
 
             _context.Notifications.Add(new Notification
             {
@@ -52,7 +52,7 @@ namespace ERP.Services
                 Content = $"Weekly requirement request has been sent from {project.Name} project.",
                 Type = NOTIFICATIONTYPE.WorkForceAssigned,
                 SiteId = project.Site.SiteId,
-                EmployeeId = project.CoordinatorId,
+                // EmployeeId = project.CoordinatorId,
                 ActionId = weeklyRequirement.Id,
                 Status = 0
 
@@ -170,7 +170,7 @@ namespace ERP.Services
         }
 
 
-        public void UpdateWeeklyRequirement(int id,WeeklyRequirement updatedWeeklyRequirement)
+        public void UpdateWeeklyRequirement(int id, WeeklyRequirement updatedWeeklyRequirement)
         {
 
             if (updatedWeeklyRequirement == null)
@@ -181,48 +181,48 @@ namespace ERP.Services
             WeeklyRequirement weeklyRequirements = _context.WeeklyRequirements.FirstOrDefault(c => c.Id == id);
             if (weeklyRequirements == null)
                 throw new ItemNotFoundException($"WeeklyRequirement not found with WeeklyRequirement Id={id}");
-            
 
-            for (int i=0; i<weeklyRequirements.material.Count; i++)
+
+            for (int i = 0; i < weeklyRequirements.material.Count; i++)
             {
                 for (int j = 0; j < updatedWeeklyRequirement.material.Count; j++)
                 {
                     if (updatedWeeklyRequirement.material[j].materialId == weeklyRequirements.material[j].materialId)
-                    weeklyRequirements.material[j].amount = updatedWeeklyRequirement.material[j].amount;
+                        weeklyRequirements.material[j].amount = updatedWeeklyRequirement.material[j].amount;
                     weeklyRequirements.material[j].budget = updatedWeeklyRequirement.material[j].budget;
-                    weeklyRequirements.material[j].unit = updatedWeeklyRequirement.material[j].unit;                    
+                    weeklyRequirements.material[j].unit = updatedWeeklyRequirement.material[j].unit;
                 }
-             }
-        
+            }
 
 
-          for (int i=0; i<weeklyRequirements.equipment.Count; i++)
+
+            for (int i = 0; i < weeklyRequirements.equipment.Count; i++)
             {
-                for (int j = 0; j<updatedWeeklyRequirement.equipment.Count; j++)
+                for (int j = 0; j < updatedWeeklyRequirement.equipment.Count; j++)
                 {
                     if (updatedWeeklyRequirement.equipment[j].equipmentId == weeklyRequirements.equipment[j].equipmentId)
-                    weeklyRequirements.equipment[j].amount = updatedWeeklyRequirement.equipment[j].amount;
+                        weeklyRequirements.equipment[j].amount = updatedWeeklyRequirement.equipment[j].amount;
                     weeklyRequirements.equipment[j].budget = updatedWeeklyRequirement.material[j].budget;
                     weeklyRequirements.equipment[j].unit = updatedWeeklyRequirement.equipment[j].unit;
 
                 }
             }
-        
 
-           for (int i=0; i<weeklyRequirements.labor.Count; i++)
+
+            for (int i = 0; i < weeklyRequirements.labor.Count; i++)
             {
-                for (int j = 0; j<updatedWeeklyRequirement.labor.Count; j++)
+                for (int j = 0; j < updatedWeeklyRequirement.labor.Count; j++)
                 {
                     if (updatedWeeklyRequirement.labor[j].laborId == weeklyRequirements.labor[j].laborId)
-                    weeklyRequirements.labor[j].number = updatedWeeklyRequirement.labor[j].number;
+                        weeklyRequirements.labor[j].number = updatedWeeklyRequirement.labor[j].number;
                     weeklyRequirements.labor[j].budget = updatedWeeklyRequirement.labor[j].budget;
-                    weeklyRequirements.labor[j].laborId = updatedWeeklyRequirement.labor[j].laborId;                    
+                    weeklyRequirements.labor[j].laborId = updatedWeeklyRequirement.labor[j].laborId;
 
                 }
-                }
-            
+            }
 
-            weeklyRequirements.date = updatedWeeklyRequirement.date;          
+
+            weeklyRequirements.date = updatedWeeklyRequirement.date;
             weeklyRequirements.projCoordinator = updatedWeeklyRequirement.projCoordinator;
             weeklyRequirements.projManager = updatedWeeklyRequirement.projManager;
             weeklyRequirements.projId = updatedWeeklyRequirement.projId;
@@ -256,7 +256,7 @@ namespace ERP.Services
 
 
 
-	
 
-}
+
+    }
 }

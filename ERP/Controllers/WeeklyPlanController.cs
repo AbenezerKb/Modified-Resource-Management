@@ -34,7 +34,7 @@ namespace ERP.Controllers
                         }
                     );
                 }
-                if (weeklyPlanDto.WeekStartDate < DateTime.Now)
+                if (DateTime.Now.Subtract(weeklyPlanDto.WeekStartDate).Days >= 1)
                 {
                     return BadRequest(new CustomApiResponse
                     {
@@ -228,7 +228,10 @@ namespace ERP.Controllers
                     Message = infe.Message
                 });
             }
-
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(new CustomApiResponse { Message = ioe.Message });
+            }
         }
 
         [Authorize(Roles = "ProjectManager,ProjectCoordinator,Admin")]

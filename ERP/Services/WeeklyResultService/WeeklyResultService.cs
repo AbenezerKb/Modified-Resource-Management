@@ -68,7 +68,6 @@ namespace ERP.Services.WeeklyResultService
             var mainTask = await dbContext.Tasks.Where(t => t.Id == subTask.TaskId)
                 .Include(t => t.SubTasks)
                 .Include(t => t.Project)
-                .ThenInclude(t => t.Coordinator)
                 .FirstOrDefaultAsync();
             if (mainTask!.IsCompleted())
             {
@@ -79,7 +78,6 @@ namespace ERP.Services.WeeklyResultService
                     Content = $"{mainTask.Name} is completed from project '{mainTask.Project!.Name}'",
                     Type = NOTIFICATIONTYPE.MainTaskCompleted,
                     SiteId = mainTask.Project.SiteId,
-                    EmployeeId = mainTask.Project.CoordinatorId,
                     ActionId = subTask.Id,
                     Status = 0
 

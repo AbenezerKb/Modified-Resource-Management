@@ -2,12 +2,14 @@
 using ERP.DTOs.Project;
 using ERP.DTOs.TaskProgressSheet;
 using ERP.DTOs.TaskSchedule;
+using ERP.Models.Others;
 
 namespace ERP.Services.ProjectService
 {
     public interface IProjectService
     {
         Task<Project> Add(ProjectDto projectDto);
+        Task<Project> ApproveProject(int projectId, ProjectStatus approvalStatus);
         Task<Project> Remove(int id);
         Task<Project> Update(int id, ProjectDto projectDto);
         Task<List<Project>> GetAll();

@@ -70,8 +70,15 @@ namespace ERP.Services.SubTaskService
         {
             var subTask = await dbContext.SubTasks.FindAsync(id);
             if (subTask == null) throw new ItemNotFoundException($"SubTask not found with Id=${id}");
-            dbContext.SubTasks.Remove(subTask);
-            await dbContext.SaveChangesAsync();
+            try
+            {
+                dbContext.SubTasks.Remove(subTask);
+                await dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                throw new InvalidOperationException(message: "Cannot delete the selected subtask because its already associated with other entities");
+            }
             return subTask;
         }
 

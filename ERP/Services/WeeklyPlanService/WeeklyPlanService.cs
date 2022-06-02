@@ -206,8 +206,16 @@ namespace ERP.Services.WeeklyPlanService
         public async Task<WeeklyPlan> Remove(int weeklyPlanId)
         {
             var weeklyPlan = await GetById(weeklyPlanId);
-            dbContext.WeeklyPlans.Remove(weeklyPlan);
-            await dbContext.SaveChangesAsync();
+            try
+            {
+                dbContext.WeeklyPlans.Remove(weeklyPlan);
+                await dbContext.SaveChangesAsync();
+
+            }
+            catch (DbUpdateException)
+            {
+                throw new InvalidOperationException(message: "Cannot delete the selected weekly plan because its already associated with other entities");
+            }
             return weeklyPlan;
         }
 

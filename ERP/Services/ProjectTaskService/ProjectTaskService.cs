@@ -113,8 +113,17 @@ namespace ERP.Services.ProjectTaskService
         {
             var task = await DbContext.Tasks.FindAsync(id);
             if (task == null) throw new ItemNotFoundException($"Task not found with id={id}");
-            DbContext.Tasks.Remove(task);
-            await DbContext.SaveChangesAsync();
+
+            try
+            {
+                DbContext.Tasks.Remove(task);
+                await DbContext.SaveChangesAsync();
+
+            }
+            catch (DbUpdateException duex)
+            {
+                throw new InvalidOperationException(message: "Cannot delete the selected Task because it already have subtasks associated with it");
+            }
             return task;
         }
 

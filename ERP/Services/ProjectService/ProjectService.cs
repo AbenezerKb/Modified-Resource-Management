@@ -19,6 +19,15 @@ namespace ERP.Services.ProjectService
 
         }
 
+        public async Task<Project> ApproveProject(int projectId, ProjectStatus status)
+        {
+            var project = await dbContext.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
+            if (project == null) throw new ItemNotFoundException($"Project not found with ProjectId={projectId}");
+            project.Status = status;
+            await dbContext.SaveChangesAsync();
+            return project;
+        }
+
         public async Task<List<TaskScheduleDto>> GetActualSchedule(int projectId)
         {
             List<TaskScheduleDto> actualSchedule = new();
@@ -48,8 +57,6 @@ namespace ERP.Services.ProjectService
         public async Task<List<Project>> GetByName(string name)
         {
             var projects = await dbContext.Projects.Where(p => p.Name.ToLower().Contains(name.ToLower()))
-                .Include(p => p.Coordinator)
-                .Include(p => p.Manager)
                 .Include(p => p.Site)
                 .ToListAsync();
             if (!projects.Any())
@@ -63,9 +70,7 @@ namespace ERP.Services.ProjectService
         public async Task<List<Project>> GetByNameAndSiteId(string name, int siteId)
         {
             var projects = await dbContext.Projects.Where(p => p.SiteId == siteId && p.Name.ToLower().Contains(name.ToLower()))
-                 .Include(p => p.Coordinator)
-                .Include(p => p.Manager)
-                .Include(p => p.Site)
+                 .Include(p => p.Site)
                 .ToListAsync();
             if (!projects.Any())
             {
@@ -77,8 +82,6 @@ namespace ERP.Services.ProjectService
         public async Task<List<Project>> GetBySiteId(int siteId)
         {
             var projects = await dbContext.Projects.Where(p => p.SiteId == siteId)
-                .Include(p => p.Coordinator)
-                .Include(p => p.Manager)
                 .Include(p => p.Site)
                 .ToListAsync();
             if (!projects.Any())
@@ -142,22 +145,23 @@ namespace ERP.Services.ProjectService
             var isSiteAssigned = await dbContext.Projects.AnyAsync(p => p.SiteId == projectDto.SiteId);
 
             if (isSiteAssigned) throw new ItemAlreadyExistException($"Site already assigned to a project");
-            var manager = await dbContext.Employees.FirstOrDefaultAsync(e => e.EmployeeId == projectDto.ManagerId);
-            if (manager == null)
-            {
-                throw new ItemNotFoundException($"Manager not found with ManagerId={projectDto.ManagerId}");
-            }
-            var isManagerAssigned = await dbContext.Projects.AnyAsync(p => p.ManagerId == projectDto.ManagerId);
-            if (isManagerAssigned)
-            {
-                throw new ItemAlreadyExistException($"Manager already assigned to a project with ManagerId={projectDto.ManagerId}");
-            }
+            // var manager = await dbContext.Employees.FirstOrDefaultAsync(e => e.EmployeeId == projectDto.ManagerId);
+            // if (manager == null)
+            // {
+            //     throw new ItemNotFoundException($"Manager not found with ManagerId={projectDto.ManagerId}");
+            // }
+            //TODO: fetch the following from abenezer
+            // var isManagerAssigned = await dbContext.Projects.AnyAsync(p => p.ManagerId == projectDto.ManagerId);
+            // if (isManagerAssigned)
+            // {
+            //     throw new ItemAlreadyExistException($"Manager already assigned to a project with ManagerId={projectDto.ManagerId}");
+            // }
 
-            var coordinator = await dbContext.Employees.FirstOrDefaultAsync(e => e.EmployeeId == projectDto.CoordinatorId);
-            if (coordinator == null)
-            {
-                throw new ItemNotFoundException($"Coordinator not found with CoordinatorId={projectDto.CoordinatorId}");
-            }
+            // var coordinator = await dbContext.Employees.FirstOrDefaultAsync(e => e.EmployeeId == projectDto.CoordinatorId);
+            // if (coordinator == null)
+            // {
+            //     throw new ItemNotFoundException($"Coordinator not found with CoordinatorId={projectDto.CoordinatorId}");
+            // }
 
             var project = new Project
             {
@@ -165,17 +169,14 @@ namespace ERP.Services.ProjectService
                 StartDate = projectDto.StartDate,
                 EndDate = projectDto.EndDate,
                 SiteId = projectDto.SiteId,
-                ManagerId = projectDto.ManagerId,
-                CoordinatorId = projectDto.CoordinatorId,
-                Status = Status.New
+
+                Status = ProjectStatus.Pending
             };
 
             await dbContext.Projects.AddAsync(project);
             await dbContext.SaveChangesAsync();
 
             project.Site = site;
-            project.Manager = manager;
-            project.Coordinator = coordinator;
 
             return project;
 
@@ -184,17 +185,15 @@ namespace ERP.Services.ProjectService
         async Task<List<Project>> IProjectService.GetAll()
         {
             return await dbContext.Projects
-                .Include(p => p.Manager)
+
                 .Include(p => p.Site)
-                .Include(p => p.Coordinator)
                 .ToListAsync();
         }
 
         async Task<Project> IProjectService.GetById(int id)
         {
-            var project = await dbContext.Projects.Where(p => p.Id == id).Include(p => p.Manager)
+            var project = await dbContext.Projects.Where(p => p.Id == id)
                 .Include(p => p.Site)
-                .Include(p => p.Coordinator)
                 .FirstOrDefaultAsync();
             if (project == null)
             {
@@ -210,9 +209,16 @@ namespace ERP.Services.ProjectService
             {
                 throw new ItemNotFoundException($"Project not found with id={id}");
             }
+            try
+            {
+                dbContext.Projects.Remove(project);
+                await dbContext.SaveChangesAsync();
 
-            dbContext.Projects.Remove(project);
-            await dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException duex)
+            {
+                throw new InvalidOperationException(message: "Cannot delete the selected project because its already associated with other entities");
+            }
 
             return project;
         }
@@ -225,12 +231,14 @@ namespace ERP.Services.ProjectService
             {
                 throw new ItemNotFoundException($"Project not found with id={id}");
             }
+            if (project.Status == ProjectStatus.Approved)
+            {
+                throw new InvalidOperationException(message: "Project cannot be updated because its already been approved!");
+            }
 
             project.Name = projectDto.Name;
             project.StartDate = projectDto.StartDate;
             project.EndDate = projectDto.EndDate;
-            project.ManagerId = projectDto.ManagerId;
-            project.CoordinatorId = projectDto.CoordinatorId;
             project.SiteId = projectDto.SiteId;
 
             dbContext.Update(project);

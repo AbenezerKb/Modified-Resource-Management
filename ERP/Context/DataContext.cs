@@ -392,67 +392,73 @@ namespace ERP.Context
                 .OnDelete(DeleteBehavior.Restrict);
 
             #region TaskManagement Config 
+
             modelBuilder.Entity<Project>()
             .Property(p => p.Status)
             .HasConversion(v => v.ToString(),
-            v => (Models.Others.Status)Enum.Parse(typeof(Models.Others.Status), v));
+            v => (Models.Others.ProjectStatus)Enum.Parse(typeof(Models.Others.ProjectStatus), v));
+
             modelBuilder.Entity<Project>()
                 .HasOne(p => p.Site)
-                .WithOne();
-
-
-            modelBuilder.Entity<Project>()
-                .HasOne(p => p.Manager)
-                .WithOne();
-            modelBuilder.Entity<Project>()
-                .HasOne(p => p.Coordinator)
-                .WithMany()
+                .WithOne()
                 .OnDelete(DeleteBehavior.Restrict);
-
 
             modelBuilder
             .Entity<ProjectTask>()
             .HasOne<Project>(t => t.Project)
             .WithMany(p => p.Tasks)
+            .OnDelete(DeleteBehavior.Restrict)
             .HasForeignKey(t => t.ProjectId);
 
             modelBuilder
             .Entity<SubTask>()
             .HasOne(sub => sub.ProjectTask)
             .WithMany(t => t.SubTasks)
+            .OnDelete(DeleteBehavior.Restrict)
             .HasForeignKey(sub => sub.TaskId);
 
             modelBuilder.Entity<ProjectTask>().Ignore(p => p.Progress);
 
             modelBuilder.Entity<WeeklyPlanValue>()
-             .HasOne(wpv => wpv.WeeklyPlan)
-             .WithMany(wp => wp.PlanValues)
-             .HasForeignKey(w => w.WeeklyPlanId);
+                        .HasOne(wpv => wpv.WeeklyPlan)
+                        .WithMany(wp => wp.PlanValues)
+                        .HasForeignKey(w => w.WeeklyPlanId);
 
             modelBuilder.Entity<WeeklyPlanValue>()
-            .HasOne(wpv => wpv.Employee)
-            .WithMany()
-            .HasForeignKey(wpv => wpv.EmployeeId);
+                        .HasOne(wpv => wpv.Employee)
+                        .WithMany()
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey(wpv => wpv.EmployeeId);
 
             modelBuilder.Entity<WeeklyPlanValue>()
                         .HasOne(wpv => wpv.SubContractor)
                         .WithMany()
+                        .OnDelete(DeleteBehavior.Restrict)
                         .HasForeignKey(wpv => wpv.SubContractorId);
+            modelBuilder.Entity<WeeklyPlanValue>()
+                        .HasOne(wpv => wpv.SubTask)
+                        .WithMany()
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey(wpv => wpv.SubTaskId);
+
 
             modelBuilder.Entity<WeeklyPlan>()
-            .HasOne(wp => wp.WeeklyResult)
-            .WithOne(wr => wr.WeeklyPlan)
-            .HasForeignKey<WeeklyResult>(wr => wr.WeeklyPlanId);
+                        .HasOne(wp => wp.WeeklyResult)
+                        .WithOne(wr => wr.WeeklyPlan)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey<WeeklyResult>(wr => wr.WeeklyPlanId);
 
             modelBuilder.Entity<WeeklyResult>()
                 .HasOne(wr => wr.ApprovedBy)
                 .WithMany()
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasForeignKey(wr => wr.ApprovedById);
 
             modelBuilder
                 .Entity<WeeklyPlan>()
                 .HasOne(wp => wp.Project)
                 .WithMany()
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasForeignKey(wp => wp.ProjectId);
 
             modelBuilder
@@ -464,19 +470,25 @@ namespace ERP.Context
             modelBuilder.Entity<WeeklyResultValue>()
                       .HasOne(wrv => wrv.SubTask)
                       .WithMany(s => s.WeeklyResultValues)
+                      .OnDelete(DeleteBehavior.Restrict)
                       .HasForeignKey(wrv => wrv.SubTaskId);
 
             modelBuilder.Entity<PerformanceSheet>()
                         .HasOne(ps => ps.Project)
                         .WithMany()
+                        .OnDelete(DeleteBehavior.Restrict)
                         .HasForeignKey(ps => ps.ProjectId);
+
             modelBuilder.Entity<PerformanceSheet>()
            .HasOne(ps => ps.Employee)
            .WithMany()
+           .OnDelete(DeleteBehavior.Restrict)
            .HasForeignKey(ps => ps.EmployeeId);
+
             modelBuilder.Entity<PerformanceSheet>()
            .HasOne(ps => ps.SubContractor)
            .WithMany()
+           .OnDelete(DeleteBehavior.Restrict)
            .HasForeignKey(ps => ps.SubContractorId);
 
             #endregion
