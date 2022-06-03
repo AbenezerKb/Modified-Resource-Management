@@ -5,16 +5,12 @@ namespace ERP.DTOs
 {
     public class TimeCardCreateDto
     {
+       
         [Required]
-        public int id { get; set; }
-        [Required]
-        public DateTime dateOfWork { get; set; }
-        [Required]
-        public string employeeName { get; set; }
+        public DateTime dateOfWork { get; set; }       
         [Required]
         public string jobType { get; set; }
-        [Required]
-        public int weekNo { get; set; }
+        
         [Required]
         public int NoOfPresents { get; set; }
         [Required]
@@ -27,16 +23,13 @@ namespace ERP.DTOs
         public double wages { get; set; }
         [Required]
         public double totalPayment { get; set; }
-
-        //FK
+        
         [Required]
-        public int preparedByFK { get; set; }
-
-        //FK
+        public int preparedById { get; set; }        
+        
         [Required]
-        public int approvedBy { get; set; }
-
-        //FK
+        public int approvedById { get; set; }
+        
         [Required]
         public int LaborerID { get; set; }
         [Required]

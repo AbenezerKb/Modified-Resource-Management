@@ -55,8 +55,8 @@ namespace ERP.Controllers
         public async Task<ActionResult<GranderReadDto>> AddGrander(GranderCreateDto grander)
         {
 
-            var newGrander = _mapper.Map<Grander>(grander);
-            _granderRepo.CreateGrander(newGrander);
+            //var newGrander = _mapper.Map<Grander>(grander);
+            var newGrander  = _granderRepo.CreateGrander(grander);
             _granderRepo.SaveChanges();
             
             var granderReadDto = _mapper.Map<GranderReadDto>(newGrander);
@@ -92,8 +92,8 @@ namespace ERP.Controllers
             try
             {
 
-                var newLaborDetail = _mapper.Map<Grander>(laborDetail);
-                _granderRepo.UpdateGrander(id, newLaborDetail);
+                //var newLaborDetail = _mapper.Map<Grander>(laborDetail);
+                _granderRepo.UpdateGrander(id, laborDetail);
                 _granderRepo.SaveChanges();
                 return Ok("Success");
             }

@@ -57,8 +57,8 @@ using ERP.Services;
         public async Task<ActionResult<IncidentReadDto>> AddIncident(IncidentCreateDto incident)
         {
 
-            var newIncident = _mapper.Map<Incident>(incident);
-            _incidentRepo.CreateIncident(newIncident);
+            //var newIncident = _mapper.Map<Incident>(incident);
+            var newIncident = _incidentRepo.CreateIncident(incident);
             _incidentRepo.SaveChanges();
             Console.WriteLine("the incident id: " + newIncident.incidentNo);
             var incidentReadDto = _mapper.Map<IncidentReadDto>(newIncident);
@@ -90,8 +90,8 @@ using ERP.Services;
             try
             {
 
-                var newIncident = _mapper.Map<Incident>(incident);
-                _incidentRepo.UpdateIncident(id, newIncident);
+                //var newIncident = _mapper.Map<Incident>(incident);
+                _incidentRepo.UpdateIncident(id, incident);
                 _incidentRepo.SaveChanges();
                 return Ok("Success");
             }

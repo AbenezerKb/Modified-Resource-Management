@@ -1,4 +1,5 @@
 ﻿using ERP.Models;
+using ERP.DTOs;
 using ERP.Context;
 using ERP.Exceptions;
 
@@ -15,16 +16,39 @@ namespace ERP.Services
 
         }
 
-        public void CreateGrander(Grander grander)
+        public Grander CreateGrander(GranderCreateDto granderCreateDto)
         {
-            if (grander == null)
+            if (granderCreateDto == null)
             {
                 throw new ArgumentNullException();
             }
-          
+            Grander grander = new Grander();
+            var approvedBy = _context.Employees.FirstOrDefault(c => c.EmployeeId == granderCreateDto.ApprovedById);
+            if (approvedBy == null)
+                throw new ItemNotFoundException($"Grander with Id {granderCreateDto.ApprovedById} not found");
+
+            grander.approvedBy = approvedBy;
+            grander.approvedById = granderCreateDto.ApprovedById;
+            grander.Date = granderCreateDto.Date;
+            grander.Duration = granderCreateDto.Duration;
+            grander.ProjectId = granderCreateDto.ProjectId;
+
+            var project = _context.Projects.FirstOrDefault(c => c.Id == granderCreateDto.ProjectId);
+            if (project == null)
+                throw new ItemNotFoundException($"Project with Id {granderCreateDto.ProjectId} not found");
+
+            grander.project = project;
+            grander.RequestNo = granderCreateDto.RequestNo;
+            grander.ResourcePlans = granderCreateDto.ResourcePlans;
+            grander.SubcontractingPlans = granderCreateDto.SubcontractingPlans;
+            grander.TotalEstiamtedReqtBudget = granderCreateDto.TotalEstiamtedReqtBudget;
+            grander.WorkForcePlans = granderCreateDto.WorkForcePlans;
+            _context.Granders.Add(grander);
+            _context.SaveChanges();
+            return grander;
             //grander.GranderId = Guid.NewGuid().ToString();
 
-
+            /*
             foreach (SubcontractingPlan scp in grander.SubcontractingPlans)
             {
           
@@ -89,6 +113,7 @@ namespace ERP.Services
 
 
             }
+            */
 
 
 
@@ -97,13 +122,16 @@ namespace ERP.Services
         public Grander GetGrander(int granderId)
         {
             var grander =_context.Granders.FirstOrDefault(c => c.GranderId == granderId);
-            var subcontractingPlans = _context.SubcontractingPlans.ToList();
-            var resourcePlans = _context.ResourcePlans.ToList();
-            var workForcePlan = _context.WorkForcePlans.ToList();
+            if (grander == null)
+                throw new ItemNotFoundException($"Grander not found with Grander Id={granderId}");
+
+            //var subcontractingPlans = _context.SubcontractingPlans.ToList();
+            //var resourcePlans = _context.ResourcePlans.ToList();
+            //var workForcePlan = _context.WorkForcePlans.ToList();
 
 
 
-
+            /*
             foreach (SubcontractingPlan scp in subcontractingPlans)
             {
                 if (scp.GranderFK == grander.GranderId)
@@ -129,6 +157,7 @@ namespace ERP.Services
                     grander.WorkForcePlans.Add(scp);
                 }
             }
+            */
 
             return grander;
 
@@ -138,6 +167,9 @@ namespace ERP.Services
         {
 
             var granders = _context.Granders.ToList();
+            if (granders == null)
+                throw new ArgumentNullException();
+            /*
             var subcontractingPlans = _context.SubcontractingPlans.ToList();
             var resourcePlans = _context.ResourcePlans.ToList();
             var workForcePlan = _context.WorkForcePlans.ToList();
@@ -172,6 +204,7 @@ namespace ERP.Services
 
 
             }
+            */
 
             return granders;
 
@@ -185,12 +218,14 @@ namespace ERP.Services
         public void DeleteGrander(int id)
         {
             var grander = _context.Granders.FirstOrDefault(c => c.GranderId == id);
+            if (grander == null)
+                throw new ItemNotFoundException($"Grander not found with Grander Id={id}");
             _context.Granders.Remove(grander);
         }
 
 
 
-        public void UpdateGrander(int id,Grander updatedGrander)
+        public void UpdateGrander(int id,GranderCreateDto updatedGrander)
         {
 
             if (updatedGrander == null)
@@ -202,8 +237,8 @@ namespace ERP.Services
             if (grander == null)
                 throw new ItemNotFoundException($"Grander not found with Grander Id={id}");
 
-
-
+           
+            /*
             for (int i = 0; i < grander.ResourcePlans.Count; i++)
             {
                 for (int j = 0; j < updatedGrander.ResourcePlans.Count; j++)
@@ -248,17 +283,34 @@ namespace ERP.Services
                 }
             }
 
+            */
+
+            Employee ApprovedBy = _context.Employees.FirstOrDefault(c => c.EmployeeId == updatedGrander.ApprovedById);
+            if (ApprovedBy == null)
+                throw new ItemNotFoundException($"Employee with {grander.approvedById} Id not found ");
 
 
-            grander.ApprovedBy = updatedGrander.ApprovedBy;
+
+            grander.approvedBy = ApprovedBy;
+            grander.approvedById = updatedGrander.ApprovedById;
             grander.Date = updatedGrander.Date;
             grander.Duration = updatedGrander.Duration;            
             grander.ProjectId = updatedGrander.ProjectId;
             grander.RequestNo = updatedGrander.RequestNo;                 
             grander.TotalEstiamtedReqtBudget = updatedGrander.TotalEstiamtedReqtBudget;
-           
-            grander.WorkForcePlans = updatedGrander.WorkForcePlans;            
-         
+
+            Project project = _context.Projects.FirstOrDefault(c => c.Id == updatedGrander.ProjectId);
+            if (project == null)
+                throw new ItemNotFoundException($"Projects with {updatedGrander.ProjectId} Id not found ");
+
+
+
+
+            grander.project = project;
+            grander.WorkForcePlans = updatedGrander.WorkForcePlans;
+            grander.ResourcePlans = updatedGrander.ResourcePlans;
+            grander.SubcontractingPlans = updatedGrander.SubcontractingPlans;
+            
             _context.Granders.Update(grander);
             _context.SaveChanges();
         }
@@ -268,3 +320,4 @@ namespace ERP.Services
 
     }
 }
+

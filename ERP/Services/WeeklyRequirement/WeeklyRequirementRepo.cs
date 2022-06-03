@@ -1,4 +1,5 @@
 ﻿using ERP.Models;
+using ERP.DTOs;
 using ERP.Context;
 using ERP.Exceptions;
 
@@ -16,13 +17,40 @@ namespace ERP.Services
         }
 
 
-        public void CreateWeeklyRequirement(WeeklyRequirement weeklyRequirement)
+        public WeeklyRequirement CreateWeeklyRequirement(WeeklyRequirementCreateDto weeklyRequirementCreateDto)
         {
-            if (weeklyRequirement == null)
+            if (weeklyRequirementCreateDto == null)
             {
                 throw new ArgumentNullException();
             }
-            weeklyRequirement.date = DateTime.Now;
+            WeeklyRequirement weeklyRequirement = new WeeklyRequirement();
+            weeklyRequirement.date = weeklyRequirementCreateDto.date;
+
+            var projectCoordinator = _context.Employees.FirstOrDefault(c => c.EmployeeId == weeklyRequirementCreateDto.projectCoordinator);
+            if (projectCoordinator == null)
+                throw new ItemNotFoundException($"Grander with Id {weeklyRequirementCreateDto.projectCoordinator} not found");
+
+            weeklyRequirement.projectCoordinator = projectCoordinator;
+
+            var projectManager = _context.Employees.FirstOrDefault(c => c.EmployeeId == weeklyRequirementCreateDto.projectManager);
+            if (projectManager == null)
+                throw new ItemNotFoundException($"Grander with Id {weeklyRequirementCreateDto.projectManager} not found");
+
+
+
+            weeklyRequirement.projectManager = projectManager;
+            weeklyRequirement.projectId = weeklyRequirementCreateDto.projectId;
+            weeklyRequirement.remark = weeklyRequirementCreateDto.remark;
+            weeklyRequirement.specialRequest = weeklyRequirementCreateDto.specialRequest;
+            weeklyRequirement.projectManagerId = weeklyRequirementCreateDto.projectManager;
+            weeklyRequirement.remark = weeklyRequirementCreateDto.remark;
+            weeklyRequirement.specialRequest = weeklyRequirementCreateDto.specialRequest;
+            weeklyRequirement.status = weeklyRequirementCreateDto.specialRequest;
+            weeklyRequirement.projectCoordinatorId = weeklyRequirementCreateDto.projectCoordinator;
+            weeklyRequirement.material = weeklyRequirementCreateDto.material;
+            weeklyRequirement.labor = weeklyRequirementCreateDto.labor;
+            weeklyRequirement.equipment = weeklyRequirementCreateDto.equipment;
+            
             //weeklyRequirement.Id = Guid.NewGuid().ToString();
             /*
                         foreach (WeeklyMaterial s in weeklyRequirement.material)
@@ -59,8 +87,7 @@ namespace ERP.Services
             });
 
 
-
-
+            return weeklyRequirement;
         }
 
 
@@ -68,6 +95,8 @@ namespace ERP.Services
         public WeeklyRequirement GetWeeklyRequirements(int id)
         {
             var weeklyRequirement = _context.WeeklyRequirements.FirstOrDefault(c => c.Id == id);
+            
+            /*
             var material = _context.WeeklyMaterials.ToList();
             var equipment = _context.WeeklyEquipments.ToList();
             var labor = _context.Labors.ToList();
@@ -99,13 +128,15 @@ namespace ERP.Services
                     weeklyRequirement.labor.Add(scp);
                 }
             }
-
+            */
             return weeklyRequirement;
         }
 
         public IEnumerable<WeeklyRequirement> GetAllWeeklyRequirement()
         {
             var weeklyRequirement = _context.WeeklyRequirements.ToList();
+           
+            /*
             var material = _context.WeeklyMaterials.ToList();
             var equipment = _context.WeeklyEquipments.ToList();
             var labor = _context.Labors.ToList();
@@ -140,6 +171,7 @@ namespace ERP.Services
 
 
             }
+            */
 
             return weeklyRequirement;
 
@@ -170,19 +202,19 @@ namespace ERP.Services
         }
 
 
-        public void UpdateWeeklyRequirement(int id, WeeklyRequirement updatedWeeklyRequirement)
+        public void UpdateWeeklyRequirement(int id, WeeklyRequirementCreateDto weeklyRequirementCreateDto)
         {
 
-            if (updatedWeeklyRequirement == null)
+            if (weeklyRequirementCreateDto == null)
             {
                 throw new ArgumentNullException();
             }
 
-            WeeklyRequirement weeklyRequirements = _context.WeeklyRequirements.FirstOrDefault(c => c.Id == id);
-            if (weeklyRequirements == null)
+            WeeklyRequirement weeklyRequirement = _context.WeeklyRequirements.FirstOrDefault(c => c.Id == id);
+            if (weeklyRequirement == null)
                 throw new ItemNotFoundException($"WeeklyRequirement not found with WeeklyRequirement Id={id}");
 
-
+            /*
             for (int i = 0; i < weeklyRequirements.material.Count; i++)
             {
                 for (int j = 0; j < updatedWeeklyRequirement.material.Count; j++)
@@ -220,18 +252,38 @@ namespace ERP.Services
 
                 }
             }
+            */
+
+            weeklyRequirement.date = weeklyRequirementCreateDto.date;
+
+            var projectCoordinator = _context.Employees.FirstOrDefault(c => c.EmployeeId == weeklyRequirementCreateDto.projectCoordinator);
+            if (projectCoordinator == null)
+                throw new ItemNotFoundException($"Grander with Id {weeklyRequirementCreateDto.projectCoordinator} not found");
+
+            weeklyRequirement.projectCoordinator = projectCoordinator;
+
+            var projectManager = _context.Employees.FirstOrDefault(c => c.EmployeeId == weeklyRequirementCreateDto.projectManager);
+            if (projectManager == null)
+                throw new ItemNotFoundException($"Grander with Id {weeklyRequirementCreateDto.projectManager} not found");
 
 
-            weeklyRequirements.date = updatedWeeklyRequirement.date;
-            weeklyRequirements.projCoordinator = updatedWeeklyRequirement.projCoordinator;
-            weeklyRequirements.projManager = updatedWeeklyRequirement.projManager;
-            weeklyRequirements.projId = updatedWeeklyRequirement.projId;
-            weeklyRequirements.remark = updatedWeeklyRequirement.remark;
-            weeklyRequirements.specialRequest = updatedWeeklyRequirement.specialRequest;
-            weeklyRequirements.weekNo = updatedWeeklyRequirement.weekNo;
+
+            weeklyRequirement.projectManager = projectManager;
+            weeklyRequirement.projectId = weeklyRequirementCreateDto.projectId;
+            weeklyRequirement.remark = weeklyRequirementCreateDto.remark;
+            weeklyRequirement.specialRequest = weeklyRequirementCreateDto.specialRequest;
+            weeklyRequirement.projectManagerId = weeklyRequirementCreateDto.projectManager;
+            weeklyRequirement.remark = weeklyRequirementCreateDto.remark;
+            weeklyRequirement.specialRequest = weeklyRequirementCreateDto.specialRequest;
+            weeklyRequirement.status = weeklyRequirementCreateDto.specialRequest;
+            weeklyRequirement.projectCoordinatorId = weeklyRequirementCreateDto.projectCoordinator;
+            weeklyRequirement.material = weeklyRequirementCreateDto.material;
+            weeklyRequirement.labor = weeklyRequirementCreateDto.labor;
+            weeklyRequirement.equipment = weeklyRequirementCreateDto.equipment;
 
 
-            _context.WeeklyRequirements.Update(weeklyRequirements);
+
+            _context.WeeklyRequirements.Update(weeklyRequirement);
             _context.SaveChanges();
         }
 

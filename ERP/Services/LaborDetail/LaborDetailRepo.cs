@@ -1,6 +1,7 @@
 ﻿using ERP.Models;
 using ERP.Context;
 using ERP.Exceptions;
+using ERP.DTOs;
 
 namespace ERP.Services
 {
@@ -16,16 +17,31 @@ namespace ERP.Services
         }
 
 
-        public void CreateLaborDetail(LaborDetail laborDetail)
+        public LaborDetail CreateLaborDetail(LaborDetailCreateDto laborDetailCreateDto)
         {
-            if (laborDetail == null)
+            if (laborDetailCreateDto == null)
             {
                 throw new ArgumentNullException();
             }
 
             //laborDetail.Id = Guid.NewGuid().ToString();           
 
+            LaborDetail laborDetail = new LaborDetail();
+            laborDetail.afternoonSession = laborDetailCreateDto.afternoonSession;
+            laborDetail.dateOfWork = laborDetailCreateDto.dateOfWork;
+            laborDetail.dateType = laborDetailCreateDto.dateType;
+            laborDetail.eveningSession = laborDetailCreateDto.eveningSession;
+            laborDetail.morningSession = laborDetailCreateDto.morningSession;
+            laborDetail.NoOfHrsPerSession = laborDetailCreateDto.NoOfHrsPerSession;
+            laborDetail.PaymentDayIn = laborDetailCreateDto.PaymentDayIn;
+
+            laborDetail.LaborerID = laborDetailCreateDto.LaborerID;
+
+
+
             _context.LaborDetails.Add(laborDetail);
+            return laborDetail
+                ;
         }
 
 
@@ -54,10 +70,10 @@ namespace ERP.Services
 
 
 
-        public void UpdateLaborDetail(int id,LaborDetail updatedLaborDetail)
+        public void UpdateLaborDetail(int id, LaborDetailCreateDto laborDetailCreateDto)
         {
 
-            if (updatedLaborDetail == null)
+            if (laborDetailCreateDto == null)
             {
                 throw new ArgumentNullException();
             }
@@ -65,15 +81,23 @@ namespace ERP.Services
             LaborDetail laborDetail = _context.LaborDetails.FirstOrDefault(c => c.id == id);
             if (laborDetail == null)
                 throw new ItemNotFoundException($"LaborDetail not found with LaborDetail Id={id}");
-            laborDetail.afternoonSession = updatedLaborDetail.afternoonSession;
-            laborDetail.dateOfWork = updatedLaborDetail.dateOfWork;
-            laborDetail.dateType = updatedLaborDetail.dateType;
-            laborDetail.eveningSession = updatedLaborDetail.eveningSession;
-            laborDetail.morningSession = updatedLaborDetail.morningSession;
-            laborDetail.NoOfHrsPerSession = updatedLaborDetail.NoOfHrsPerSession;
-            laborDetail.weekNo = updatedLaborDetail.weekNo;
-            laborDetail.PaymentDayIn = laborDetail.PaymentDayIn;
+            laborDetail.afternoonSession = laborDetailCreateDto.afternoonSession;
+            laborDetail.dateOfWork = laborDetailCreateDto.dateOfWork;
+            laborDetail.dateType = laborDetailCreateDto.dateType;
+            laborDetail.eveningSession = laborDetailCreateDto.eveningSession;
+            laborDetail.morningSession = laborDetailCreateDto.morningSession;
+            laborDetail.NoOfHrsPerSession = laborDetailCreateDto.NoOfHrsPerSession;            
+            laborDetail.PaymentDayIn = laborDetailCreateDto.PaymentDayIn;
 
+            laborDetail.LaborerID = laborDetailCreateDto.LaborerID;
+
+            DailyLabor dailyLabor = _context.DailyLabors.FirstOrDefault(c => c.LaborerID == laborDetailCreateDto.LaborerID);
+            if (dailyLabor == null)
+                throw new ItemNotFoundException($"LaborDetail not found with LaborDetail Id={id}");
+
+
+
+            laborDetail.dailyLabor = dailyLabor;            
             _context.LaborDetails.Update(laborDetail);
             _context.SaveChanges();
         }

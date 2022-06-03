@@ -1,4 +1,5 @@
 ﻿using ERP.Models;
+using ERP.DTOs;
 using ERP.Context;
 using ERP.Exceptions;
 
@@ -14,14 +15,34 @@ namespace ERP.Services
 
         }
 
-        public void CreateBID(BID bid)
+        public BID CreateBID(BIDCreateDto bidCreateDto)
         {
-            if (bid == null){
+            if (bidCreateDto == null){
                 throw new ArgumentNullException();
             }
-          
+            BID bid = new BID();
+            bid.ActualCost = bidCreateDto.ActualCost;
+            bid.ConBID = bidCreateDto.ConBID;
+            bid.EstimatedBID = bidCreateDto.EstimatedBID;
+            bid.fileName = bidCreateDto.fileName;
+            bid.finalDate = bidCreateDto.finalDate;
+            bid.initailDate = bidCreateDto.initailDate;
+            bid.PenalityDescription = bidCreateDto.PenalityDescription;
+            bid.ProjectId = bidCreateDto.ProjectId;
+
+
+            var project = _context.Projects.FirstOrDefault(c => c.Id == bidCreateDto.ProjectId);
+            if (project == null)
+                throw new ItemNotFoundException($"Project with Id {bidCreateDto.ProjectId} not found");
+
+
+
+            bid.project = project;
+            bid.Remark = bidCreateDto.Remark;
+            bid.WorkDescription = bidCreateDto.WorkDescription;
 
             _context.BIDs.Add(bid);
+            return bid;
         }
 
 
@@ -45,9 +66,9 @@ namespace ERP.Services
 
 
 
-        public void UpdateBID(int id,BID updateBID)
+        public void UpdateBID(int id, BIDCreateDto bidCreateDto)
         {
-            if (updateBID.Equals(null))
+            if (bidCreateDto.Equals(null))
             {
                 throw new ArgumentNullException();
             }
@@ -55,15 +76,25 @@ namespace ERP.Services
             BID bid = _context.BIDs.FirstOrDefault(c => c.BIDID ==id);
             if (bid == null)
                 throw new ItemNotFoundException($"Bid not found with bid Id={id}");
-            bid.ActualCost = updateBID.ActualCost;
-            bid.ConBID = updateBID.ConBID;
-            bid.EstimatedBID = updateBID.EstimatedBID;
-            bid.fileName = updateBID.fileName;
-            bid.finalDate = updateBID.finalDate;
-            bid.initailDate = updateBID.initailDate;
-            bid.ProjectId = updateBID.ProjectId;
-            bid.Remark = updateBID.Remark;
-            bid.WorkDescription = updateBID.WorkDescription;
+            bid.ActualCost = bidCreateDto.ActualCost;
+            bid.ConBID = bidCreateDto.ConBID;
+            bid.EstimatedBID = bidCreateDto.EstimatedBID;
+            bid.fileName = bidCreateDto.fileName;
+            bid.finalDate = bidCreateDto.finalDate;
+            bid.initailDate = bidCreateDto.initailDate;
+            bid.PenalityDescription = bidCreateDto.PenalityDescription;
+            bid.ProjectId = bidCreateDto.ProjectId;
+
+
+            var project = _context.Projects.FirstOrDefault(c => c.Id == bidCreateDto.ProjectId);
+            if (project == null)
+                throw new ItemNotFoundException($"Project with Id {bidCreateDto.ProjectId} not found");
+
+
+
+            bid.project = project;
+            bid.Remark = bidCreateDto.Remark;
+            bid.WorkDescription = bidCreateDto.WorkDescription;
 
             _context.BIDs.Update(bid);
             _context.SaveChanges();

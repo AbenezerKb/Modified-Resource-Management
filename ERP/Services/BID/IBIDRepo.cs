@@ -1,4 +1,5 @@
 ﻿using ERP.Models;
+using ERP.DTOs;
 
 namespace ERP.Services
 {
@@ -8,8 +9,8 @@ namespace ERP.Services
 
         IEnumerable<BID> GetAllBIDs();
         BID GetBID(int id);
-        void CreateBID(BID bid);
+        BID CreateBID(BIDCreateDto bid);
         void DeleteBID(int id);
-        void UpdateBID(int id,BID updateBID);
+        void UpdateBID(int id, BIDCreateDto updateBID);
     }
 }

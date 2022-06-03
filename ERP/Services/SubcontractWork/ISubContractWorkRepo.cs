@@ -1,5 +1,5 @@
 ﻿using ERP.Models;
-
+using ERP.DTOs;
 
 namespace ERP.Services
 {
@@ -10,8 +10,9 @@ namespace ERP.Services
 
         IEnumerable<SubContractWork> GetAllSubContractWorks();
         SubContractWork GetSubContractWork(int id);
-        void CreateSubContractWork(SubContractWork contract);
+        SubContractWork CreateSubContractWork(SubContractWorkCreateDto contract);
         void DeleteSubContractWorks(int id);
-        void UpdateSubContractWork(int id, SubContractWork updatedSubContractWork);
+        void UpdateSubContractWork(int id, SubContractWorkCreateDto contract);
+        
     }
 }

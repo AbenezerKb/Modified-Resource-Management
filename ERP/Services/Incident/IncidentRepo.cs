@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.Exceptions;
 using ERP.Models;
+using ERP.DTOs;
 
 namespace ERP.Services
 {
@@ -13,15 +14,31 @@ namespace ERP.Services
 
         }
 
-        public void CreateIncident(Incident incident )
+        public Incident CreateIncident(IncidentCreateDto incidentCreateDto)
         {
-            if (incident == null)
+            if (incidentCreateDto == null)
             {
                 throw new ArgumentNullException();
             }
-            var project = _context.Projects.FirstOrDefault(c => c.Id == incident.proID);
+            var project = _context.Projects.FirstOrDefault(c => c.Id == incidentCreateDto.projectId);
+            if (project == null)
+                throw new ItemNotFoundException($"Project with Id {incidentCreateDto.projectId} not found");
             //var site = _context.LaborDetails.FirstOrDefault(c => c.id == dailyLabor.LaborerID);
 
+
+            Incident incident = new Incident();
+            incident.date = incidentCreateDto.date;
+            incident.Description = incidentCreateDto.Description;
+            incident.EmployeeId = incidentCreateDto.EmployeeId;
+
+            Employee employee = _context.Employees.FirstOrDefault(c => c.EmployeeId == incidentCreateDto.EmployeeId);
+            if (employee == null)
+                throw new ItemNotFoundException($"Employee with Id {incidentCreateDto.EmployeeId} not found");
+
+            incident.employee = employee;
+            incident.incidentName = incidentCreateDto.incidentName;
+            incident.projectID = incidentCreateDto.projectId;
+            incident.project = project;
             _context.Incidents.Add(incident);
             _context.Notifications.Add(new Notification
             {
@@ -35,11 +52,18 @@ namespace ERP.Services
 
             });
 
+            return incident;
+
         }
 
         public Incident GetIncident(int incidentNo)
         {
-            return _context.Incidents.FirstOrDefault(c => c.incidentNo == incidentNo);
+            // return _context.Incidents.FirstOrDefault(c => c.incidentNo == incidentNo);
+
+            Incident incident = _context.Incidents.FirstOrDefault(c => c.incidentNo == incidentNo);
+            if (incident == null)
+                throw new ItemNotFoundException($"Incident not found with Incident Id={incidentNo}");
+            return incident;
 
         }
 
@@ -58,15 +82,17 @@ namespace ERP.Services
         public void DeleteIncident(int id)
         {
             var incident = _context.Incidents.FirstOrDefault(c => c.incidentNo == id);
+            if (incident == null)
+                throw new ItemNotFoundException($"Incident not found with Incident Id={id}");
             _context.Incidents.Remove(incident);
         }
 
 
 
-        public void UpdateIncident(int id,Incident updatedIncident)
+        public void UpdateIncident(int id, IncidentCreateDto incidentCreateDto)
         {
 
-            if (updatedIncident == null)
+            if (incidentCreateDto == null)
             {
                 throw new ArgumentNullException();
             }
@@ -75,11 +101,23 @@ namespace ERP.Services
             if (incident==null)
                 throw new ItemNotFoundException($"Incident not found with Incident Id={id}");
 
-            incident.date = updatedIncident.date;
-            incident.Description = updatedIncident.Description;
-            incident.EmployeeId = updatedIncident.EmployeeId;
-            incident.incidentName = updatedIncident.incidentName;
-            incident.proID = updatedIncident.proID;
+            var project = _context.Projects.FirstOrDefault(c => c.Id == incidentCreateDto.projectId);
+            if (project == null)
+                throw new ItemNotFoundException($"Project with Id {incidentCreateDto.projectId} not found");
+
+
+            incident.date = incidentCreateDto.date;
+            incident.Description = incidentCreateDto.Description;
+            incident.EmployeeId = incidentCreateDto.EmployeeId;
+
+            Employee employee = _context.Employees.FirstOrDefault(c => c.EmployeeId == incidentCreateDto.EmployeeId);
+            if (employee == null)
+                throw new ItemNotFoundException($"Employee with Id {incidentCreateDto.EmployeeId} not found");
+
+            incident.employee = employee;
+            incident.incidentName = incidentCreateDto.incidentName;
+            incident.projectID = incidentCreateDto.projectId;
+            incident.project = project;
             _context.Incidents.Update(incident);
             _context.SaveChanges();
         }
@@ -89,3 +127,4 @@ namespace ERP.Services
 
     }
 }
+

@@ -1,4 +1,5 @@
 ﻿using ERP.Models;
+using ERP.DTOs;
 using ERP.Context;
 using ERP.Exceptions;
 
@@ -15,15 +16,33 @@ namespace ERP.Services
 
         }
 
-        public void CreateAllocatedResources(AllocatedResources allocatedResources)
+        public AllocatedResources CreateAllocatedResources(AllocatedResourcesCreateDto allocatedResourcesCreateDto)
         {
-            if (allocatedResources == null)
+            if (allocatedResourcesCreateDto == null)
             {
                 throw new ArgumentNullException();
-            }         
-         
+            }
+            AllocatedResources allocatedResources = new AllocatedResources();
+            allocatedResources.date = allocatedResourcesCreateDto.date;
+            allocatedResources.itemId = allocatedResourcesCreateDto.itemId;
 
+            Item item = _context.Items.FirstOrDefault(c => c.ItemId == allocatedResourcesCreateDto.itemId);
+            if (item == null)
+                throw new ItemNotFoundException($"Allocated budget not found with allocatedbudgetId={ allocatedResourcesCreateDto.itemId}");
+
+            allocatedResources.item = item;
+            allocatedResources.projectId = allocatedResourcesCreateDto.projectId;
+
+            Project project = _context.Projects.FirstOrDefault(c => c.Id == allocatedResourcesCreateDto.projectId);
+            if (project == null)
+                throw new ItemNotFoundException($"Project not found with Id={ allocatedResourcesCreateDto.projectId}");
+
+            allocatedResources.project = project;
+            allocatedResources.remark = allocatedResourcesCreateDto.remark;
+            allocatedResources.unit = allocatedResources.unit;
+            
             _context.AllocatedResources.Add(allocatedResources);
+            return allocatedResources;
         }
 
         public IEnumerable<AllocatedResources> GetAllAllocatedResources()
@@ -48,22 +67,33 @@ namespace ERP.Services
             _context.AllocatedResources.Remove(allocatedResources);
         }
 
-        public void UpdateAllocatedResource(int id,AllocatedResources updatedallocatedResources)
+        public void UpdateAllocatedResource(int id, AllocatedResourcesCreateDto allocatedResourcesCreateDto)
         {
 
-            if (updatedallocatedResources ==  null)
+            if (allocatedResourcesCreateDto ==  null)
             {
                 throw new ArgumentNullException();
             }
 
             AllocatedResources allocatedResources = _context.AllocatedResources.FirstOrDefault(c => c.allocatedResourcesNo == id);
-            if (allocatedResources == null)
-                throw new ItemNotFoundException($"Allocated budget not found with allocatedbudgetId={id}");
-            allocatedResources.date = updatedallocatedResources.date;
-            allocatedResources.itemId = updatedallocatedResources.itemId;
-            allocatedResources.projId = updatedallocatedResources.projId;
-            allocatedResources.remark = updatedallocatedResources.remark;
-            allocatedResources.unit = updatedallocatedResources.unit;
+            allocatedResources.date = allocatedResourcesCreateDto.date;
+            allocatedResources.itemId = allocatedResourcesCreateDto.itemId;
+
+            Item item = _context.Items.FirstOrDefault(c => c.ItemId == allocatedResourcesCreateDto.itemId);
+            if (item == null)
+                throw new ItemNotFoundException($"Allocated budget not found with allocatedbudgetId={ allocatedResourcesCreateDto.itemId}");
+
+            allocatedResources.item = item;
+            allocatedResources.projectId = allocatedResourcesCreateDto.projectId;
+
+            Project project = _context.Projects.FirstOrDefault(c => c.Id == allocatedResourcesCreateDto.projectId);
+            if (project == null)
+                throw new ItemNotFoundException($"Project not found with Id={ allocatedResourcesCreateDto.projectId}");
+
+            allocatedResources.project = project;
+            allocatedResources.remark = allocatedResourcesCreateDto.remark;
+            allocatedResources.unit = allocatedResources.unit;
+
             _context.AllocatedResources.Update(allocatedResources);
             _context.SaveChanges();
         }

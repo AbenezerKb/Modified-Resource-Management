@@ -7,7 +7,7 @@ namespace ERP.DTOs
        [Required]
         public string incidentName { get; set; } = string.Empty;
         [Required]
-        public int proID { get; set; }
+        public int projectId { get; set; }
         [Required]
         public int EmployeeId { get; set; }
         [Required]

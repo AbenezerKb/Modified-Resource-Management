@@ -8,7 +8,7 @@ namespace ERP.DTOs
         [Required]
         public int ProjectId { get; set; }
         [Required]
-        public int ProjectManager { get; set; }
+        public int ProjectManagerId { get; set; }
         [Required]
         public string Duration { get; set; }
         [Required]
@@ -16,13 +16,13 @@ namespace ERP.DTOs
         [Required]
         public DateTime Date { get; set; }
         [Required]
-        public IList<WorkForcePlanCreateDto> WorkForcePlans { get; set; }
+        public IList<WorkForcePlan> WorkForcePlans { get; set; }
         [Required]
-        public IList<ResourcePlanCreateDto> ResourcePlans { get; set; }
+        public IList<ResourcePlan> ResourcePlans { get; set; }
         [Required]
-        public IList<SubcontractingPlanCreateDto> SubcontractingPlans { get; set; }
+        public IList<SubcontractingPlan> SubcontractingPlans { get; set; }
         [Required]
-        public int ApprovedBy { get; set; }
+        public int ApprovedById { get; set; }
         [Required]
         public int TotalEstiamtedReqtBudget { get; set; }
 

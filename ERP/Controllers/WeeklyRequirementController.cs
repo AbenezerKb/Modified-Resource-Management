@@ -58,8 +58,8 @@ namespace ERP.Controllers
         public async Task<ActionResult<WeeklyRequirementReadDto>> AddWeeklyRequirement(WeeklyRequirementCreateDto weeklyRequirement)
         {
 
-            var newWeeklyRequirement = _mapper.Map<WeeklyRequirement>(weeklyRequirement);
-            _weeklyRequirementRepo.CreateWeeklyRequirement(newWeeklyRequirement);
+         //   var newWeeklyRequirement = _mapper.Map<WeeklyRequirement>(weeklyRequirement);
+            var newWeeklyRequirement = _weeklyRequirementRepo.CreateWeeklyRequirement(weeklyRequirement);
             _weeklyRequirementRepo.SaveChanges();
             var weeklyRequirementReadDto = _mapper.Map<WeeklyRequirementReadDto>(newWeeklyRequirement);
 
@@ -114,8 +114,8 @@ namespace ERP.Controllers
             try
             {
 
-                var newWeeklyRequirement = _mapper.Map<WeeklyRequirement>(weeklyRequirement);
-            _weeklyRequirementRepo.UpdateWeeklyRequirement(id,newWeeklyRequirement);
+                //var newWeeklyRequirement = _mapper.Map<WeeklyRequirement>(weeklyRequirement);
+            _weeklyRequirementRepo.UpdateWeeklyRequirement(id, weeklyRequirement);
             _weeklyRequirementRepo.SaveChanges();
                 return Ok("Success");
             }

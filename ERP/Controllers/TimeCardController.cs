@@ -53,8 +53,8 @@ namespace ERP.Controllers
             public async Task<ActionResult<TimeCardReadDto>> AddTimeCard(TimeCardCreateDto timeCard)
             {
 
-                var newTimeCard = _mapper.Map<TimeCard>(timeCard);
-                _timeCardRepo.CreateTimeCard(newTimeCard);
+             //   var newTimeCard = _mapper.Map<TimeCard>(timeCard);
+            var newTimeCard = _timeCardRepo.CreateTimeCard(timeCard);
                 _timeCardRepo.SaveChanges();                
                 var timeCardReadDto = _mapper.Map<TimeCardReadDto>(newTimeCard);
 
@@ -88,8 +88,8 @@ namespace ERP.Controllers
             try
             {
 
-                var newTimeCard = _mapper.Map<TimeCard>(timeCard);
-                _timeCardRepo.UpdateTimeCard(id, newTimeCard);
+                //var newTimeCard = _mapper.Map<TimeCard>(timeCard);
+                _timeCardRepo.UpdateTimeCard(id, timeCard);
                 _timeCardRepo.SaveChanges();
                 return Ok("Success");
             }

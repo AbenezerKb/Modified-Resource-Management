@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.Exceptions;
 using ERP.Models;
+using ERP.DTOs;
 
 namespace ERP.Services
 {
@@ -14,15 +15,20 @@ namespace ERP.Services
 
         }
 
-        public void CreateSubContractWork(SubContractWork subContractWork)
+        public SubContractWork CreateSubContractWork( SubContractWorkCreateDto subContractWorkCreateDto)
         {
-            if (subContractWork == null)
+            if (subContractWorkCreateDto == null)
             {
                 throw new ArgumentNullException();
             }
 
-            //subContractWork.subconractingid = Guid.NewGuid().ToString();
+            SubContractWork subContractWork = new SubContractWork();
+            subContractWork.remarks = subContractWorkCreateDto.remarks;
+            subContractWork.workName = subContractWorkCreateDto.workName;            
+
             _context.SubContractWorks.Add(subContractWork);
+            _context.SaveChanges();
+            return subContractWork;
         }
 
 
@@ -46,21 +52,21 @@ namespace ERP.Services
 
 
 
-        public void UpdateSubContractWork(int id,SubContractWork updatedSubContractWork)
+        public void UpdateSubContractWork(int id,SubContractWorkCreateDto subContractWorkCreateDto)
         {
 
-            if (updatedSubContractWork == null)
+            if (subContractWorkCreateDto == null)
             {
                 throw new ArgumentNullException();
             }
 
             SubContractWork subContractWork = _context.SubContractWorks.FirstOrDefault(c => c.subconractingid == id);
             if (subContractWork == null)
-                throw new ItemNotFoundException($"SubContractWork not found with SubContractWork Id={id}");
+                throw new ItemNotFoundException($"SubContractWork not found with Id={id}");
 
 
-            subContractWork.remarks = updatedSubContractWork.remarks;
-            subContractWork.workName = updatedSubContractWork.workName;            
+            subContractWork.remarks = subContractWorkCreateDto.remarks;
+            subContractWork.workName = subContractWorkCreateDto.workName;            
 
             _context.SubContractWorks.Update(subContractWork);
             _context.SaveChanges();

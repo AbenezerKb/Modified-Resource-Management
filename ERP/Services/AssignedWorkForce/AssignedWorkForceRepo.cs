@@ -1,6 +1,7 @@
 ﻿using ERP.Context;
 using ERP.Exceptions;
 using ERP.Models;
+using ERP.DTOs;
 
 namespace ERP.Services
 {
@@ -13,37 +14,25 @@ namespace ERP.Services
             _context = context;
 
         }
-        public void CreateAssignedWorkForce(AssignedWorkForce assignedWorkForce)
+        public AssignedWorkForce CreateAssignedWorkForce(AssignedWorkForceCreateDto assignedWorkForceCreateDto)
         {
-            if (assignedWorkForce == null)
+            if (assignedWorkForceCreateDto == null)
             {
                 throw new ArgumentNullException();
             }
-            //  
-            foreach (WorkForce w in assignedWorkForce.ProfessionWithWork)
-            {
 
+            AssignedWorkForce assignedWorkForce = new AssignedWorkForce();
+            assignedWorkForce.date = assignedWorkForceCreateDto.date;
+            assignedWorkForce.projectId = assignedWorkForceCreateDto.projectId;
+            assignedWorkForce.remark = assignedWorkForceCreateDto.remark;
+            assignedWorkForce.ProfessionWithWork = assignedWorkForceCreateDto.ProfessionWithWork;
 
-                w.assigneWorkForceNo = 0;
-                _context.WorkForces.Add(w);
-            }
-            //assignedWorkForce.assigneWorkForceNo
-            _context.AssignedWorkForces.Add(assignedWorkForce);
-            AssignedWorkForce assignedList = _context.AssignedWorkForces.Last();
-            for (int i = 0; i < assignedList.ProfessionWithWork.Count; i++)
-            {
-                if (assignedWorkForce.ProfessionWithWork[i].assigneWorkForceNo == 0)
-                {
-                    assignedWorkForce.ProfessionWithWork[i].assigneWorkForceNo = assignedWorkForce.assigneWorkForceNo;
-                    _context.WorkForces.First(q => q.assigneWorkForceNo == 0).assigneWorkForceNo = assignedWorkForce.ProfessionWithWork[i].assigneWorkForceNo;
-                    _context.SaveChanges();
-                }
+            var project = _context.Projects.FirstOrDefault(c => c.Id == assignedWorkForceCreateDto.projectId);
+            if (project == null)
+                throw new ItemNotFoundException($"Project with Id {assignedWorkForceCreateDto.projectId} not found");
 
-
-            }
-
-
-            var project = _context.Projects.FirstOrDefault(c => c.Id == assignedList.projId);
+            assignedWorkForce.project = project;
+            assignedWorkForce.remark = assignedWorkForceCreateDto.remark;          
 
             //GetCoordinator here from assigned proffessionals
 
@@ -59,7 +48,9 @@ namespace ERP.Services
 
             });
 
+            _context.AssignedWorkForces.Add(assignedWorkForce);
 
+            return assignedWorkForce;
 
         }
 
@@ -118,7 +109,7 @@ namespace ERP.Services
         }
 
 
-        public void UpdateAssignedWorkForce(int id, AssignedWorkForce updatedAssignedWorkForce)
+        public void UpdateAssignedWorkForce(int id, AssignedWorkForceCreateDto updatedAssignedWorkForce)
         {
             if (updatedAssignedWorkForce == null)
             {
@@ -128,26 +119,23 @@ namespace ERP.Services
             AssignedWorkForce assignedWorkForce = _context.AssignedWorkForces.FirstOrDefault(c => c.assigneWorkForceNo == id);
             if (updatedAssignedWorkForce == null)
                 throw new ItemNotFoundException($"Allocated budget not found with allocatedbudgetId={id}");
-
-            for (int i = 0; i < assignedWorkForce.ProfessionWithWork.Count; i++)
-            {
-                for (int j = 0; j < updatedAssignedWorkForce.ProfessionWithWork.Count; j++)
-                {
-                    if (assignedWorkForce.ProfessionWithWork[j].WokrkForceID == updatedAssignedWorkForce.ProfessionWithWork[j].WokrkForceID)
-                        assignedWorkForce.ProfessionWithWork[j].EmployeeId = updatedAssignedWorkForce.ProfessionWithWork[j].EmployeeId;
-
-                }
-            }
-
-
-
+       
 
             assignedWorkForce.date = updatedAssignedWorkForce.date;
-            assignedWorkForce.projId = updatedAssignedWorkForce.projId;
+            assignedWorkForce.projectId = updatedAssignedWorkForce.projectId;
             assignedWorkForce.remark = updatedAssignedWorkForce.remark;
+            assignedWorkForce.ProfessionWithWork = updatedAssignedWorkForce.ProfessionWithWork;
 
+            var project = _context.Projects.FirstOrDefault(c => c.Id == updatedAssignedWorkForce.projectId);
+            if (project == null)
+                throw new ItemNotFoundException($"Project with Id {updatedAssignedWorkForce.projectId} not found");
+
+            assignedWorkForce.project = project;
+            assignedWorkForce.remark = updatedAssignedWorkForce.remark;
+            
             _context.AssignedWorkForces.Update(assignedWorkForce);
             _context.SaveChanges();
+            
         }
     }
 }

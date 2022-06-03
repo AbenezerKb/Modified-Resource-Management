@@ -1,4 +1,5 @@
 ﻿using ERP.Models;
+using ERP.DTOs;
 
 namespace ERP.Services
 {
@@ -10,8 +11,8 @@ namespace ERP.Services
 
         IEnumerable<TimeCard> GetAllTimeCards();
         TimeCard GetTimeCard(int id);
-        void CreateTimeCard(TimeCard timeCard);
+        TimeCard CreateTimeCard(TimeCardCreateDto timeCard);
         void DeleteTimeCard(int id);
-        void UpdateTimeCard(int id, TimeCard updatedTimeCard);
+        void UpdateTimeCard(int id, TimeCardCreateDto updatedTimeCard);
     }
 }

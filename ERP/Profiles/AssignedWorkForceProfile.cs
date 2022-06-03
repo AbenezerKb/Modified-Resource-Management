@@ -21,7 +21,7 @@ namespace ERP.Profiles
         public WorkForceProfile()
         {
             CreateMap<WorkForce, WorkForceReadDto>();
-            CreateMap<WorkForceCreateDto, WorkForce>();
+            //CreateMap<WorkForceCreateDto, WorkForce>();
         }
     }
 }

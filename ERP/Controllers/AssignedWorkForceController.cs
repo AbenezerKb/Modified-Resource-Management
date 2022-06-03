@@ -54,12 +54,12 @@ namespace ERP.Controllers
         public async Task<ActionResult<AssignedWorkForceReadDto>> AddAssignedWorkForce(AssignedWorkForceCreateDto assignedWorkForce)
         {
             
-            var newAssignedWorkForce = _mapper.Map<AssignedWorkForce>(assignedWorkForce);
-            _assignedWorkForceRepo.CreateAssignedWorkForce(newAssignedWorkForce);
+            //var newAssignedWorkForce = _mapper.Map<AssignedWorkForce>(assignedWorkForce);
+            var newAssignedWorkForce = _assignedWorkForceRepo.CreateAssignedWorkForce(assignedWorkForce);
             _assignedWorkForceRepo.SaveChanges();
-            var assignedWorkForceReadDto = _mapper.Map<AssignedWorkForceReadDto>(newAssignedWorkForce);
+            //var assignedWorkForceReadDto = _mapper.Map<AssignedWorkForceReadDto>(newAssignedWorkForce);
 
-            return CreatedAtRoute(nameof(GetAssignedWorkForce), new { id = assignedWorkForceReadDto.assigneWorkForceNo }, assignedWorkForceReadDto);
+            return CreatedAtRoute(nameof(GetAssignedWorkForce), new { id = newAssignedWorkForce.assigneWorkForceNo }, newAssignedWorkForce);
         }
 
 
@@ -87,8 +87,8 @@ namespace ERP.Controllers
         {
             try
             {
-                var newAssignedWorkForce = _mapper.Map<AssignedWorkForce>(assignedWorkForce);
-            _assignedWorkForceRepo.UpdateAssignedWorkForce(id,newAssignedWorkForce);
+                //var newAssignedWorkForce = _mapper.Map<AssignedWorkForce>(assignedWorkForce);
+            _assignedWorkForceRepo.UpdateAssignedWorkForce(id, assignedWorkForce);
             _assignedWorkForceRepo.SaveChanges();
                 return Ok("Success");
             }

@@ -64,8 +64,8 @@ namespace ERP.Controllers
         public async Task<ActionResult<DailyLaborReadDto>> AddDailyLabor(DailyLaborCreateDto dailyLabor)
         {
 
-            var newDailyLabor = _mapper.Map<DailyLabor>(dailyLabor);
-            _dailyLaborRepo.CreateDailyLabor(newDailyLabor);
+            //var newDailyLabor = _mapper.Map<DailyLabor>(dailyLabor);
+            var newDailyLabor = _dailyLaborRepo.CreateDailyLabor(dailyLabor);
             _dailyLaborRepo.SaveChanges();
             var dailyLaborReadDto = _mapper.Map<DailyLaborReadDto>(newDailyLabor);
 
@@ -101,8 +101,8 @@ namespace ERP.Controllers
             try
             {
 
-                var newDailyLabor = _mapper.Map<DailyLabor>(dailyLabor);
-                _dailyLaborRepo.UpdateDailyLabor(id,newDailyLabor);
+                //var newDailyLabor = _mapper.Map<DailyLabor>(dailyLabor);
+                _dailyLaborRepo.UpdateDailyLabor(id, dailyLabor);
                 _dailyLaborRepo.SaveChanges();
                 return Ok("Success");
             }
@@ -120,8 +120,8 @@ namespace ERP.Controllers
             try
             {
 
-                var newDailyLabor = _mapper.Map<DailyLabor>(dailyLabor);
-                _dailyLaborRepo.UpdateDailyLabor(id, newDailyLabor);
+                //var newDailyLabor = _mapper.Map<DailyLabor>(dailyLabor);
+                _dailyLaborRepo.UpdateDailyLabor(id, dailyLabor);
                 _dailyLaborRepo.SaveChanges();
                 return Ok("Success");
             }

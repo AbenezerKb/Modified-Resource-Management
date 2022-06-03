@@ -11,8 +11,8 @@ namespace ERP.Models
         public string consultantName { get; set; }        
         public int projectId { get; set; }
         public Project project { get; set; }
-        public int contractorId { get; set; }
-        public Contractor contractor { get; set; }
+        public int subContractorId { get; set; }
+        public Contract contractor { get; set; }
         public DateTime reviewDate { get; set; }
         public IList<ApprovedWorkList> approvedWorkList { get; set; }        
         public string changesTaken { get; set; } = string.Empty;

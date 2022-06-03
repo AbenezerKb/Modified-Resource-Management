@@ -1,5 +1,5 @@
 ﻿using ERP.Models;
-
+using ERP.DTOs;
 
 namespace ERP.Services
 {
@@ -8,8 +8,8 @@ namespace ERP.Services
         bool SaveChanges();
         IEnumerable<AllocatedBudget> GetAllAllocatedBudgets();
         AllocatedBudget GetAllocatedBudget(int id);
-        void CreateAllocatedBudget(AllocatedBudget allocatedBudget);
+        AllocatedBudget CreateAllocatedBudget(AllocatedBudgetCreateDto allocatedBudget);
         void DeleteAllocatedBudget(int id);
-        void UpdateAllocatedBudget(int id,AllocatedBudget allocatedBudget);
+        void UpdateAllocatedBudget(int id, AllocatedBudgetCreateDto allocatedBudget);
     }
 }

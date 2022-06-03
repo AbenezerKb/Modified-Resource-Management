@@ -55,12 +55,12 @@ namespace ERP.Controllers
         public async Task<ActionResult<AllocatedResourcesReadDto>> AddAllocatedResources(AllocatedResourcesCreateDto allocatedResources)
         {
 
-            var newAllocatedResources = _mapper.Map<AllocatedResources>(allocatedResources);
-            _allocatedResourcesRepo.CreateAllocatedResources(newAllocatedResources);
+            //var newAllocatedResources = _mapper.Map<AllocatedResources>(allocatedResources);
+            var newAllocatedResources = _allocatedResourcesRepo.CreateAllocatedResources(allocatedResources);
             _allocatedResourcesRepo.SaveChanges();
-            var allocatedResourcesReadDto = _mapper.Map<AllocatedResourcesReadDto>(newAllocatedResources);
+            //var allocatedResourcesReadDto = _mapper.Map<AllocatedResourcesReadDto>(newAllocatedResources);
 
-            return CreatedAtRoute(nameof(GetAllocatedResources), new { id = allocatedResourcesReadDto.allocatedResourcesNo  }, allocatedResourcesReadDto);
+            return CreatedAtRoute(nameof(GetAllocatedResources), new { id = newAllocatedResources.allocatedResourcesNo  }, newAllocatedResources);
         }
 
         [Authorize(Roles = "ProjectManager,Admin")]
@@ -87,8 +87,8 @@ namespace ERP.Controllers
         {
             try
             {
-                var newAllocatedResources = _mapper.Map<AllocatedResources>(allocatedResource);
-            _allocatedResourcesRepo.UpdateAllocatedResource(id,newAllocatedResources);
+                //var newAllocatedResources = _mapper.Map<AllocatedResources>(allocatedResource);
+            _allocatedResourcesRepo.UpdateAllocatedResource(id, allocatedResource);
             _allocatedResourcesRepo.SaveChanges();
             return Ok("Success");
         }

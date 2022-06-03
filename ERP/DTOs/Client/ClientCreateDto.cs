@@ -9,7 +9,7 @@ namespace ERP.DTOs
         [Required]
         public string address { get; set; }
         [Required]
-        public int contractorId { get; set; }
+        public int subContractorId { get; set; }
         [Required]
         public string estimatedDuration { get; set; }
         [Required]

@@ -67,8 +67,8 @@ namespace ERP.Controllers
         public async Task<ActionResult<LaborDetailReadDto>> AddLaborDetail(LaborDetailCreateDto laborDetail)
         {
 
-            var newLaborDetail = _mapper.Map<LaborDetail>(laborDetail);
-            _laborDetailRepo.CreateLaborDetail(newLaborDetail);
+            //var newLaborDetail = _mapper.Map<LaborDetail>(laborDetail);
+            var newLaborDetail =  _laborDetailRepo.CreateLaborDetail(laborDetail);
             _laborDetailRepo.SaveChanges();
             var laborDetailReadDto = _mapper.Map<LaborDetailReadDto>(newLaborDetail);
 
@@ -101,8 +101,8 @@ namespace ERP.Controllers
             try
             {
 
-                var newLaborDetail = _mapper.Map<LaborDetail>(laborDetail);
-                _laborDetailRepo.UpdateLaborDetail(id,newLaborDetail);
+                //var newLaborDetail = _mapper.Map<LaborDetail>(laborDetail);
+                _laborDetailRepo.UpdateLaborDetail(id, laborDetail);
                 _laborDetailRepo.SaveChanges();
                 return Ok("Success");
             }

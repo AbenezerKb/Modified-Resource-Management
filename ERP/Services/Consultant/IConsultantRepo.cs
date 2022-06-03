@@ -7,10 +7,10 @@ namespace ERP.Services
     {       
             bool SaveChanges();
             IEnumerable<Consultant> GetAllConsultant();
-        ConsultantWithProjectCreateDto GetConsultant(int id);
-            void CreateConsultant(Consultant consultant);
+        Consultant GetConsultant(int id);
+        Consultant CreateConsultant(ConsultantCreateDto consultant);
             void DeleteConsultant(int id);
-            void UpdateConsultant(int id,Consultant updatedConsultant);
+            void UpdateConsultant(int id, ConsultantCreateDto updatedConsultant);
         }
     }
 

@@ -5,11 +5,11 @@ namespace ERP.DTOs
     public class SubContractorCreateDto
     {       
         [Required]
-        public string SubName { get; set; }
+        public string subContractorName { get; set; }
         [Required]
-        public string SubAddress { get; set; }
+        public string subContractorAddress { get; set; }        
         [Required]
-        public int SubWorkId { get; set; }
+        public int subContractingWorkId { get; set; }
         [Required]
         public string Status { get; set; }
     }

@@ -40,7 +40,7 @@ namespace ERP.Services.ProjectManagementAnalyticsService
                 professionals = new
                 {
                     planned = 0,//grander.WorkForcePlans.Count,
-                    used = dbContext.AssignedWorkForces.Where(awf => awf.projId == projectId).Count()
+                    used = dbContext.AssignedWorkForces.Where(awf => awf.projectId == projectId).Count()
                 },
                 subContractors = new
                 {
@@ -51,7 +51,7 @@ namespace ERP.Services.ProjectManagementAnalyticsService
                 resources = new
                 {
                     planned = 0,//grander.ResourcePlans.Count,
-                    used = dbContext.AssignedWorkForces.Count(awf => awf.projId == projectId),
+                    used = dbContext.AssignedWorkForces.Count(awf => awf.projectId == projectId),
                     damaged = 0
                 },
                 budget = new

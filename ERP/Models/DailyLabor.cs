@@ -15,10 +15,10 @@ namespace ERP.Models
         public Project project { get; set; }
         public double wagePerhour { get; set; }
         public DateTime date { get; set; }
-        public int approvedById { set; get;
+        public int approvedById { set; get; }
         public Employee approvedBy { get; set; }
         public string remarks { get; set; }
-        public string status { get; set; }
+        public string status { get; set; }       
 
     }
 
@@ -29,14 +29,16 @@ namespace ERP.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
-        public DateTime dateOfWork { get; set; }
-        public int weekNo { get; set; }
+        public DateTime dateOfWork { get; set; }      
         public string dateType { get; set; } = string.Empty;
         public bool morningSession { get; set; } 
         public bool afternoonSession { get; set; } 
         public bool eveningSession { get; set; }               
         public int NoOfHrsPerSession { get; set; } 
-        public int PaymentDayIn { get; set; } = 14;       
+        public int PaymentDayIn { get; set; } = 14;
 
+        public int LaborerID { get; set; }
+        public DailyLabor dailyLabor { get; set; }
+        
     }
 }

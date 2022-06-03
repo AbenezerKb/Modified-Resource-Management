@@ -34,13 +34,13 @@ namespace ERP.Controllers
 
         [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpGet("{id:int}", Name = "GetAllocatedBudget")]
-        public async Task<ActionResult<AllocatedBudgetReadDto>> GetAllocatedBudget(int id)
+        public async Task<ActionResult<AllocatedBudget>> GetAllocatedBudget(int id)
         {
 
             var _allocatedBudget = _allocatedBudgetRepo.GetAllocatedBudget(id);
             if (_allocatedBudget != null)
-            {
-                return Ok(_mapper.Map<AllocatedBudgetReadDto>(_allocatedBudget));
+            {               
+                return Ok(_allocatedBudget);
             }
             else
             {
@@ -53,21 +53,21 @@ namespace ERP.Controllers
 
         [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpPost]
-        public async Task<ActionResult<AllocatedBudgetReadDto>> AddAllocatedBudget(AllocatedBudgetCreateDto allocatedBudget)
+        public async Task<ActionResult<AllocatedBudget>> AddAllocatedBudget(AllocatedBudgetCreateDto allocatedBudget)
         {
 
-            var newAllocatedBudget = _mapper.Map<AllocatedBudget>(allocatedBudget);
-            _allocatedBudgetRepo.CreateAllocatedBudget(newAllocatedBudget);
+            //var newAllocatedBudget = _mapper.Map<AllocatedBudget>(allocatedBudget);
+            var newAllocatedBudget = _allocatedBudgetRepo.CreateAllocatedBudget(allocatedBudget);
             _allocatedBudgetRepo.SaveChanges();
-            var allocatedBudgetReadDto = _mapper.Map<AllocatedBudgetReadDto>(newAllocatedBudget);
+        //    var allocatedBudgetReadDto = _mapper.Map<AllocatedBudgetReadDto>(allocatedBudget);
 
-            return CreatedAtRoute(nameof(GetAllocatedBudget), new { id = allocatedBudgetReadDto.id }, allocatedBudgetReadDto);
+            return CreatedAtRoute(nameof(GetAllocatedBudget), new { id = newAllocatedBudget.Id }, newAllocatedBudget);
         }
 
 
         [Authorize(Roles = "ProjectManager,Admin,OfficeEngineer")]
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<AllocatedResourcesReadDto>> DeleteAllocatedResource(int id)
+        public async Task<ActionResult<AllocatedResources>> DeleteAllocatedResource(int id)
         {
 
             try
@@ -88,8 +88,8 @@ namespace ERP.Controllers
         {
             try
             {
-                var newAllocatedBudget = _mapper.Map<AllocatedBudget>(allocatedBudget);
-                _allocatedBudgetRepo.UpdateAllocatedBudget(id, newAllocatedBudget);
+                //var newAllocatedBudget = _mapper.Map<AllocatedBudget>(allocatedBudget);
+                _allocatedBudgetRepo.UpdateAllocatedBudget(id, allocatedBudget);
                 _allocatedBudgetRepo.SaveChanges();
                 return Ok("Success");
             }

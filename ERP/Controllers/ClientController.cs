@@ -55,8 +55,8 @@ namespace ERP.Controllers
         public async Task<ActionResult<ClientReadDto>> AddClient(ClientCreateDto client)
         {
 
-            var newClient = _mapper.Map<Client>(client);
-            _clientRepo.CreateClient(newClient);
+            //var newClient = _mapper.Map<Client>(client);
+            var newClient = _clientRepo.CreateClient(client);
             _clientRepo.SaveChanges();
             var clientReadDto = _mapper.Map<ClientReadDto>(newClient);
 
@@ -90,8 +90,8 @@ namespace ERP.Controllers
             try
             {
 
-                var newClient = _mapper.Map<Client>(client);
-                _clientRepo.UpdateClient(id,newClient);
+                //var newClient = _mapper.Map<Client>(client);
+                _clientRepo.UpdateClient(id, client);
                 _clientRepo.SaveChanges();
                 return Ok("Success");
             }

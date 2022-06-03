@@ -18,14 +18,41 @@ namespace ERP.Services
 
         }
 
-        public void CreateConsultant(Consultant consultant)
+        public Consultant CreateConsultant(ConsultantCreateDto consultantCreateDto)
         {
-            if (consultant == null)
+            if (consultantCreateDto == null)
             {
                 throw new ArgumentNullException();
             }
-            
+            Consultant consultant = new Consultant();
+            consultant.approvedWorkList = consultantCreateDto.approvedWorkList;
+            consultant.changesTaken = consultantCreateDto.changesTaken;
+            consultant.subContractorId = consultantCreateDto.subContractorId;
 
+            var contractor = _context.Contracts.FirstOrDefault(c => c.ConId == consultantCreateDto.subContractorId);
+            if (contractor == null)
+                throw new ItemNotFoundException($"Contract not found with Id={consultantCreateDto.subContractorId}");
+
+            consultant.contractor = contractor;
+            consultant.declinedWorkList = consultantCreateDto.declinedWorkList;
+            consultant.defectsCorrectionlist = consultantCreateDto.defectsCorrectionlist;
+            consultant.defectsSeen = consultantCreateDto.defectsSeen;
+            consultant.nextWork = consultantCreateDto.nextWork;
+            consultant.projectId = consultantCreateDto.projectId;
+
+            var project = _context.Projects.FirstOrDefault(c => c.Id == consultantCreateDto.projectId);
+            if (project == null)
+                throw new ItemNotFoundException($"Project with Id {consultantCreateDto.projectId} not found");
+            consultant.project = project;
+            consultant.consultantName = consultantCreateDto.consultantName;
+            consultant.attachemnt = consultantCreateDto.attachement;
+            consultant.reasonForChange = consultantCreateDto.reasonForChange;
+            consultant.remarks = consultantCreateDto.remarks;
+            consultant.reviewDate = consultantCreateDto.reviewDate;
+
+
+
+            /*
             foreach (ApprovedWorkList awl in consultant.approvedWorkList)
             {                
             
@@ -87,10 +114,11 @@ namespace ERP.Services
                 }
 
 
-            }
+            }*/
 
 
             _context.Consultants.Add(consultant);
+            return consultant;
         }
 
 
@@ -99,10 +127,12 @@ namespace ERP.Services
         {
 
             var consultants = _context.Consultants.ToList();
+           
+            /*
             var approvedWorkLists = _context.ApprovedWorkLists.ToList();
             var declinedWorkLists = _context.DeclinedWorkLists.ToList();
             var defectsCorrectionlists = _context.DefectsCorrectionlists.ToList();
-
+            
             for (int i = 0; i < consultants.Count; i++)
             {
                 foreach (ApprovedWorkList awl in approvedWorkLists)
@@ -131,16 +161,18 @@ namespace ERP.Services
                 }
 
             }
-
+            */
             return consultants;
         }
 
         private readonly IMapper _mapper;
-        public ConsultantWithProjectCreateDto GetConsultant(int id)
+        public Consultant GetConsultant(int id)
         {
 
             
             var consultants = _context.Consultants.FirstOrDefault(c => c.consultantId == id);
+
+            /*
             var approvedWorkLists = _context.ApprovedWorkLists.ToList();
             var declinedWorkLists = _context.DeclinedWorkLists.ToList();
             var defectsCorrectionlists = _context.DefectsCorrectionlists.ToList();
@@ -193,8 +225,11 @@ namespace ERP.Services
             consultantsWtihProject.remarks = consultant.remarks;
             consultantsWtihProject.reviewDate = consultant.reviewDate;
             consultantsWtihProject.project = project;
+            */
+            if (consultants == null)
+                throw new ItemNotFoundException($"Consultant not found with Consultant Id={id}");
 
-            return consultantsWtihProject;
+            return consultants;
         }
 
 
@@ -215,7 +250,7 @@ namespace ERP.Services
 
 
 
-        public void UpdateConsultant(int id,Consultant updatedConsultant)
+        public void UpdateConsultant(int id, ConsultantCreateDto updatedConsultant)
         {
             if (updatedConsultant == null)
             {
@@ -228,12 +263,25 @@ namespace ERP.Services
 
             consultant.approvedWorkList = updatedConsultant.approvedWorkList;
             consultant.changesTaken = updatedConsultant.changesTaken;
-            consultant.contractorId = updatedConsultant.contractorId;
+            consultant.subContractorId = updatedConsultant.subContractorId;
+           
+            var contractor = _context.Contracts.FirstOrDefault(c => c.ConId == updatedConsultant.subContractorId);
+            if (contractor == null)
+                throw new ItemNotFoundException($"Contract not found with Id={updatedConsultant.subContractorId}");
+            
+            consultant.contractor = contractor;
             consultant.declinedWorkList = updatedConsultant.declinedWorkList;
             consultant.defectsCorrectionlist = updatedConsultant.defectsCorrectionlist;
             consultant.defectsSeen = updatedConsultant.defectsSeen;
             consultant.nextWork = updatedConsultant.nextWork;
             consultant.projectId = updatedConsultant.projectId;
+
+            var project = _context.Projects.FirstOrDefault(c => c.Id == updatedConsultant.projectId);
+            if (project == null)
+                throw new ItemNotFoundException($"Project with Id {updatedConsultant.projectId} not found");
+            consultant.project = project;
+            consultant.consultantName = updatedConsultant.consultantName;
+            consultant.attachemnt = updatedConsultant.attachement;
             consultant.reasonForChange = updatedConsultant.reasonForChange;
             consultant.remarks = updatedConsultant.remarks;
             consultant.reviewDate = updatedConsultant.reviewDate;

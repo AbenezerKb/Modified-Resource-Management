@@ -73,7 +73,7 @@ namespace ERP.Services.ProjectManagementReportService
                                                  Status = t.IsCompleted() ? "Completed" : "Pending"
                                              }).ToList();
 
-            var incidents = await dbContext.Incidents.Where(i => i.proID == projectId).ToListAsync();
+            var incidents = await dbContext.Incidents.Where(i => i.projectID == projectId).ToListAsync();
 
             var consultants = await dbContext.Consultants.Where(c => c.projectId == projectId).ToListAsync();
             return new
@@ -136,7 +136,7 @@ namespace ERP.Services.ProjectManagementReportService
                   .Include(pv => pv.SubTask)
                   .Select(pv => new
                   {
-                      SubContractorName = pv.SubContractor.SubName,
+                      SubContractorName = pv.SubContractor.subContractorName,
                       TaskName = pv.SubTask!.Name,
                       Progress = pv.SubTask.Progress,
                   }).ToListAsync<object>();

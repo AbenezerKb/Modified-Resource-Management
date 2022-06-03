@@ -1,4 +1,5 @@
 ﻿using ERP.Models;
+using ERP.DTOs;
 
 namespace ERP.Services
 {
@@ -7,9 +8,9 @@ namespace ERP.Services
         bool SaveChanges();
         IEnumerable<AllocatedResources> GetAllAllocatedResources();
         AllocatedResources GetAllocatedResources(int id);
-        void CreateAllocatedResources(AllocatedResources allocatedResources);
+        AllocatedResources CreateAllocatedResources(AllocatedResourcesCreateDto allocatedResources);
         void DeleteAllocatedResource(int id);
-        void UpdateAllocatedResource(int id,AllocatedResources allocatedResources);
+        void UpdateAllocatedResource(int id, AllocatedResourcesCreateDto allocatedResources);
     }
 }
 

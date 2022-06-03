@@ -21,14 +21,14 @@ namespace ERP.Models
         //FK
 
 
-        public string preparedById { get; set; } = string.Empty;
+        public int preparedById { get; set; } 
         public Employee preparedBy { get; set; }
         //FK
-        public string approvedById { get; set; } = string.Empty;
+        public int approvedById { get; set; }
         public Employee approvedBy { get; set; }
         //FK
 
-        public string LaborerID { get; set; } = string.Empty;
+        public int LaborerID { get; set; } 
         public DailyLabor dailyLabor { get; set; }
 
         public string remark { get; set; } = string.Empty;

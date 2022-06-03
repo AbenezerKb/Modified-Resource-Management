@@ -1,4 +1,5 @@
 ﻿using ERP.Models;
+using ERP.DTOs;
 
 
 namespace ERP.Services
@@ -9,8 +10,8 @@ namespace ERP.Services
         bool SaveChanges();
         IEnumerable<Client> GetAllClient();
         Client GetClient(int id);
-        void CreateClient(Client client);
+        Client CreateClient(ClientCreateDto client);
         void DeleteClient(int id);
-        void UpdateClient(int id,Client client);
+        void UpdateClient(int id, ClientCreateDto client);
     }
 }

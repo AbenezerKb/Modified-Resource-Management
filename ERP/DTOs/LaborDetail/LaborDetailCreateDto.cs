@@ -6,8 +6,7 @@ namespace ERP.DTOs
     {
         [Required]
         public DateTime dateOfWork { get; set; }
-        [Required]
-        public int weekNo { get; set; }
+        
         [Required]
         public string dateType { get; set; }
         [Required]
@@ -18,10 +17,9 @@ namespace ERP.DTOs
         public bool eveningSession { get; set; }
         [Required]
         public int NoOfHrsPerSession { get; set; }
-        public int PaymentDayIn { get; set; } = 14;
-
-        //FK
-        //     [Required]
-        //   public string LaborerID { get; set; }
+        [Required]
+        public int PaymentDayIn { get; set; } = 14;        
+        [Required]
+        public int LaborerID { get; set; }
     }
 }

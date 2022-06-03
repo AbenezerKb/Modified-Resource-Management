@@ -1,4 +1,5 @@
 ﻿using ERP.Models;
+using ERP.DTOs;
 using ERP.Context;
 using ERP.Exceptions;
 
@@ -14,17 +15,38 @@ namespace ERP.Services
 
         }
 
-        public void CreateClient(Client client)
+        public Client CreateClient(ClientCreateDto clientCreateDto)
         {
-            if (client == null)
+            if (clientCreateDto == null)
             {
                 throw new ArgumentNullException();
             }
-           // client.clientId = Guid.NewGuid().ToString();
+
+            Client client = new Client();
+            client.address = clientCreateDto.address;
+            client.attachmentOfContract = clientCreateDto.attachmentOfContract;
+            client.clientName = clientCreateDto.clientName;
+            client.dateOfContract = clientCreateDto.dateOfContract;
+            client.attachmentOfContract = clientCreateDto.attachmentOfContract;
+            client.clientName = clientCreateDto.clientName;
+            client.dateOfContract = clientCreateDto.dateOfContract;
+            client.subContractorId = clientCreateDto.subContractorId;
+
+            var subContractor = _context.SubContractors.FirstOrDefault(c => c.SubId == clientCreateDto.subContractorId);
+            if (subContractor == null)
+                throw new ItemNotFoundException($"SubContractor not found with Id={clientCreateDto.subContractorId}");
+
+
+
+            client.subContractor = subContractor;           
+
+            _context.Clients.Add(client);
+            // client.clientId = Guid.NewGuid().ToString();
 
             //consultant. = DateTime.Now.Date;//DateTime.Now.ToString("yyyy-MM-dd");
 
-            _context.Clients.Add(client);
+
+            return client;
         }
 
 
@@ -57,9 +79,9 @@ namespace ERP.Services
 
 
 
-        public void UpdateClient(int id,Client updatedClient)
+        public void UpdateClient(int id, ClientCreateDto clientCreateDto)
         {
-            if (updatedClient == null)
+            if (clientCreateDto == null)
             {
                 throw new ArgumentNullException();
             }
@@ -67,14 +89,22 @@ namespace ERP.Services
             Client client = _context.Clients.FirstOrDefault(c => c.clientId == id);
             if (client == null)
                 throw new ItemNotFoundException($"Client not found with client Id={id}");
-            client.address = updatedClient.address;
-            client.clientName = updatedClient.clientName;
-            client.contractorId = updatedClient.contractorId;
-            client.dateOfContract = updatedClient.dateOfContract;
-            client.description = updatedClient.description;
-            client.estimatedCost = updatedClient.estimatedCost;
-            client.estimatedDuration = updatedClient.estimatedDuration;
-            client.remarks = updatedClient.remarks;            
+            client.address = clientCreateDto.address;
+            client.attachmentOfContract = clientCreateDto.attachmentOfContract;
+            client.clientName = clientCreateDto.clientName;
+            client.dateOfContract = clientCreateDto.dateOfContract;
+            client.attachmentOfContract = clientCreateDto.attachmentOfContract;
+            client.clientName = clientCreateDto.clientName;
+            client.dateOfContract = clientCreateDto.dateOfContract;
+            client.subContractorId = clientCreateDto.subContractorId;
+
+            var subContractor = _context.SubContractors.FirstOrDefault(c => c.SubId == clientCreateDto.subContractorId);
+            if (subContractor == null)
+                throw new ItemNotFoundException($"SubContractor not found with Id={clientCreateDto.subContractorId}");
+
+
+
+            client.subContractor = subContractor;
 
             _context.Clients.Update(client);
             _context.SaveChanges();

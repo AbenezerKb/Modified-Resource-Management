@@ -15,7 +15,7 @@ namespace ERP.Models
         public Project project { get; set; }
         // public string professionalName { get; set; }
         public IList<WorkForce> ProfessionWithWork { get; set; }
-        public string remark { get; set; }
+        public string remark { get; set; } = string.Empty;
 
     }
 
@@ -25,6 +25,6 @@ namespace ERP.Models
         [Key]
         public int assigneWorkForceNo { get; set; }
         public int EmployeeId { get; set; }
-        public string position { get; set; }
+        public string position { get; set; } = string.Empty;
     }
 }

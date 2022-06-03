@@ -56,8 +56,8 @@ namespace ERP.Controllers
         public async Task<ActionResult<SubContractorReadDto>> AddSubContractor(SubContractorCreateDto contract)
         {
 
-            var newContract = _mapper.Map<SubContractor>(contract);
-            _subcontractRepo.CreateSubContractor(newContract);
+            //var newContract = _mapper.Map<SubContractor>(contract);
+            var newContract = _subcontractRepo.CreateSubContractor(contract);
             _subcontractRepo.SaveChanges();
          
             var subcontractReadDto = _mapper.Map<SubContractorReadDto>(newContract);
@@ -96,8 +96,8 @@ namespace ERP.Controllers
             try
             {
 
-                var newSubContractor = _mapper.Map<SubContractor>(subContractor);
-                _subcontractRepo.UpdateSubContractor(id, newSubContractor);
+                //var newSubContractor = _mapper.Map<SubContractor>(subContractor);
+                 _subcontractRepo.UpdateSubContractor(id, subContractor);
                 _subcontractRepo.SaveChanges();
                 return Ok("Success");
             }

@@ -1,4 +1,5 @@
 ﻿using ERP.Models;
+using ERP.DTOs;
 
 
 namespace ERP.Services
@@ -9,8 +10,8 @@ namespace ERP.Services
 
         IEnumerable<WeeklyRequirement> GetAllWeeklyRequirement();
         WeeklyRequirement GetWeeklyRequirements(int id);
-        void CreateWeeklyRequirement(WeeklyRequirement weeklyRequirement);
+        WeeklyRequirement CreateWeeklyRequirement(WeeklyRequirementCreateDto weeklyRequirement);
         void DeleteWeeklyRequirements(int id);
-        void UpdateWeeklyRequirement(int id,WeeklyRequirement updatedWeeklyRequirement);
+        void UpdateWeeklyRequirement(int id, WeeklyRequirementCreateDto updatedWeeklyRequirement);
     }
 }

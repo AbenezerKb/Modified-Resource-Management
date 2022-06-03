@@ -6,27 +6,25 @@ namespace ERP.DTOs
     public class WeeklyRequirementCreateDto
     {
         [Required]
-        public int projId { get; set; }
+        public int projectId { get; set; }
         [Required]
-        public int projManager { get; set; }
+        public int projectManager { get; set; }
 
-        public int projCoordinator { get; set; }
+        public int projectCoordinator { get; set; }
 
         public DateTime date { get; set; }
         [Required]
-        public IList<WeeklyMaterialCreateDto> material { get; set; }
+        public IList<WeeklyMaterial> material { get; set; }
 
         // 
         //public string[] materialNo { get; set; }
 
         [Required]
-        public IList<WeeklyEquipmentCreateDto> equipment { get; set; }
-
-
+        public IList<WeeklyEquipment> equipment { get; set; }
 
         //public string[] equipmentNo { get; set; }
         [Required]
-        public IList<WeeklyLaborCreateDto> labor { get; set; }
+        public IList<WeeklyLabor> labor { get; set; }
 
         //public string[] laborNo { get; set; }
         [Required]
@@ -34,10 +32,7 @@ namespace ERP.DTOs
 
         [Required]
         public string remark { get; set; }
-
-
-        [Required]
-        public string weekNo { get; set; }
+        
 
     }
 

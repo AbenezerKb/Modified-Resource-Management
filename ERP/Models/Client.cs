@@ -12,10 +12,10 @@ namespace ERP.Models
         public int clientId { get; set; }
         public string clientName { get; set; } = string.Empty;
         public string address { get; set; } = string.Empty;
-        public int contractorId { get; set; } = string.Empty;
-        public Contract contract { get; set; }
+        public int subContractorId { get; set; } 
+        public SubContractor subContractor { get; set; }
         public string estimatedDuration { get; set; } = string.Empty;
-        public string estimatedCost { get; set; } = string.Empty;
+        public double estimatedCost { get; set; } 
         public string description { get; set; } = string.Empty;
         public DateTime dateOfContract { get; set; }
         public string attachmentOfContract { get; set; } = string.Empty;

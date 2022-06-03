@@ -62,8 +62,8 @@ namespace ERP.Controllers
         public async Task<ActionResult<BIDReadDto>> AddBID(BIDCreateDto bid)
         {
 
-            var newBid = _mapper.Map<BID>(bid);
-            _bidRepo.CreateBID(newBid);
+            //var newBid = _mapper.Map<BID>(bid);
+            var newBid =  _bidRepo.CreateBID(bid);
             _bidRepo.SaveChanges();            
             var bidReadDto = _mapper.Map<BIDReadDto>(newBid);
 
@@ -98,8 +98,8 @@ namespace ERP.Controllers
             try
             {
 
-                var newBid = _mapper.Map<BID>(bid);
-                _bidRepo.UpdateBID(id,newBid);
+                //var newBid = _mapper.Map<BID>(bid);
+                _bidRepo.UpdateBID(id, bid);
                 _bidRepo.SaveChanges();
                 return Ok("Success");
             }

@@ -1,5 +1,5 @@
 ﻿using ERP.Models;
-
+using ERP.DTOs;
 
 namespace ERP.Services
 {
@@ -10,8 +10,8 @@ namespace ERP.Services
 
         IEnumerable<LaborDetail> GetAllLaborDetails();
         LaborDetail GetLaborDetail(int id);
-        void CreateLaborDetail(LaborDetail laborDetail);
+        LaborDetail CreateLaborDetail(LaborDetailCreateDto laborDetail);
         void DeleteLaborDetails(int id);
-        void UpdateLaborDetail(int id, LaborDetail updatedLaborDetail);
+        void UpdateLaborDetail(int id, LaborDetailCreateDto updatedLaborDetail);
     }
 }

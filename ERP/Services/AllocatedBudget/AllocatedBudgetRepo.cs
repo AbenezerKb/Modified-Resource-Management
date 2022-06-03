@@ -1,7 +1,7 @@
 ﻿using ERP.Context;
 using ERP.Exceptions;
 using ERP.Models;
-
+using ERP.DTOs;
 namespace ERP.Services
 {
     public class AllocatedBudgetRepo : IAllocatedBudgetRepo
@@ -15,15 +15,44 @@ namespace ERP.Services
 
         }
 
-        public void CreateAllocatedBudget(AllocatedBudget allocatedBudget)
+        public AllocatedBudget CreateAllocatedBudget(AllocatedBudgetCreateDto allocatedBudgetCreateDto)
         {
-            if (allocatedBudget == null)
+            if (allocatedBudgetCreateDto == null)
             {
                 throw new ArgumentNullException();
             }
-            
+            AllocatedBudget allocatedBudget = new AllocatedBudget();
+            allocatedBudget.activity = allocatedBudgetCreateDto.activity;
+            allocatedBudget.amount = allocatedBudgetCreateDto.amount;
 
+            Employee ApprovedBy = _context.Employees.FirstOrDefault(c => c.EmployeeId == allocatedBudgetCreateDto.ApprovedBy);
+            if (ApprovedBy == null)
+                throw new ItemNotFoundException($"Employee with {allocatedBudgetCreateDto.ApprovedBy} Id not found ");
+
+
+            allocatedBudget.ApprovedBy = ApprovedBy;
+            allocatedBudget.ApprovedById = allocatedBudgetCreateDto.ApprovedBy;
+            allocatedBudget.contingency = allocatedBudget.contingency;
+            allocatedBudget.date = allocatedBudgetCreateDto.date;
+
+            Employee preparedBy = _context.Employees.FirstOrDefault(c => c.EmployeeId == allocatedBudgetCreateDto.ApprovedBy);
+            if (preparedBy == null)
+                throw new ItemNotFoundException($"Employee with {allocatedBudgetCreateDto.preparedBy} Id not found ");
+
+
+            allocatedBudget.preparedBy = preparedBy;
+            allocatedBudget.preparedById = allocatedBudgetCreateDto.preparedBy;
+
+            Project project = _context.Projects.FirstOrDefault(c => c.Id == allocatedBudgetCreateDto.projectId);
+            if (project == null)
+                throw new ItemNotFoundException($"Project with {allocatedBudgetCreateDto.projectId} Id not found ");
+
+
+            allocatedBudget.project = project;
+            allocatedBudget.projectId = allocatedBudgetCreateDto.projectId;
+            
              _context.AllocatedBudgets.Add(allocatedBudget);
+            return allocatedBudget;
         }
 
         public IEnumerable<AllocatedBudget> GetAllAllocatedBudgets()
@@ -51,7 +80,7 @@ namespace ERP.Services
         }
 
         
-        public void UpdateAllocatedBudget(int id,AllocatedBudget updateAllocatedBudget)
+        public void UpdateAllocatedBudget(int id, AllocatedBudgetCreateDto updateAllocatedBudget)
         {
             if (updateAllocatedBudget ==  null)
             {
@@ -59,24 +88,36 @@ namespace ERP.Services
             }
 
             AllocatedBudget allocatedBudget = _context.AllocatedBudgets.FirstOrDefault(c => c.Id == id);
-            Console.WriteLine("service 1");
-            if (allocatedBudget == null)
-                throw new ItemNotFoundException($"Allocated budget not found with allocatedbudgetId={id}");
-            
-            allocatedBudget.date = updateAllocatedBudget.date;
-            
-            allocatedBudget.projectId = updateAllocatedBudget.projectId;
-            
             allocatedBudget.activity = updateAllocatedBudget.activity;
-            
             allocatedBudget.amount = updateAllocatedBudget.amount;
-            
+
+            Employee ApprovedBy = _context.Employees.FirstOrDefault(c => c.EmployeeId == updateAllocatedBudget.ApprovedBy);
+            if (ApprovedBy == null)
+                throw new ItemNotFoundException($"Employee with {updateAllocatedBudget.ApprovedBy} Id not found ");
+
+
+            allocatedBudget.ApprovedBy = ApprovedBy;
+            allocatedBudget.ApprovedById = updateAllocatedBudget.ApprovedBy;
             allocatedBudget.contingency = updateAllocatedBudget.contingency;
-            
-            allocatedBudget.preparedBy = updateAllocatedBudget.preparedBy;
-            
-            allocatedBudget.ApprovedBy = updateAllocatedBudget.ApprovedBy;
-            
+            allocatedBudget.date = updateAllocatedBudget.date;
+
+            Employee preparedBy = _context.Employees.FirstOrDefault(c => c.EmployeeId == updateAllocatedBudget.ApprovedBy);
+            if (preparedBy == null)
+                throw new ItemNotFoundException($"Employee with {updateAllocatedBudget.preparedBy} Id not found ");
+
+
+            allocatedBudget.preparedBy = preparedBy;
+            allocatedBudget.preparedById = updateAllocatedBudget.preparedBy;
+
+            Project project = _context.Projects.FirstOrDefault(c => c.Id == updateAllocatedBudget.projectId);
+            if (project == null)
+                throw new ItemNotFoundException($"Project with {updateAllocatedBudget.projectId} Id not found ");
+
+
+            allocatedBudget.project = project;
+            allocatedBudget.projectId = updateAllocatedBudget.projectId;
+
+
             _context.AllocatedBudgets.Update(allocatedBudget);
             
             _context.SaveChanges();
@@ -92,3 +133,4 @@ namespace ERP.Services
         }
     }
 }
+

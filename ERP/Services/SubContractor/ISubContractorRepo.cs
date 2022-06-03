@@ -1,4 +1,5 @@
 ﻿using ERP.Models;
+using ERP.DTOs;
 
 namespace ERP.Services
 {
@@ -8,8 +9,8 @@ namespace ERP.Services
 
         IEnumerable<SubContractor> GetAllSubContractors();
         SubContractor GetSubContractor(int id);
-        void CreateSubContractor(SubContractor contract);
+        SubContractor CreateSubContractor(SubContractorCreateDto contract);
         void DeleteSubContractor(int id);
-        void UpdateSubContractor(int id,SubContractor updatedSubContractor);
+        void UpdateSubContractor(int id, SubContractorCreateDto updatedSubContractor);
     }
 }

@@ -54,8 +54,8 @@ namespace ERP.Controllers
         public async Task<ActionResult<ConsultantReadDto>> AddConsultant(ConsultantCreateDto consultant)
         {
 
-            var newConsultant = _mapper.Map<Consultant>(consultant);
-            _consultantRepo.CreateConsultant(newConsultant);
+            //var newConsultant = _mapper.Map<Consultant>(consultant);
+            var newConsultant =  _consultantRepo.CreateConsultant(consultant);
             _consultantRepo.SaveChanges();            
             var consultantReadDto = _mapper.Map<ConsultantReadDto>(newConsultant);
 
@@ -89,8 +89,8 @@ namespace ERP.Controllers
             try
             {
 
-                var newConsultant = _mapper.Map<Consultant>(consultant);
-                _consultantRepo.UpdateConsultant(id,newConsultant);
+                //var newConsultant = _mapper.Map<Consultant>(consultant);
+                _consultantRepo.UpdateConsultant(id, consultant);
                 _consultantRepo.SaveChanges();
                 return Ok("Success");
             }

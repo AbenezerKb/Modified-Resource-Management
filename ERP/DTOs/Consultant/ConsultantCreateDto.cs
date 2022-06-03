@@ -5,35 +5,34 @@ namespace ERP.DTOs
     public class ConsultantCreateDto
     {
         [Required]
-        public int projectId { get; set; }
-        [Required]
-        public int projectName { get; set; }
-        [Required]
-        public int consultantId { get; set; }
+        public int projectId { get; set; }             
 
         [Required]
         public string consultantName { get; set; }
 
         [Required]
-        public int contractorId { get; set; }
+        public int subContractorId { get; set; }
         [Required]
         public DateTime reviewDate { get; set; }
         [Required]
-        public IList<ApprovedWorkListCreateDto> approvedWorkList { get; set; }
+        public IList<ApprovedWorkList> approvedWorkList { get; set; }
         [Required]
         public string changesTaken { get; set; }
         [Required]
         public string reasonForChange { get; set; }
         [Required]
-        public IList<DeclinedWorkListCreateDto> declinedWorkList { get; set; }
+        public IList<DeclinedWorkList> declinedWorkList { get; set; }
         [Required]
         public string defectsSeen { get; set; }
         [Required]
         public string nextWork { get; set; }
         [Required]
-        public IList<DefectsCorrectionlistCreateDto> defectsCorrectionlist { get; set; }
+        public IList<DefectsCorrectionlist> defectsCorrectionlist { get; set; }
         [Required]
         public string remarks { get; set; }
+
+        [Required]
+        public string attachement { get; set; }
     }
 
 
